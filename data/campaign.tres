@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="CampaignDef" load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/config/campaign_def.gd" id="1_campaign"]
+[ext_resource type="Script" path="res://scripts/config/level_info.gd" id="2_level"]
+
+[sub_resource type="Resource" id="Level_yard"]
+script = ExtResource("2_level")
+title = "Guild Dispatch Yard"
+act_name = "Act I: The City Above"
+scene_path = "res://scenes/levels/level_01_dispatch_yard.tscn"
+
+[sub_resource type="Resource" id="Level_tram"]
+script = ExtResource("2_level")
+title = "Pneumatic Tramline"
+act_name = "Act I: The City Above"
+scene_path = "res://scenes/levels/level_02_tramline.tscn"
+
+[sub_resource type="Resource" id="Level_row"]
+script = ExtResource("2_level")
+title = "Clockmakers' Row"
+act_name = "Act I: The City Above"
+scene_path = "res://scenes/levels/level_03_clockmakers_row.tscn"
+
+[sub_resource type="Resource" id="Level_cisterns"]
+script = ExtResource("2_level")
+title = "Flooded Cisterns"
+act_name = "Act I: The City Above"
+scene_path = "res://scenes/levels/level_04_flooded_cisterns.tscn"
+
+[sub_resource type="Resource" id="Level_gardens"]
+script = ExtResource("2_level")
+title = "Steam Gardens"
+act_name = "Act II: The Outer Works"
+scene_path = "res://scenes/levels/level_05_steam_gardens.tscn"
+
+[sub_resource type="Resource" id="Level_seam"]
+script = ExtResource("2_level")
+title = "Coal Seam & Mine Lift"
+act_name = "Act II: The Outer Works"
+scene_path = "res://scenes/levels/level_06_coal_seam.tscn"
+
+[sub_resource type="Resource" id="Level_foundry"]
+script = ExtResource("2_level")
+title = "The Great Foundry"
+act_name = "Finale"
+scene_path = "res://scenes/world/foundry_level.tscn"
+
+[resource]
+script = ExtResource("1_campaign")
+levels = Array[ExtResource("2_level")]([SubResource("Level_yard"), SubResource("Level_tram"), SubResource("Level_row"), SubResource("Level_cisterns"), SubResource("Level_gardens"), SubResource("Level_seam"), SubResource("Level_foundry")])

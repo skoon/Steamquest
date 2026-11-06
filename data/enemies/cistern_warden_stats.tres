@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3]
+
+[ext_resource type="Script" path="res://scripts/config/enemy_stats.gd" id="1_stats"]
+
+[resource]
+script = ExtResource("1_stats")
+display_name = "Cistern Warden"
+max_health = 340.0
+move_speed = 2.4
+armor = 5.0
+knockback_resistance = 0.85
+aggro_range = 15.0
+attack_damage = 24.0
+attack_range = 3.2
+attack_cooldown = 2.6
+telegraph_time = 1.1
+area_radius = 4.2
+attack_knockback = 16.0
+projectile_speed = 0.0
+gear_drop_chance = 1.0

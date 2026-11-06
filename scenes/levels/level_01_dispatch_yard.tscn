@@ -1,0 +1,237 @@
+[gd_scene load_steps=38 format=3]
+
+[ext_resource type="Script" path="res://scenes/world/foundry_level.gd" id="1_level"]
+[ext_resource type="Script" path="res://scenes/world/foundry_builder.gd" id="2_builder"]
+[ext_resource type="Script" path="res://scripts/config/room_def.gd" id="3_room"]
+[ext_resource type="Script" path="res://scripts/resources/rumor_data.gd" id="4_rumor"]
+[ext_resource type="PackedScene" path="res://scenes/player/technician.tscn" id="5_tech"]
+[ext_resource type="PackedScene" path="res://scenes/player/camera_rig.tscn" id="6_cam"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="7_hud"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/scrap_skitterer.tscn" id="8_skit"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/piston_bruiser.tscn" id="9_brute"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/arc_turret.tscn" id="10_turret"]
+[ext_resource type="PackedScene" path="res://scenes/world/rumor_terminal.tscn" id="11_term"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_door.tscn" id="12_door"]
+[ext_resource type="PackedScene" path="res://scenes/world/jammed_valve.tscn" id="13_valve"]
+[ext_resource type="PackedScene" path="res://scenes/world/rotating_cog.tscn" id="15_cog"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_vent.tscn" id="17_vent"]
+[ext_resource type="PackedScene" path="res://scenes/world/elevator.tscn" id="18_elev"]
+[ext_resource type="PackedScene" path="res://scenes/world/decor_prop.tscn" id="19_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/gear_pickup.tscn" id="21_pickup"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/clockwork_hound.tscn" id="22_hound"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/brass_sentry.tscn" id="23_sentry"]
+[ext_resource type="PackedScene" path="res://scenes/world/key_pickup.tscn" id="24_key"]
+[ext_resource type="PackedScene" path="res://scenes/world/tram_crossing.tscn" id="25_tram"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_stone_slab.png" id="t_stone"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_brick.png" id="t_w_brick"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_wood_planks.png" id="t_planks"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_wood_panel.png" id="t_w_wood"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_brick_cellar.png" id="t_w_cellar"]
+[ext_resource type="Texture2D" path="res://assets/sprites/decor/boiler_tank.png" id="t_boiler"]
+
+[sub_resource type="Environment" id="Env_level"]
+background_mode = 1
+background_color = Color(0.06, 0.05, 0.045, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.85, 0.75, 0.62, 1)
+ambient_light_energy = 0.65
+tonemap_mode = 2
+tonemap_exposure = 1.05
+glow_enabled = true
+glow_intensity = 0.9
+glow_bloom = 0.08
+fog_enabled = true
+fog_light_color = Color(0.32, 0.27, 0.22, 1)
+fog_density = 0.004
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.009
+volumetric_fog_albedo = Color(0.95, 0.8, 0.65, 1)
+volumetric_fog_emission = Color(0.04, 0.025, 0.015, 1)
+
+[sub_resource type="Resource" id="Room_yard"]
+script = ExtResource("3_room")
+room_name = "Loading Yard"
+width = 18
+depth = 16
+floor_texture = ExtResource("t_stone")
+wall_texture = ExtResource("t_w_brick")
+floor_tint = Color(0.95, 0.88, 0.8, 1)
+light_color = Color(1, 0.75, 0.5, 1)
+light_energy = 2.6
+pillars = PackedVector2Array(-4, 4)
+dressing_theme = 4
+dressing_seed = 101
+clutter_density = 0.3
+grime_density = 0.5
+
+[sub_resource type="Resource" id="Room_office"]
+script = ExtResource("3_room")
+room_name = "Guild Dispatch Office"
+width = 16
+depth = 14
+floor_texture = ExtResource("t_planks")
+wall_texture = ExtResource("t_w_wood")
+floor_tint = Color(1, 0.9, 0.8, 1)
+light_color = Color(1, 0.8, 0.55, 1)
+light_energy = 2.6
+pillars = PackedVector2Array()
+dressing_theme = 4
+dressing_seed = 103
+clutter_density = 0.26
+grime_density = 0.35
+
+[sub_resource type="Resource" id="Room_platform"]
+script = ExtResource("3_room")
+room_name = "Tram Platform"
+width = 14
+depth = 14
+floor_texture = ExtResource("t_stone")
+wall_texture = ExtResource("t_w_cellar")
+floor_tint = Color(0.9, 0.85, 0.8, 1)
+light_color = Color(1, 0.7, 0.45, 1)
+light_energy = 2.4
+pillars = PackedVector2Array(-3, -3)
+dressing_theme = 5
+dressing_seed = 107
+clutter_density = 0.22
+grime_density = 0.45
+
+[sub_resource type="Resource" id="Rumor_dispatch_briefing"]
+script = ExtResource("4_rumor")
+rumor_id = &"dispatch_briefing"
+title = "Dispatch #1: The Job"
+body = "Pneumatic dispatch, Guild of Mechanical Trades.\n\nEleven years ago the Hargreaves Automaton & Clockwork Foundry fell silent in a single night. The automatons kept working. The workers did not come home.\n\nThe Guild sends you, Technician, with a pipe-wrench, a rivet gun and a diagnostic rig full of tired scavenged gears. Every cog you carry grinds a little more with each step. Ride the old tramline down to the Foundry and find what Master Hargreaves hid in its core. They say whoever carries it will never grind again."
+hint = "Controls: WASD move, Space steam-dash, LMB wrench, RMB rivet gun (costs pressure), R lubricant vent, F interact, Q/E rotate camera, Tab log, G gear sockets."
+
+[sub_resource type="Resource" id="Rumor_yard_valve_memo"]
+script = ExtResource("4_rumor")
+rumor_id = &"yard_valve_memo"
+title = "Yard Memo: The Gate"
+body = "To whoever has the yard tonight:\n\nThe office gate runs on yard pressure, and the release valve by the gate has seized solid again. Do not waste good oil on it. Three honest blows with a wrench will shake it loose, as they always have.\n\nAnd mind the scrap-spiders. They have been crawling up out of the old Foundry drains for weeks.\n\n- Yardmaster Pell"
+hint = "Bash the seized valve beside the east gate with your wrench (3 hits)."
+
+[sub_resource type="Resource" id="Rumor_guild_primer"]
+script = ExtResource("4_rumor")
+rumor_id = &"guild_primer"
+title = "Guild Primer: Pressure and Friction"
+body = "Page 3 of the apprentice primer, dog-eared.\n\nYour rivet gun and your steam-dash both draw on the rig's pressure. Spend it, and the pump will refill it in time.\n\nEvery gear in your rig gathers friction as it works. A hot gear is a slow gear, and a slow gear wears its teeth away. When the grinding gets loud, open the lubricant vent: it purges the friction and overclocks the rig for a few heartbeats.\n\nA cracked gear can be swapped for any scrap gear you find lying about."
+hint = "R vents lubricant (friction purged, short overclock). Press G to see the state of each gear socket."
+
+[sub_resource type="Resource" id="Rumor_missing_notice"]
+script = ExtResource("4_rumor")
+rumor_id = &"missing_notice"
+title = "Notice: Missing Persons"
+body = "PASTED TO THE DISPATCH WINDOW, MANY TIMES OVER.\n\nHAVE YOU SEEN THEM? 312 hands of the Hargreaves Foundry, night shift, not returned these eleven years. Smelters, gear-cutters, boiler stewards, a foreman named Aldous Brack.\n\nAny word to the Guild office. The families still wait."
+hint = ""
+
+[sub_resource type="Resource" id="Rumor_tram_notice"]
+script = ExtResource("4_rumor")
+rumor_id = &"tram_notice"
+title = "Tramline Notice"
+body = "The Foundry line is CLOSED until further notice. The line was never formally closed; the trams simply stopped coming back.\n\nThe service lift at the end of this platform still drops to the tram tunnel. Use at your own risk."
+hint = "Step onto the lift platform to descend to the Pneumatic Tramline."
+
+[node name="Level01DispatchYard" type="Node3D"]
+script = ExtResource("1_level")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_level")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.383022, 0.321394, 0, 0.642788, 0.766044, -0.5, -0.663414, 0.55667, 0, 20, 0)
+light_color = Color(1, 0.86, 0.7, 1)
+light_energy = 0.6
+shadow_enabled = true
+directional_shadow_max_distance = 60.0
+
+[node name="Navigation" type="NavigationRegion3D" parent="."]
+script = ExtResource("2_builder")
+rooms = Array[ExtResource("3_room")]([SubResource("Room_yard"), SubResource("Room_office"), SubResource("Room_platform")])
+start_x = -9.0
+player_path = NodePath("../Technician")
+keep_clear_roots = Array[NodePath]([NodePath("../Doors"), NodePath("../Interactables"), NodePath("../Hazards"), NodePath("../Props"), NodePath("../Enemies")])
+
+[node name="Technician" parent="." instance=ExtResource("5_tech")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.05, 1)
+
+[node name="CameraRig" parent="." instance=ExtResource("6_cam")]
+target_path = NodePath("../Technician")
+
+[node name="HUD" parent="." instance=ExtResource("7_hud")]
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="YardGate" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 0)
+door_id = &"yard_gate"
+condition = 1
+locked_hint = "The gate is held by back-pressure. Free the seized valve to release it."
+
+[node name="OfficeDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 0)
+door_id = &"office_door"
+condition = 0
+locked_hint = ""
+
+[node name="Interactables" type="Node3D" parent="."]
+
+[node name="BriefingTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, -6.5)
+rumor = SubResource("Rumor_dispatch_briefing")
+
+[node name="ValveMemoTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, -6.5)
+rumor = SubResource("Rumor_yard_valve_memo")
+
+[node name="SeizedValve" parent="Interactables" instance=ExtResource("13_valve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, 4)
+door_id = &"yard_gate"
+
+[node name="PrimerTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, -5.5)
+rumor = SubResource("Rumor_guild_primer")
+
+[node name="MissingTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 21, 0, 5.5)
+rumor = SubResource("Rumor_missing_notice")
+
+[node name="TramNoticeTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, -5.5)
+rumor = SubResource("Rumor_tram_notice")
+
+[node name="ScrapGearCache" parent="Interactables" instance=ExtResource("21_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, -4)
+
+[node name="Elevator" parent="Interactables" instance=ExtResource("18_elev")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 0)
+exit_mode = 1
+
+[node name="Hazards" type="Node3D" parent="."]
+
+[node name="YardVent" parent="Hazards" instance=ExtResource("17_vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -4)
+
+[node name="Props" type="Node3D" parent="."]
+
+[node name="YardBoiler" parent="Props" instance=ExtResource("19_prop")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 6)
+texture = ExtResource("t_boiler")
+pixel_size = 0.014
+collision_radius = 1.0
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="YardSkittererA" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.05, 2)
+
+[node name="YardSkittererB" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.05, -3)
+
+[node name="OfficeSkittererA" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.05, 2)
+
+[node name="OfficeSkittererB" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.05, -3)
+
+[node name="OfficeSkittererC" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0.05, 2.5)

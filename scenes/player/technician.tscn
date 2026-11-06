@@ -1,0 +1,56 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scenes/player/technician.gd" id="1_tech"]
+[ext_resource type="Script" path="res://scripts/core/character_sprite.gd" id="2_sprite"]
+[ext_resource type="Resource" path="res://data/technician_stats.tres" id="3_stats"]
+[ext_resource type="PackedScene" path="res://scenes/player/rivet.tscn" id="4_rivet"]
+
+[sub_resource type="CapsuleShape3D" id="Shape_body"]
+radius = 0.4
+height = 1.6
+
+[sub_resource type="SphereShape3D" id="Shape_wrench"]
+radius = 2.3
+
+[sub_resource type="SphereShape3D" id="Shape_interact"]
+radius = 1.8
+
+[node name="Technician" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 5
+script = ExtResource("1_tech")
+stats = ExtResource("3_stats")
+rivet_scene = ExtResource("4_rivet")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+shape = SubResource("Shape_body")
+
+[node name="Sprite" type="AnimatedSprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+pixel_size = 0.01
+script = ExtResource("2_sprite")
+sprite_prefix = "res://assets/sprites/players/player_woman_athletic"
+
+[node name="AimPivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+
+[node name="WrenchHitbox" type="Area3D" parent="AimPivot"]
+collision_layer = 8
+collision_mask = 20
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AimPivot/WrenchHitbox"]
+shape = SubResource("Shape_wrench")
+
+[node name="Muzzle" type="Marker3D" parent="AimPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.7)
+
+[node name="InteractArea" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 16
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("Shape_interact")

@@ -1,0 +1,283 @@
+[gd_scene load_steps=44 format=3]
+
+[ext_resource type="Script" path="res://scenes/world/foundry_level.gd" id="1_level"]
+[ext_resource type="Script" path="res://scenes/world/foundry_builder.gd" id="2_builder"]
+[ext_resource type="Script" path="res://scripts/config/room_def.gd" id="3_room"]
+[ext_resource type="Script" path="res://scripts/resources/rumor_data.gd" id="4_rumor"]
+[ext_resource type="PackedScene" path="res://scenes/player/technician.tscn" id="5_tech"]
+[ext_resource type="PackedScene" path="res://scenes/player/camera_rig.tscn" id="6_cam"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="7_hud"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/scrap_skitterer.tscn" id="8_skit"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/piston_bruiser.tscn" id="9_brute"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/arc_turret.tscn" id="10_turret"]
+[ext_resource type="PackedScene" path="res://scenes/world/rumor_terminal.tscn" id="11_term"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_door.tscn" id="12_door"]
+[ext_resource type="PackedScene" path="res://scenes/world/jammed_valve.tscn" id="13_valve"]
+[ext_resource type="PackedScene" path="res://scenes/world/rotating_cog.tscn" id="15_cog"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_vent.tscn" id="17_vent"]
+[ext_resource type="PackedScene" path="res://scenes/world/elevator.tscn" id="18_elev"]
+[ext_resource type="PackedScene" path="res://scenes/world/decor_prop.tscn" id="19_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/gear_pickup.tscn" id="21_pickup"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/clockwork_hound.tscn" id="22_hound"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/brass_sentry.tscn" id="23_sentry"]
+[ext_resource type="PackedScene" path="res://scenes/world/key_pickup.tscn" id="24_key"]
+[ext_resource type="PackedScene" path="res://scenes/world/tram_crossing.tscn" id="25_tram"]
+[ext_resource type="PackedScene" path="res://scenes/world/water_pool.tscn" id="26_pool"]
+[ext_resource type="PackedScene" path="res://scenes/world/pump_sequence.tscn" id="27_pumpseq"]
+[ext_resource type="PackedScene" path="res://scenes/world/pump_valve.tscn" id="28_pumpvalve"]
+[ext_resource type="PackedScene" path="res://scenes/world/humid_zone.tscn" id="29_humid"]
+[ext_resource type="PackedScene" path="res://scenes/world/enemy_nest.tscn" id="30_nest"]
+[ext_resource type="PackedScene" path="res://scenes/world/wall_lantern_switch.tscn" id="31_lantern"]
+[ext_resource type="PackedScene" path="res://scenes/world/winch.tscn" id="32_winch"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/cistern_warden.tscn" id="33_warden"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_stone_slab.png" id="t_stone"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_brick_cellar.png" id="t_w_cellar"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_grate.png" id="t_grate"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_brick.png" id="t_w_brick"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_iron_plate.png" id="t_iron"]
+
+[sub_resource type="Environment" id="Env_level"]
+background_mode = 1
+background_color = Color(0.03, 0.04, 0.045, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.55, 0.7, 0.72, 1)
+ambient_light_energy = 0.5
+tonemap_mode = 2
+tonemap_exposure = 1.05
+glow_enabled = true
+glow_intensity = 0.9
+glow_bloom = 0.08
+fog_enabled = true
+fog_light_color = Color(0.18, 0.24, 0.25, 1)
+fog_density = 0.004
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.016
+volumetric_fog_albedo = Color(0.95, 0.8, 0.65, 1)
+volumetric_fog_emission = Color(0.04, 0.025, 0.015, 1)
+
+[sub_resource type="Resource" id="Room_intake"]
+script = ExtResource("3_room")
+room_name = "Intake Gallery"
+width = 16
+depth = 14
+floor_texture = ExtResource("t_stone")
+wall_texture = ExtResource("t_w_cellar")
+floor_tint = Color(0.85, 0.9, 0.9, 1)
+light_color = Color(0.85, 0.9, 1, 1)
+light_energy = 2.4
+pillars = PackedVector2Array()
+dressing_theme = 7
+dressing_seed = 401
+clutter_density = 0.24
+grime_density = 0.6
+
+[sub_resource type="Resource" id="Room_tanks"]
+script = ExtResource("3_room")
+room_name = "Settling Tanks"
+width = 24
+depth = 18
+floor_texture = ExtResource("t_grate")
+wall_texture = ExtResource("t_w_cellar")
+floor_tint = Color(0.8, 0.88, 0.88, 1)
+light_color = Color(0.8, 0.95, 1, 1)
+light_energy = 2.6
+pillars = PackedVector2Array(-6, 0, 6, 0)
+dressing_theme = 7
+dressing_seed = 403
+clutter_density = 0.18
+grime_density = 0.6
+
+[sub_resource type="Resource" id="Room_pumps"]
+script = ExtResource("3_room")
+room_name = "Pump Hall"
+width = 20
+depth = 18
+floor_texture = ExtResource("t_stone")
+wall_texture = ExtResource("t_w_brick")
+floor_tint = Color(0.88, 0.9, 0.9, 1)
+light_color = Color(1, 0.82, 0.55, 1)
+light_energy = 2.6
+pillars = PackedVector2Array()
+dressing_theme = 7
+dressing_seed = 407
+clutter_density = 0.22
+grime_density = 0.55
+
+[sub_resource type="Resource" id="Room_outflow"]
+script = ExtResource("3_room")
+room_name = "Outflow Lift"
+width = 12
+depth = 12
+floor_texture = ExtResource("t_iron")
+wall_texture = ExtResource("t_w_cellar")
+floor_tint = Color(0.85, 0.88, 0.88, 1)
+light_color = Color(0.9, 0.9, 1, 1)
+light_energy = 2.2
+pillars = PackedVector2Array()
+dressing_theme = 7
+dressing_seed = 411
+clutter_density = 0.16
+grime_density = 0.45
+
+[sub_resource type="Resource" id="Rumor_cistern_flood_log"]
+script = ExtResource("4_rumor")
+rumor_id = &"cistern_flood_log"
+title = "Cistern Keeper's Flood Log"
+body = "The tanks breathe twice a minute, near enough. Low water, high water, low water again, regular as the Foundry clock.\n\nAt high water the tanks are up to a man's knees. Wading is slow and murder on your boots and your gears. The arc-coils the Board installed in the tanks short out every time the water comes up over their feet; I have stopped reporting it.\n\nAnd the Warden is still down there. The diving rig the Master built to clear the outflow. It does not like visitors."
+hint = "Deep water slows you and wears your drive gear. Cross the tanks at low water, or fight turrets while they are drowned."
+
+[sub_resource type="Resource" id="Rumor_pump_order"]
+script = ExtResource("4_rumor")
+rumor_id = &"pump_order"
+title = "Pump Hall Start-Up Card"
+body = "A brass card riveted beside the pumps.\n\nSTART-UP ORDER, TO BE FOLLOWED EXACTLY:\n  First: pump II\n  Second: pump III\n  Third: pump I\n\nA valve opened out of turn reverses the whole system and floods the hall. Do not ask how we know."
+hint = "Turn the pump valves II, then III, then I. A wrong valve floods the hall."
+
+[sub_resource type="Resource" id="Rumor_sealed_project"]
+script = ExtResource("4_rumor")
+rumor_id = &"sealed_project"
+title = "Work Order 1147"
+body = "FROM THE OFFICE OF THE MASTER. PRIORITY.\n\nAll outflow capacity to be diverted to the deep works for the duration of the sealed project. The cistern crew is to be reassigned to the Foundry floor, night shift.\n\nNo questions regarding the nature of the project will be answered.\n\n- H."
+hint = ""
+
+[node name="Level04FloodedCisterns" type="Node3D"]
+script = ExtResource("1_level")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_level")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.383022, 0.321394, 0, 0.642788, 0.766044, -0.5, -0.663414, 0.55667, 0, 20, 0)
+light_color = Color(0.75, 0.85, 0.85, 1)
+light_energy = 0.35
+shadow_enabled = true
+directional_shadow_max_distance = 60.0
+
+[node name="Navigation" type="NavigationRegion3D" parent="."]
+script = ExtResource("2_builder")
+rooms = Array[ExtResource("3_room")]([SubResource("Room_intake"), SubResource("Room_tanks"), SubResource("Room_pumps"), SubResource("Room_outflow")])
+start_x = -9.0
+player_path = NodePath("../Technician")
+keep_clear_roots = Array[NodePath]([NodePath("../Doors"), NodePath("../Interactables"), NodePath("../Hazards"), NodePath("../Props"), NodePath("../Enemies")])
+
+[node name="Technician" parent="." instance=ExtResource("5_tech")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.05, 1)
+
+[node name="CameraRig" parent="." instance=ExtResource("6_cam")]
+target_path = NodePath("../Technician")
+
+[node name="HUD" parent="." instance=ExtResource("7_hud")]
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="IntakeDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0)
+door_id = &"intake_door"
+condition = 0
+locked_hint = ""
+
+[node name="TankDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 0, 0)
+door_id = &"tank_door"
+condition = 0
+locked_hint = ""
+
+[node name="OutflowDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 0, 0)
+door_id = &"outflow_door"
+condition = 1
+locked_hint = "The outflow lock is sealed. Start the pumps in the right order."
+
+[node name="Interactables" type="Node3D" parent="."]
+
+[node name="FloodLogTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -5.5)
+rumor = SubResource("Rumor_cistern_flood_log")
+
+[node name="WorkOrderTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, -8)
+rumor = SubResource("Rumor_sealed_project")
+
+[node name="PumpOrderTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 34, 0, 7.5)
+rumor = SubResource("Rumor_pump_order")
+
+[node name="PumpSequence" parent="Interactables" instance=ExtResource("27_pumpseq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 0, 0)
+order = Array[StringName]([&"pump_2", &"pump_3", &"pump_1"])
+unlock_id = &"outflow_door"
+flood_pools = Array[NodePath]([NodePath("../../Hazards/TankPoolA"), NodePath("../../Hazards/TankPoolB"), NodePath("../../Hazards/PumpHallPool")])
+
+[node name="PumpValveI" parent="Interactables" instance=ExtResource("28_pumpvalve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, -6.5)
+valve_id = &"pump_1"
+label = "I"
+sequence_path = NodePath("../PumpSequence")
+
+[node name="PumpValveII" parent="Interactables" instance=ExtResource("28_pumpvalve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 0, -6.5)
+valve_id = &"pump_2"
+label = "II"
+sequence_path = NodePath("../PumpSequence")
+
+[node name="PumpValveIII" parent="Interactables" instance=ExtResource("28_pumpvalve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 0, -6.5)
+valve_id = &"pump_3"
+label = "III"
+sequence_path = NodePath("../PumpSequence")
+
+[node name="ScrapGearCache" parent="Interactables" instance=ExtResource("21_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0, -2)
+
+[node name="Elevator" parent="Interactables" instance=ExtResource("18_elev")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 59, 0, 0)
+exit_mode = 1
+
+[node name="Hazards" type="Node3D" parent="."]
+
+[node name="TankPoolA" parent="Hazards" instance=ExtResource("26_pool")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, -4.5)
+size = Vector2(9, 7)
+phase_offset = 0.0
+
+[node name="TankPoolB" parent="Hazards" instance=ExtResource("26_pool")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 4.5)
+size = Vector2(9, 7)
+phase_offset = 7.0
+
+[node name="PumpHallPool" parent="Hazards" instance=ExtResource("26_pool")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, 4.5)
+size = Vector2(10, 6)
+phase_offset = 3.5
+
+[node name="IntakeVent" parent="Hazards" instance=ExtResource("17_vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 4)
+phase_offset = 1.5
+
+[node name="Props" type="Node3D" parent="."]
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="IntakeSkittererA" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 3)
+
+[node name="IntakeSkittererB" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.05, -3)
+
+[node name="IntakeBruiser" parent="Enemies" instance=ExtResource("9_brute")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.05, 1)
+
+[node name="TankTurretA" parent="Enemies" instance=ExtResource("10_turret")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, -6)
+
+[node name="TankTurretB" parent="Enemies" instance=ExtResource("10_turret")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 6)
+
+[node name="CisternWarden" parent="Enemies" instance=ExtResource("33_warden")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.05, 0)
+
+[node name="PumpHoundA" parent="Enemies" instance=ExtResource("22_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38, 0.05, 2)
+
+[node name="PumpHoundB" parent="Enemies" instance=ExtResource("22_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0.05, -2)

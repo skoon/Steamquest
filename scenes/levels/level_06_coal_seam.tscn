@@ -1,0 +1,314 @@
+[gd_scene load_steps=46 format=3]
+
+[ext_resource type="Script" path="res://scenes/world/foundry_level.gd" id="1_level"]
+[ext_resource type="Script" path="res://scenes/world/foundry_builder.gd" id="2_builder"]
+[ext_resource type="Script" path="res://scripts/config/room_def.gd" id="3_room"]
+[ext_resource type="Script" path="res://scripts/resources/rumor_data.gd" id="4_rumor"]
+[ext_resource type="PackedScene" path="res://scenes/player/technician.tscn" id="5_tech"]
+[ext_resource type="PackedScene" path="res://scenes/player/camera_rig.tscn" id="6_cam"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="7_hud"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/scrap_skitterer.tscn" id="8_skit"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/piston_bruiser.tscn" id="9_brute"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/arc_turret.tscn" id="10_turret"]
+[ext_resource type="PackedScene" path="res://scenes/world/rumor_terminal.tscn" id="11_term"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_door.tscn" id="12_door"]
+[ext_resource type="PackedScene" path="res://scenes/world/jammed_valve.tscn" id="13_valve"]
+[ext_resource type="PackedScene" path="res://scenes/world/rotating_cog.tscn" id="15_cog"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_vent.tscn" id="17_vent"]
+[ext_resource type="PackedScene" path="res://scenes/world/elevator.tscn" id="18_elev"]
+[ext_resource type="PackedScene" path="res://scenes/world/decor_prop.tscn" id="19_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/gear_pickup.tscn" id="21_pickup"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/clockwork_hound.tscn" id="22_hound"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/brass_sentry.tscn" id="23_sentry"]
+[ext_resource type="PackedScene" path="res://scenes/world/key_pickup.tscn" id="24_key"]
+[ext_resource type="PackedScene" path="res://scenes/world/tram_crossing.tscn" id="25_tram"]
+[ext_resource type="PackedScene" path="res://scenes/world/water_pool.tscn" id="26_pool"]
+[ext_resource type="PackedScene" path="res://scenes/world/pump_sequence.tscn" id="27_pumpseq"]
+[ext_resource type="PackedScene" path="res://scenes/world/pump_valve.tscn" id="28_pumpvalve"]
+[ext_resource type="PackedScene" path="res://scenes/world/humid_zone.tscn" id="29_humid"]
+[ext_resource type="PackedScene" path="res://scenes/world/enemy_nest.tscn" id="30_nest"]
+[ext_resource type="PackedScene" path="res://scenes/world/wall_lantern_switch.tscn" id="31_lantern"]
+[ext_resource type="PackedScene" path="res://scenes/world/winch.tscn" id="32_winch"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/cistern_warden.tscn" id="33_warden"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_wood_planks.png" id="t_planks"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_wood_panel.png" id="t_w_wood"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_stone_slab.png" id="t_stone"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_brick_cellar.png" id="t_w_cellar"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_iron_plate.png" id="t_iron"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_brick.png" id="t_w_brick"]
+
+[sub_resource type="Environment" id="Env_level"]
+background_mode = 1
+background_color = Color(0.01, 0.01, 0.012, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.55, 0.5, 0.45, 1)
+ambient_light_energy = 0.45
+tonemap_mode = 2
+tonemap_exposure = 1.05
+glow_enabled = true
+glow_intensity = 0.9
+glow_bloom = 0.08
+fog_enabled = true
+fog_light_color = Color(0.1, 0.09, 0.08, 1)
+fog_density = 0.004
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.02
+volumetric_fog_albedo = Color(0.95, 0.8, 0.65, 1)
+volumetric_fog_emission = Color(0.04, 0.025, 0.015, 1)
+
+[sub_resource type="Resource" id="Room_lamp"]
+script = ExtResource("3_room")
+room_name = "Lamp Room"
+width = 14
+depth = 14
+floor_texture = ExtResource("t_planks")
+wall_texture = ExtResource("t_w_wood")
+floor_tint = Color(1, 0.9, 0.8, 1)
+light_color = Color(1, 0.72, 0.4, 1)
+light_energy = 2.2
+pillars = PackedVector2Array()
+dressing_theme = 9
+dressing_seed = 601
+clutter_density = 0.22
+grime_density = 0.4
+
+[sub_resource type="Resource" id="Room_face"]
+script = ExtResource("3_room")
+room_name = "Coal Face"
+width = 24
+depth = 16
+floor_texture = ExtResource("t_stone")
+wall_texture = ExtResource("t_w_cellar")
+floor_tint = Color(0.7, 0.68, 0.65, 1)
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 0.35
+pillars = PackedVector2Array(-6, 5)
+dressing_theme = 9
+dressing_seed = 603
+clutter_density = 0.2
+grime_density = 0.6
+
+[sub_resource type="Resource" id="Room_junction"]
+script = ExtResource("3_room")
+room_name = "Cart Junction"
+width = 20
+depth = 16
+floor_texture = ExtResource("t_iron")
+wall_texture = ExtResource("t_w_cellar")
+floor_tint = Color(0.7, 0.7, 0.7, 1)
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 0.35
+pillars = PackedVector2Array()
+dressing_theme = 9
+dressing_seed = 607
+clutter_density = 0.18
+grime_density = 0.6
+
+[sub_resource type="Resource" id="Room_winch"]
+script = ExtResource("3_room")
+room_name = "Winch House"
+width = 18
+depth = 18
+floor_texture = ExtResource("t_planks")
+wall_texture = ExtResource("t_w_brick")
+floor_tint = Color(0.8, 0.75, 0.7, 1)
+light_color = Color(1, 0.7, 0.4, 1)
+light_energy = 0.5
+pillars = PackedVector2Array()
+dressing_theme = 9
+dressing_seed = 611
+clutter_density = 0.16
+grime_density = 0.5
+
+[sub_resource type="Resource" id="Room_lift"]
+script = ExtResource("3_room")
+room_name = "Mine Lift"
+width = 12
+depth = 12
+floor_texture = ExtResource("t_iron")
+wall_texture = ExtResource("t_w_cellar")
+floor_tint = Color(0.8, 0.8, 0.8, 1)
+light_color = Color(1, 0.75, 0.45, 1)
+light_energy = 1.2
+pillars = PackedVector2Array()
+dressing_theme = 9
+dressing_seed = 613
+clutter_density = 0.14
+grime_density = 0.4
+
+[sub_resource type="Resource" id="Rumor_lamp_room_card"]
+script = ExtResource("4_rumor")
+rumor_id = &"lamp_room_card"
+title = "Lamp Room Rules"
+body = "EVERY MINER TAKES A LAMP. EVERY LAMP COMES BACK.\n\nThe seam is black as the inside of a boiler. Light the wall lanterns as you go; a lit lantern stays lit, and it will see you home.\n\nThe ore carts run downhill on their own when the brakes slip. If you hear the rails start to sing, get off them."
+hint = "Press F at a wall lantern (or hit it with the wrench) to light it. Ore carts hit hard. Clear the rails when they rumble."
+
+[sub_resource type="Resource" id="Rumor_shift_roster"]
+script = ExtResource("4_rumor")
+rumor_id = &"shift_roster"
+title = "Shift Roster, Seam Four"
+body = "A slate board, chalk names in two neat columns.\n\nEvery name has been struck through. All of them in the same hand, all on the same night. At the bottom, in that same hand:\n\nREASSIGNED. FOUNDRY FLOOR. GUARD DUTY.\n\nThe automatons were never the ones on guard duty, were they."
+hint = ""
+
+[sub_resource type="Resource" id="Rumor_winchman_warning"]
+script = ExtResource("4_rumor")
+rumor_id = &"winchman_warning"
+title = "Winchman's Warning"
+body = "The winch brake is seized. Knock it free, engage the drum, and do NOT walk away from it. It only winds while someone minds it.\n\nThey will come for the noise. They always come for the noise. Whatever the Master is keeping down there, he wants it kept, and the machines have heard him."
+hint = "Bash the winch brake free, press F to engage it, then stay close while it winds. Waves will come."
+
+[node name="Level06CoalSeam" type="Node3D"]
+script = ExtResource("1_level")
+dark_level = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_level")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.383022, 0.321394, 0, 0.642788, 0.766044, -0.5, -0.663414, 0.55667, 0, 20, 0)
+light_color = Color(0.7, 0.65, 0.6, 1)
+light_energy = 0.3
+shadow_enabled = true
+directional_shadow_max_distance = 60.0
+
+[node name="Navigation" type="NavigationRegion3D" parent="."]
+script = ExtResource("2_builder")
+rooms = Array[ExtResource("3_room")]([SubResource("Room_lamp"), SubResource("Room_face"), SubResource("Room_junction"), SubResource("Room_winch"), SubResource("Room_lift")])
+start_x = -9.0
+player_path = NodePath("../Technician")
+keep_clear_roots = Array[NodePath]([NodePath("../Doors"), NodePath("../Interactables"), NodePath("../Hazards"), NodePath("../Props"), NodePath("../Enemies")])
+
+[node name="Technician" parent="." instance=ExtResource("5_tech")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.05, 1)
+
+[node name="CameraRig" parent="." instance=ExtResource("6_cam")]
+target_path = NodePath("../Technician")
+
+[node name="HUD" parent="." instance=ExtResource("7_hud")]
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="LampDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
+door_id = &"lamp_door"
+condition = 0
+locked_hint = ""
+
+[node name="FaceDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29, 0, 0)
+door_id = &"face_door"
+condition = 0
+locked_hint = ""
+
+[node name="JunctionDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, 0, 0)
+door_id = &"junction_door"
+condition = 0
+locked_hint = ""
+
+[node name="MineLiftDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67, 0, 0)
+door_id = &"mine_lift"
+condition = 1
+locked_hint = "The lift cage is at the bottom of the shaft. Wind it up first."
+
+[node name="Interactables" type="Node3D" parent="."]
+
+[node name="LampRoomTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -5.5)
+rumor = SubResource("Rumor_lamp_room_card")
+
+[node name="RosterTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -7.5)
+rumor = SubResource("Rumor_shift_roster")
+
+[node name="WinchmanTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 52, 0, 8)
+rumor = SubResource("Rumor_winchman_warning")
+
+[node name="FaceLanternA" parent="Interactables" instance=ExtResource("31_lantern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, -6.5)
+
+[node name="FaceLanternB" parent="Interactables" instance=ExtResource("31_lantern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, 6.5)
+
+[node name="FaceLanternC" parent="Interactables" instance=ExtResource("31_lantern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, -6.5)
+
+[node name="JunctionLanternA" parent="Interactables" instance=ExtResource("31_lantern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 0, 6.5)
+
+[node name="JunctionLanternB" parent="Interactables" instance=ExtResource("31_lantern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 0, -6.5)
+
+[node name="WinchLanternA" parent="Interactables" instance=ExtResource("31_lantern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52, 0, -7.5)
+
+[node name="WinchLanternB" parent="Interactables" instance=ExtResource("31_lantern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, 0, 7.5)
+
+[node name="Winch" parent="Interactables" instance=ExtResource("32_winch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 0, -3)
+unlock_id = &"mine_lift"
+wave_scenes = Array[PackedScene]([ExtResource("8_skit"), ExtResource("22_hound"), ExtResource("9_brute")])
+spawn_offsets = PackedVector3Array(-7, 0, 5, 6, 0, 6, -7, 0, -3.5, 6, 0, -3.5)
+
+[node name="ScrapGearCache" parent="Interactables" instance=ExtResource("21_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 4)
+
+[node name="Elevator" parent="Interactables" instance=ExtResource("18_elev")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75, 0, 0)
+exit_mode = 1
+
+[node name="Hazards" type="Node3D" parent="."]
+
+[node name="CoalFaceCarts" parent="Hazards" instance=ExtResource("25_tram")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 0)
+style = 1
+track_length = 14.0
+interval = 6.0
+warning_time = 1.4
+pass_time = 0.8
+damage = 18.0
+knockback = 11.0
+
+[node name="JunctionCartsWest" parent="Hazards" instance=ExtResource("25_tram")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 0)
+style = 1
+track_length = 14.0
+interval = 6.0
+warning_time = 1.4
+pass_time = 0.8
+phase_offset = 3.0
+damage = 18.0
+knockback = 11.0
+
+[node name="JunctionCartsEast" parent="Hazards" instance=ExtResource("25_tram")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 0, 0)
+style = 1
+track_length = 14.0
+interval = 5.0
+warning_time = 1.3
+pass_time = 0.8
+direction = -1.0
+damage = 18.0
+knockback = 11.0
+
+[node name="Props" type="Node3D" parent="."]
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="FaceSkittererA" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0.05, 3)
+
+[node name="FaceSkittererB" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 0.05, -3)
+
+[node name="FaceSkittererC" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0.05, 4)
+
+[node name="JunctionHoundA" parent="Enemies" instance=ExtResource("22_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, 0.05, -3)
+
+[node name="JunctionHoundB" parent="Enemies" instance=ExtResource("22_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0.05, 3)

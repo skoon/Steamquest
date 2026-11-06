@@ -1,0 +1,277 @@
+[gd_scene load_steps=38 format=3]
+
+[ext_resource type="Script" path="res://scenes/world/foundry_level.gd" id="1_level"]
+[ext_resource type="Script" path="res://scenes/world/foundry_builder.gd" id="2_builder"]
+[ext_resource type="Script" path="res://scripts/config/room_def.gd" id="3_room"]
+[ext_resource type="Script" path="res://scripts/resources/rumor_data.gd" id="4_rumor"]
+[ext_resource type="PackedScene" path="res://scenes/player/technician.tscn" id="5_tech"]
+[ext_resource type="PackedScene" path="res://scenes/player/camera_rig.tscn" id="6_cam"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="7_hud"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/scrap_skitterer.tscn" id="8_skit"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/piston_bruiser.tscn" id="9_brute"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/arc_turret.tscn" id="10_turret"]
+[ext_resource type="PackedScene" path="res://scenes/world/rumor_terminal.tscn" id="11_term"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_door.tscn" id="12_door"]
+[ext_resource type="PackedScene" path="res://scenes/world/jammed_valve.tscn" id="13_valve"]
+[ext_resource type="PackedScene" path="res://scenes/world/rotating_cog.tscn" id="15_cog"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_vent.tscn" id="17_vent"]
+[ext_resource type="PackedScene" path="res://scenes/world/elevator.tscn" id="18_elev"]
+[ext_resource type="PackedScene" path="res://scenes/world/decor_prop.tscn" id="19_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/gear_pickup.tscn" id="21_pickup"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/clockwork_hound.tscn" id="22_hound"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/brass_sentry.tscn" id="23_sentry"]
+[ext_resource type="PackedScene" path="res://scenes/world/key_pickup.tscn" id="24_key"]
+[ext_resource type="PackedScene" path="res://scenes/world/tram_crossing.tscn" id="25_tram"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_checker_marble.png" id="t_marble"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_wallpaper_striped.png" id="t_w_striped"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_wallpaper.png" id="t_w_paper"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_parquet.png" id="t_parquet"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_wood_panel.png" id="t_w_wood"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_plaster.png" id="t_w_plaster"]
+[ext_resource type="Texture2D" path="res://assets/sprites/decor/furniture_grandfather_clock.png" id="t_clock"]
+
+[sub_resource type="Environment" id="Env_level"]
+background_mode = 1
+background_color = Color(0.05, 0.035, 0.035, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.95, 0.78, 0.6, 1)
+ambient_light_energy = 0.6
+tonemap_mode = 2
+tonemap_exposure = 1.05
+glow_enabled = true
+glow_intensity = 0.9
+glow_bloom = 0.08
+fog_enabled = true
+fog_light_color = Color(0.3, 0.22, 0.18, 1)
+fog_density = 0.004
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.008
+volumetric_fog_albedo = Color(0.95, 0.8, 0.65, 1)
+volumetric_fog_emission = Color(0.04, 0.025, 0.015, 1)
+
+[sub_resource type="Resource" id="Room_foyer"]
+script = ExtResource("3_room")
+room_name = "Showroom Foyer"
+width = 16
+depth = 16
+floor_texture = ExtResource("t_marble")
+wall_texture = ExtResource("t_w_striped")
+floor_tint = Color(1, 0.95, 0.9, 1)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 2.8
+pillars = PackedVector2Array()
+dressing_theme = 6
+dressing_seed = 301
+clutter_density = 0.24
+grime_density = 0.2
+
+[sub_resource type="Resource" id="Room_gallery"]
+script = ExtResource("3_room")
+room_name = "Gallery of Clocks"
+width = 22
+depth = 18
+floor_texture = ExtResource("t_marble")
+wall_texture = ExtResource("t_w_paper")
+floor_tint = Color(1, 0.95, 0.88, 1)
+light_color = Color(1, 0.82, 0.55, 1)
+light_energy = 2.8
+pillars = PackedVector2Array(-5, 0, 5, 0)
+dressing_theme = 6
+dressing_seed = 303
+clutter_density = 0.26
+grime_density = 0.2
+
+[sub_resource type="Resource" id="Room_backroom"]
+script = ExtResource("3_room")
+room_name = "Workshop Backroom"
+width = 18
+depth = 16
+floor_texture = ExtResource("t_parquet")
+wall_texture = ExtResource("t_w_wood")
+floor_tint = Color(1, 0.9, 0.8, 1)
+light_color = Color(1, 0.72, 0.45, 1)
+light_energy = 2.5
+pillars = PackedVector2Array()
+dressing_theme = 1
+dressing_seed = 307
+clutter_density = 0.24
+grime_density = 0.35
+
+[sub_resource type="Resource" id="Room_service"]
+script = ExtResource("3_room")
+room_name = "Service Lift"
+width = 12
+depth = 12
+floor_texture = ExtResource("t_parquet")
+wall_texture = ExtResource("t_w_plaster")
+floor_tint = Color(1, 0.92, 0.85, 1)
+light_color = Color(1, 0.8, 0.55, 1)
+light_energy = 2.4
+pillars = PackedVector2Array()
+dressing_theme = 6
+dressing_seed = 311
+clutter_density = 0.16
+grime_density = 0.15
+
+[sub_resource type="Resource" id="Rumor_perpetual_engine_advert"]
+script = ExtResource("4_rumor")
+rumor_id = &"perpetual_engine_advert"
+title = "Advertisement: The Perpetual Engine"
+body = "A gilt-framed handbill, faded to the colour of tea.\n\nHARGREAVES & SONS proudly announce THE PERPETUAL ENGINE! Motion without friction! Labour without wear! A single golden gear at its heart, cut by the Master's own hand, ensures your engine shall never tire, never grind, never fail.\n\nInquire within. Demonstrations daily. Beware imitations."
+hint = "Brass Sentries block wrench and rivet from the front. A rivet on the shield knocks it aside for a moment; the glowing boiler marks their back."
+
+[sub_resource type="Resource" id="Rumor_curator_note"]
+script = ExtResource("4_rumor")
+rumor_id = &"curator_note"
+title = "Curator's Note"
+body = "Gallery attendants are reminded that the sentries are decorative. They are NOT to be wound after hours.\n\nThe Master insists every sentry keeps its shield to the visitor at all times. It turns slowly, being heavy, and an attendant who stepped around one in the old days could polish its back without it ever noticing. Kindly do not test this on duty. Nor are the rivet guns to be fired at the shields: a rivet knocks the shield aside, and the sentry takes it very personally."
+hint = "Sentries turn slowly. Rivet the shield to stagger one, or dash past and strike the boiler on its back."
+
+[sub_resource type="Resource" id="Rumor_apprentice_diary"]
+script = ExtResource("4_rumor")
+rumor_id = &"apprentice_diary"
+title = "Apprentice's Diary"
+body = "The Master came through the showroom tonight, which he never does. He wound every sentry himself and told them something I could not hear. Then he locked the service lift with the great winding key and left the key on the bench in the back, under the sentries' eyes.\n\nHe said the lift goes down to the Foundry gates, and that no one should follow him."
+hint = "The winding key lies in the Workshop Backroom. Carry it to the clockwork door of the Service Lift."
+
+[node name="Level03ClockmakersRow" type="Node3D"]
+script = ExtResource("1_level")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_level")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.383022, 0.321394, 0, 0.642788, 0.766044, -0.5, -0.663414, 0.55667, 0, 20, 0)
+light_color = Color(1, 0.85, 0.65, 1)
+light_energy = 0.5
+shadow_enabled = true
+directional_shadow_max_distance = 60.0
+
+[node name="Navigation" type="NavigationRegion3D" parent="."]
+script = ExtResource("2_builder")
+rooms = Array[ExtResource("3_room")]([SubResource("Room_foyer"), SubResource("Room_gallery"), SubResource("Room_backroom"), SubResource("Room_service")])
+start_x = -9.0
+player_path = NodePath("../Technician")
+keep_clear_roots = Array[NodePath]([NodePath("../Doors"), NodePath("../Interactables"), NodePath("../Hazards"), NodePath("../Props"), NodePath("../Enemies")])
+
+[node name="Technician" parent="." instance=ExtResource("5_tech")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.05, 1)
+
+[node name="CameraRig" parent="." instance=ExtResource("6_cam")]
+target_path = NodePath("../Technician")
+
+[node name="HUD" parent="." instance=ExtResource("7_hud")]
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="FoyerDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0)
+door_id = &"foyer_door"
+condition = 0
+locked_hint = ""
+
+[node name="GalleryDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29, 0, 0)
+door_id = &"gallery_door"
+condition = 0
+locked_hint = ""
+
+[node name="ServiceDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 0, 0)
+door_id = &"service_door"
+condition = 5
+locked_hint = "A clockwork door. It needs a winding key."
+required_item_id = &"winding_key"
+
+[node name="Interactables" type="Node3D" parent="."]
+
+[node name="AdvertTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -6.5)
+rumor = SubResource("Rumor_perpetual_engine_advert")
+
+[node name="CuratorTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, -8)
+rumor = SubResource("Rumor_curator_note")
+
+[node name="DiaryTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 0, -6.5)
+rumor = SubResource("Rumor_apprentice_diary")
+
+[node name="WindingKey" parent="Interactables" instance=ExtResource("24_key")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, -5)
+item_id = &"winding_key"
+display_name = "Winding Key"
+
+[node name="ScrapGearCache" parent="Interactables" instance=ExtResource("21_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, 7)
+
+[node name="Elevator" parent="Interactables" instance=ExtResource("18_elev")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 0, 0)
+exit_mode = 1
+
+[node name="Hazards" type="Node3D" parent="."]
+
+[node name="BackroomVent" parent="Hazards" instance=ExtResource("17_vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 0, -5)
+phase_offset = 2.0
+
+[node name="Props" type="Node3D" parent="."]
+
+[node name="GalleryCog0" parent="Props" instance=ExtResource("15_cog")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.5, 2.6, -8.4)
+radius = 1.4
+teeth = 14
+spin_speed = 0.5
+upright = true
+
+[node name="GalleryCog1" parent="Props" instance=ExtResource("15_cog")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 2.6, -8.3)
+radius = 0.9
+teeth = 10
+spin_speed = -0.8
+upright = true
+
+[node name="GalleryCog2" parent="Props" instance=ExtResource("15_cog")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 2.6, -8.4)
+radius = 1.6
+teeth = 16
+spin_speed = 0.35
+upright = true
+
+[node name="GalleryClockA" parent="Props" instance=ExtResource("19_prop")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 7.5)
+texture = ExtResource("t_clock")
+pixel_size = 0.016
+collision_radius = 0.7
+
+[node name="GalleryClockB" parent="Props" instance=ExtResource("19_prop")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 7.5)
+texture = ExtResource("t_clock")
+pixel_size = 0.016
+collision_radius = 0.7
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="FoyerSentry" parent="Enemies" instance=ExtResource("23_sentry")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 5, 0.05, 0)
+
+[node name="GallerySentryA" parent="Enemies" instance=ExtResource("23_sentry")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 16, 0.05, -4)
+
+[node name="GallerySentryB" parent="Enemies" instance=ExtResource("23_sentry")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 20, 0.05, 4)
+
+[node name="GalleryHoundA" parent="Enemies" instance=ExtResource("22_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.05, -2)
+
+[node name="GalleryHoundB" parent="Enemies" instance=ExtResource("22_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.05, 3)
+
+[node name="BackroomBruiser" parent="Enemies" instance=ExtResource("9_brute")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 0.05, 0)
+
+[node name="BackroomSentryA" parent="Enemies" instance=ExtResource("23_sentry")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 41, 0.05, -3)
+
+[node name="BackroomSentryB" parent="Enemies" instance=ExtResource("23_sentry")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 41, 0.05, 3)

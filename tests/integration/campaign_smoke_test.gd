@@ -1,0 +1,455 @@
+extends Node
+## Headless play-through of levels 1-6 and the hand-off to the finale. Run as the main scene:
+##   Godot_console.exe --headless --path . res://tests/integration/campaign_smoke_test.tscn
+## Exits 0 when every check passes, 1 otherwise.
+
+const LEVEL_1: String = "res://scenes/levels/level_01_dispatch_yard.tscn"
+const LEVEL_2: String = "res://scenes/levels/level_02_tramline.tscn"
+const LEVEL_3: String = "res://scenes/levels/level_03_clockmakers_row.tscn"
+const LEVEL_4: String = "res://scenes/levels/level_04_flooded_cisterns.tscn"
+const LEVEL_5: String = "res://scenes/levels/level_05_steam_gardens.tscn"
+const LEVEL_6: String = "res://scenes/levels/level_06_coal_seam.tscn"
+const FINALE: String = "res://scenes/world/foundry_level.tscn"
+const TEST_SAVE: String = "user://test_campaign_smoke_save.json"
+const MIN_DRESSING_PROPS: int = 8
+
+var _failures: PackedStringArray = PackedStringArray()
+var _level: Node3D
+var _heard: Dictionary = {}
+var _completed_to: Array[String] = []
+var _notices: Array[String] = []
+
+
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	_run.call_deferred()
+
+
+func _check(condition: bool, message: String) -> void:
+	print(("  PASS  " if condition else "  FAIL  ") + message)
+	if not condition:
+		_failures.append(message)
+
+
+func _frames(count: int) -> void:
+	for i: int in count:
+		await get_tree().physics_frame
+
+
+func _run() -> void:
+	GameState.save_path = TEST_SAVE
+	CampaignProgress.delete_save(TEST_SAVE)
+	GameState.reset()
+	Audio.sound_played.connect(func(id: StringName) -> void: _heard[id] = int(_heard.get(id, 0)) + 1)
+	GameState.level_completed.connect(func(path: String) -> void: _completed_to.append(path))
+	GameState.notice_posted.connect(func(text: String) -> void: _notices.append(text))
+
+	await _load_level(LEVEL_1)
+	await _test_level_1()
+	await _load_level(LEVEL_2)
+	await _test_level_2()
+	await _load_level(LEVEL_3)
+	await _test_level_3()
+	await _load_level(LEVEL_4)
+	await _test_level_4()
+	await _load_level(LEVEL_5)
+	await _test_level_5()
+	await _load_level(LEVEL_6)
+	await _test_level_6()
+
+	print("")
+	if _failures.is_empty():
+		print("CAMPAIGN SMOKE TEST PASSED")
+	else:
+		printerr("CAMPAIGN SMOKE TEST FAILED (%d):" % _failures.size())
+		for failure: String in _failures:
+			printerr("  - " + failure)
+	await _unload_level()
+	Audio.stop_all()
+	CampaignProgress.delete_save(TEST_SAVE)
+	await _frames(10)
+	get_tree().quit(0 if _failures.is_empty() else 1)
+
+
+func _load_level(path: String) -> void:
+	await _unload_level()
+	var scene: PackedScene = load(path) as PackedScene
+	_level = scene.instantiate() as Node3D
+	_level.set("auto_advance", false)
+	add_child(_level)
+	await _frames(5)
+	print("-- %s" % path.get_file())
+	var builder: FoundryBuilder = _level.get_node("Navigation") as FoundryBuilder
+	_check(builder.navigation_mesh != null and builder.navigation_mesh.get_polygon_count() > 0, "navigation mesh baked")
+	for room: RoomDef in builder.rooms:
+		var placed: int = builder.dressed_prop_counts.get(room.room_name, 0)
+		print("        %s dressing: %d props" % [room.room_name, placed])
+		_check(placed >= MIN_DRESSING_PROPS, "%s is dressed with clutter" % room.room_name)
+
+
+func _unload_level() -> void:
+	if _level == null:
+		return
+	get_tree().paused = false
+	_level.queue_free()
+	_level = null
+	await _frames(3)
+
+
+func _player() -> Technician:
+	return _level.get_node("Technician") as Technician
+
+
+func _isolate_enemies(keep: Array[EnemyBase]) -> void:
+	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var enemy: EnemyBase = node as EnemyBase
+		enemy.set_physics_process(keep.has(enemy))
+
+
+func _ride_elevator(expected_next: String) -> void:
+	var count_before: int = _completed_to.size()
+	var elevator: Node3D = _level.get_node("Interactables/Elevator") as Node3D
+	_player().global_position = elevator.global_position + Vector3(0.0, 0.1, 0.0)
+	await _frames(10)
+	_check(_completed_to.size() == count_before + 1 and _completed_to.back() == expected_next, "the exit lift leads to %s" % expected_next.get_file())
+
+
+# --- Level 1 ------------------------------------------------------------------------------------
+
+func _test_level_1() -> void:
+	var player: Technician = _player()
+	_check(GameState.level_index == 0, "level 1 registers as the first campaign level")
+	_check(GameState.has_save(), "starting a level writes the save")
+	_isolate_enemies([])
+	var briefing: RumorTerminal = _level.get_node("Interactables/BriefingTerminal") as RumorTerminal
+	briefing.interact(player)
+	get_tree().paused = false
+	_check(GameState.has_rumor(&"dispatch_briefing"), "the briefing terminal is logged")
+
+	var gate: SteamDoor = _level.get_node("Doors/YardGate") as SteamDoor
+	var valve: JammedValve = _level.get_node("Interactables/SeizedValve") as JammedValve
+	gate.use_panel()
+	_check(not gate.is_open, "yard gate stays shut until the valve is freed")
+	for i: int in valve.hits_required:
+		valve.receive_bash()
+	await _frames(2)
+	_check(gate.is_open, "freeing the yard valve opens the gate")
+	var office: SteamDoor = _level.get_node("Doors/OfficeDoor") as SteamDoor
+	office.use_panel()
+	await _frames(2)
+	_check(office.is_open, "the office door opens from its panel")
+
+	# Wear the rig and take damage, so the next level can check what carries over.
+	GameState.rig.get_gear(FrictionModel.Socket.DRIVE).durability = 60.0
+	player.health = 40.0
+	await _ride_elevator(LEVEL_2)
+	_check(GameState.level_index == 1, "completing level 1 advances the campaign")
+
+
+# --- Level 2 ------------------------------------------------------------------------------------
+
+func _test_level_2() -> void:
+	var player: Technician = _player()
+	_check(is_equal_approx(GameState.rig.get_gear(FrictionModel.Socket.DRIVE).durability, 60.0), "gear wear carries into the next level")
+	_check(player.health == player.stats.max_health, "health refills on a new level")
+	_check(GameState.has_rumor(&"dispatch_briefing"), "the rumor log carries across levels")
+	_check(int(GameState.checkpoint["level_index"]) == 1, "a checkpoint is taken for level 2")
+	_isolate_enemies([])
+	await _test_tram(player)
+	await _test_hound_pack(player)
+
+	var freight: SteamDoor = _level.get_node("Doors/FreightDoor") as SteamDoor
+	var concourse_valve: JammedValve = _level.get_node("Interactables/ConcourseValve") as JammedValve
+	var signal_valve: JammedValve = _level.get_node("Interactables/SignalValve") as JammedValve
+	for i: int in concourse_valve.hits_required:
+		concourse_valve.receive_bash()
+	await _frames(2)
+	_check(not freight.is_open, "one valve is not enough for the freight door")
+	for i: int in signal_valve.hits_required:
+		signal_valve.receive_bash()
+	await _frames(2)
+	_check(freight.is_open, "both valves open the freight door")
+	await _ride_elevator(LEVEL_3)
+
+
+func _test_tram(player: Technician) -> void:
+	var tram: TramCrossing = _level.get_node("Hazards/TramCrossingWest") as TramCrossing
+	(_level.get_node("Hazards/TramCrossingEast") as TramCrossing).set_physics_process(false)
+	player.global_position = tram.global_position + Vector3(4.0, 0.05, 1.0)
+	player.health = player.stats.max_health
+	var saw_pass: bool = false
+	for i: int in int(tram.interval * 60.0) + 30:
+		await get_tree().physics_frame
+		saw_pass = saw_pass or tram.is_running()
+	_check(saw_pass and player.health == player.stats.max_health, "a passing tram leaves a Technician beside the rails alone")
+	player.global_position = tram.global_position + Vector3(0.0, 0.05, 1.0)
+	var hit: bool = false
+	for i: int in int(tram.interval * 60.0) + 30:
+		await get_tree().physics_frame
+		player.global_position.x = tram.global_position.x
+		if player.health < player.stats.max_health:
+			hit = tram.is_running()
+			break
+	_check(hit, "a tram running over the rails hits the Technician")
+	_check(_heard.has(&"tram_bell") and _heard.has(&"tram_rush"), "trams ring a warning bell and rush past")
+	tram.set_physics_process(false)
+	player.health = player.stats.max_health
+
+
+func _test_hound_pack(player: Technician) -> void:
+	var hounds: Array[EnemyBase] = []
+	for name: String in ["Enemies/TunnelHoundA", "Enemies/TunnelHoundB", "Enemies/TunnelHoundC"]:
+		hounds.append(_level.get_node(name) as EnemyBase)
+	_isolate_enemies(hounds)
+	player.global_position = Vector3(21.0, 0.05, 0.0)
+	player.aim_direction = Vector3.LEFT
+	var bitten: bool = false
+	for i: int in 240:
+		await get_tree().physics_frame
+		if player.health < player.stats.max_health:
+			bitten = true
+			player.health = player.stats.max_health
+	var all_aggro: bool = true
+	var targets: Array[Vector3] = []
+	for hound: EnemyBase in hounds:
+		all_aggro = all_aggro and hound.is_aggro
+		targets.append((hound as ClockworkHound).orbit_target())
+	var spread: float = INF
+	for a: int in targets.size():
+		for b: int in range(a + 1, targets.size()):
+			spread = minf(spread, targets[a].distance_to(targets[b]))
+	_check(all_aggro, "the hound pack hunts the Technician")
+	_check(spread > 3.0, "each hound takes its own slot around the Technician (closest slots %.1f m apart)" % spread)
+	_check(bitten and _heard.has(&"hound_lunge"), "hounds lunge in and bite")
+	for hound: EnemyBase in hounds:
+		hound.receive_hit(1000.0, Vector3.ZERO)
+	_isolate_enemies([])
+	await _frames(5)
+
+
+# --- Level 3 ------------------------------------------------------------------------------------
+
+func _test_level_3() -> void:
+	var player: Technician = _player()
+	_isolate_enemies([])
+	var sentry: BrassSentry = _level.get_node("Enemies/FoyerSentry") as BrassSentry
+	_check(sentry.facing.dot(Vector3.LEFT) > 0.85, "the foyer sentry faces the entrance")
+	player.global_position = sentry.global_position + sentry.facing * 1.6 + Vector3(0.0, 0.05, 0.0)
+	await _frames(3)
+	player.aim_direction = -sentry.facing
+	var health_before: float = sentry.health
+	player._swing_wrench(GameState.rig)
+	_check(sentry.health == health_before, "a frontal wrench blow glances off the sentry's shield")
+	_check(_heard.has(&"sentry_shield"), "the shield rings when it turns a blow")
+	player.global_position = sentry.global_position - sentry.facing * 1.6 + Vector3(0.0, 0.05, 0.0)
+	await _frames(3)
+	player.aim_direction = sentry.facing
+	player._swing_wrench(GameState.rig)
+	_check(sentry.health < health_before, "a blow from behind damages the sentry")
+	await _test_sentry_rivet_stagger(player)
+	await _test_sentry_introduction()
+
+	var service: SteamDoor = _level.get_node("Doors/ServiceDoor") as SteamDoor
+	service.use_panel()
+	_check(not service.is_open, "the clockwork door stays shut without the key")
+	var key: KeyPickup = _level.get_node("Interactables/WindingKey") as KeyPickup
+	player.global_position = key.global_position + Vector3(0.0, 0.05, 0.0)
+	await _frames(5)
+	_check(GameState.has_item(&"winding_key"), "walking over the winding key picks it up")
+	_check(_heard.has(&"key_pickup"), "the key ratchets as it's picked up")
+	service.use_panel()
+	await _frames(2)
+	_check(service.is_open, "the winding key opens the clockwork door")
+
+	await _test_death_restores_checkpoint()
+	await _ride_elevator(LEVEL_4)
+
+
+func _test_death_restores_checkpoint() -> void:
+	var checkpoint_drive: float = float((GameState.checkpoint["rig"]["sockets"] as Array)[FrictionModel.Socket.DRIVE]["durability"])
+	GameState.rig.get_gear(FrictionModel.Socket.DRIVE).durability = 5.0
+	var died: Array[bool] = [false]
+	GameState.player_died.connect(func() -> void: died[0] = true, CONNECT_ONE_SHOT)
+	_player().receive_hit(10000.0, Vector3.ZERO)
+	_check(died[0], "the Technician can die")
+	await _load_level(LEVEL_3)
+	_check(GameState.level_index == 2, "restarting stays on level 3")
+	_check(is_equal_approx(GameState.rig.get_gear(FrictionModel.Socket.DRIVE).durability, checkpoint_drive), "dying restores the gears from the level checkpoint")
+	_check(not GameState.has_item(&"winding_key"), "the restarted level forgets the key")
+	_check(not (_level.get_node("Doors/ServiceDoor") as SteamDoor).is_open, "the restarted level's doors are shut again")
+	_check(_player().health == _player().stats.max_health and not _player().is_dead, "the Technician respawns at full health")
+	_isolate_enemies([])
+
+
+func _restore_player(player: Technician) -> void:
+	player.health = player.stats.max_health
+	player._invulnerable_time = 0.0
+	GameState.health_changed.emit(player.health, player.stats.max_health)
+
+
+func _kill_all_enemies() -> void:
+	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var enemy: EnemyBase = node as EnemyBase
+		if not enemy.is_dead:
+			enemy.receive_crush_hit(100000.0, Vector3.ZERO)
+	await _frames(3)
+
+
+# --- Level 4 ------------------------------------------------------------------------------------
+
+func _test_level_4() -> void:
+	var player: Technician = _player()
+	_isolate_enemies([])
+	_check(GameState.level_index == 3, "level 4 registers as the fourth campaign level")
+	var warden: PistonBruiser = _level.get_node("Enemies/CisternWarden") as PistonBruiser
+	_check(warden.combo_slams == 3 and warden.stats.max_health > 300.0, "the Cistern Warden is a three-slam bruiser")
+
+	var pool: WaterPool = _level.get_node("Hazards/TankPoolA") as WaterPool
+	var turret: ArcTurret = _level.get_node("Enemies/TankTurretA") as ArcTurret
+	pool.flood_for(30.0)
+	player.global_position = pool.global_position + Vector3(1.5, 0.05, 0.0)
+	await _frames(6)
+	_check(pool.is_deep(), "a forced flood fills the pool")
+	_check(player.terrain_speed < 1.0 and player.terrain_drive_work > 1.0, "deep water slows the Technician and grinds the drive gear")
+	_check(turret.disabled, "an Arc Turret standing in deep water shorts out")
+	player.global_position = Vector3(20.0, 0.05, 0.0)
+	await _frames(6)
+	_check(player.terrain_speed == 1.0 and player.terrain_drive_work == 1.0, "leaving the water restores normal footing")
+
+	var outflow: SteamDoor = _level.get_node("Doors/OutflowDoor") as SteamDoor
+	var hall_pool: WaterPool = _level.get_node("Hazards/PumpHallPool") as WaterPool
+	var valves: Dictionary = {}
+	for label: String in ["I", "II", "III"]:
+		valves[label] = _level.get_node("Interactables/PumpValve" + label) as PumpValve
+	(valves["I"] as PumpValve).interact(player)
+	await _frames(2)
+	_check(hall_pool.tide.is_forced(hall_pool._time) and _heard.has(&"sequence_wrong"), "a pump turned out of order floods the hall")
+	_check(not outflow.is_open, "the outflow stays sealed after a wrong valve")
+	for label: String in ["II", "III"]:
+		(valves[label] as PumpValve).interact(player)
+	_check((valves["II"] as PumpValve).is_lit() and not (valves["I"] as PumpValve).is_lit(), "lamps show the pumps started so far")
+	(valves["I"] as PumpValve).interact(player)
+	await _frames(2)
+	_check(outflow.is_open, "pumps II, III, I open the outflow lock")
+	await _ride_elevator(LEVEL_5)
+
+
+# --- Level 5 ------------------------------------------------------------------------------------
+
+func _test_level_5() -> void:
+	var player: Technician = _player()
+	_isolate_enemies([])
+	var mist: HumidZone = _level.get_node("Hazards/AtriumMist") as HumidZone
+	player.global_position = mist.global_position + Vector3(0.0, 0.05, 0.0)
+	await _frames(5)
+	_check(GameState.rig.wear_multiplier == mist.wear_multiplier, "standing in the hothouse mist speeds up gear wear")
+	player.global_position = Vector3(-6.0, 0.05, 4.0)
+	await _frames(5)
+	_check(GameState.rig.wear_multiplier == 1.0, "stepping out of the mist restores normal wear")
+
+	var nest: EnemyNest = _level.get_node("Hazards/NestA") as EnemyNest
+	nest.schedule = SpawnSchedule.new(0.1, 3)
+	player.global_position = nest.global_position + Vector3(5.0, 0.05, 4.0)
+	await _frames(60)
+	_check(nest.spawned_total == 3 and nest.alive_count() == 3, "a nest builds automatons up to its cap (%d built)" % nest.spawned_total)
+	await _frames(30)
+	_check(nest.spawned_total == 3, "a nest at its cap stops building")
+	_isolate_enemies([])
+	_restore_player(player)
+	var lift_door: SteamDoor = _level.get_node("Doors/GardenLiftDoor") as SteamDoor
+	nest.receive_hit(1000.0, Vector3.ZERO)
+	(_level.get_node("Hazards/NestB") as EnemyNest).receive_hit(1000.0, Vector3.ZERO)
+	await _frames(2)
+	_check(not lift_door.is_open, "two smashed nests are not enough")
+	(_level.get_node("Hazards/NestC") as EnemyNest).receive_hit(1000.0, Vector3.ZERO)
+	await _frames(2)
+	_check(lift_door.is_open, "smashing every nest opens the garden lift")
+	_check(_heard.has(&"nest_pulse") and _heard.has(&"nest_break"), "nests throb as they build and crunch when smashed")
+	await _kill_all_enemies()
+	await _ride_elevator(LEVEL_6)
+
+
+# --- Level 6 ------------------------------------------------------------------------------------
+
+func _test_level_6() -> void:
+	var player: Technician = _player()
+	_isolate_enemies([])
+	_check(player.has_lantern(), "the Technician carries a lantern in the coal seam")
+	var environment: Environment = (_level.get_node("WorldEnvironment") as WorldEnvironment).environment
+	_check(environment.ambient_light_energy < 0.1, "the coal seam is dark")
+	var lantern: WallLanternSwitch = _level.get_node("Interactables/FaceLanternA") as WallLanternSwitch
+	lantern.interact(player)
+	_check(lantern.is_lit and _heard.has(&"lantern_light"), "a wall lantern lights and stays lit")
+
+	var carts: TramCrossing = _level.get_node("Hazards/CoalFaceCarts") as TramCrossing
+	for path: String in ["Hazards/JunctionCartsWest", "Hazards/JunctionCartsEast"]:
+		(_level.get_node(path) as TramCrossing).set_physics_process(false)
+	_restore_player(player)
+	var hit: bool = false
+	for i: int in int(carts.interval * 60.0) + 30:
+		await get_tree().physics_frame
+		player.global_position = carts.global_position + Vector3(0.0, 0.05, 1.0)
+		if player.health < player.stats.max_health:
+			hit = carts.is_running()
+			break
+	_check(hit and _heard.has(&"cart_rumble"), "a runaway ore cart rumbles in and hits the Technician")
+	carts.set_physics_process(false)
+	_restore_player(player)
+
+	var winch: Winch = _level.get_node("Interactables/Winch") as Winch
+	var lift_door: SteamDoor = _level.get_node("Doors/MineLiftDoor") as SteamDoor
+	_check(not winch.can_interact(), "the seized winch cannot be engaged")
+	for i: int in winch.hits_required:
+		winch.receive_bash()
+	_check(winch.stage == Winch.Stage.READY, "knocking the brake free readies the winch")
+	winch.hold = HoldProgress.new(1.0)
+	winch.start_winding()
+	player.global_position = Vector3(30.0, 0.05, 0.0)
+	await _frames(70)
+	_check(winch.hold.progress == 0.0, "the winch does not wind while the Technician is away")
+	_check(winch.spawned_total > 0, "automatons come for the winch while it winds")
+	_isolate_enemies([])
+	player.global_position = winch.global_position + Vector3(0.0, 0.05, 3.0)
+	await _frames(80)
+	_restore_player(player)
+	_check(winch.stage == Winch.Stage.DONE, "staying beside the winch winds the cage up")
+	await _frames(2)
+	_check(lift_door.is_open, "the wound winch opens the mine lift")
+	await _kill_all_enemies()
+	await _ride_elevator(FINALE)
+
+
+func _test_sentry_rivet_stagger(player: Technician) -> void:
+	var sentry: BrassSentry = _level.get_node("Enemies/GallerySentryA") as BrassSentry
+	player.global_position = sentry.global_position + sentry.facing * 4.0 + Vector3(0.0, 0.05, 0.0)
+	await _frames(3)
+	player.aim_direction = -sentry.facing
+	player.pressure.current = player.pressure.max_pressure
+	var health_before: float = sentry.health
+	player._fire_rivet(GameState.rig)
+	for i: int in 30:
+		await get_tree().physics_frame
+		if sentry.is_staggered():
+			break
+	_check(sentry.is_staggered() and sentry.health == health_before, "a rivet on the shield staggers the sentry without hurting it")
+	player.global_position = sentry.global_position + sentry.facing * 1.6 + Vector3(0.0, 0.05, 0.0)
+	await _frames(3)
+	player.aim_direction = -sentry.facing
+	player._wrench_cooldown = 0.0
+	player._swing_wrench(GameState.rig)
+	_check(sentry.health < health_before, "a staggered sentry takes a frontal wrench blow")
+	sentry.set_physics_process(true)
+	sentry.is_aggro = true
+	player.global_position = Vector3(-6.0, 0.05, 6.0)
+	for i: int in int(sentry.stagger_time * 60.0) + 20:
+		await get_tree().physics_frame
+	sentry.set_physics_process(false)
+	_check(not sentry.is_staggered(), "the shield comes back up after the stagger")
+	_check(sentry.blocks(-sentry.facing * 5.0), "a recovered shield blocks again")
+
+
+func _test_sentry_introduction() -> void:
+	var introduced: bool = false
+	for text: String in _notices:
+		introduced = introduced or text.begins_with("BRASS SENTRY")
+	_check(introduced, "the first sentry to spot the Technician explains how to beat it")

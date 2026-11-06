@@ -1,0 +1,431 @@
+[gd_scene load_steps=40 format=3]
+
+[ext_resource type="Script" path="res://scenes/world/foundry_level.gd" id="1_level"]
+[ext_resource type="Script" path="res://scenes/world/foundry_builder.gd" id="2_builder"]
+[ext_resource type="Script" path="res://scripts/config/room_def.gd" id="3_room"]
+[ext_resource type="Script" path="res://scripts/resources/rumor_data.gd" id="4_rumor"]
+[ext_resource type="PackedScene" path="res://scenes/player/technician.tscn" id="5_tech"]
+[ext_resource type="PackedScene" path="res://scenes/player/camera_rig.tscn" id="6_cam"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="7_hud"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/scrap_skitterer.tscn" id="8_skit"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/piston_bruiser.tscn" id="9_brute"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/arc_turret.tscn" id="10_turret"]
+[ext_resource type="PackedScene" path="res://scenes/world/rumor_terminal.tscn" id="11_term"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_door.tscn" id="12_door"]
+[ext_resource type="PackedScene" path="res://scenes/world/jammed_valve.tscn" id="13_valve"]
+[ext_resource type="PackedScene" path="res://scenes/world/golden_gear_pedestal.tscn" id="14_ped"]
+[ext_resource type="PackedScene" path="res://scenes/world/rotating_cog.tscn" id="15_cog"]
+[ext_resource type="PackedScene" path="res://scenes/world/furnace.tscn" id="16_furnace"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_vent.tscn" id="17_vent"]
+[ext_resource type="PackedScene" path="res://scenes/world/elevator.tscn" id="18_elev"]
+[ext_resource type="PackedScene" path="res://scenes/world/decor_prop.tscn" id="19_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/smelting_vat.tscn" id="20_vat"]
+[ext_resource type="PackedScene" path="res://scenes/world/gear_pickup.tscn" id="21_pickup"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_stone_slab.png" id="22_floor_stone"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_brick_cellar.png" id="23_wall_cellar"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_iron_plate.png" id="24_floor_iron"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_metal_plate.png" id="25_wall_metal"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_grate.png" id="26_floor_grate"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_brick.png" id="27_wall_brick"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_tile_octagon.png" id="28_floor_octagon"]
+[ext_resource type="Texture2D" path="res://assets/sprites/decor/boiler_tank.png" id="29_boiler"]
+[ext_resource type="Texture2D" path="res://assets/sprites/decor/gear_stack.png" id="30_gear_stack"]
+[ext_resource type="Texture2D" path="res://assets/sprites/decor/furniture_grandfather_clock.png" id="31_clock"]
+[ext_resource type="Texture2D" path="res://assets/sprites/decor/automaton_head.png" id="32_head"]
+
+[sub_resource type="Environment" id="Env_foundry"]
+background_mode = 1
+background_color = Color(0.05, 0.035, 0.025, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.9, 0.65, 0.45, 1)
+ambient_light_energy = 0.55
+tonemap_mode = 2
+tonemap_exposure = 1.05
+glow_enabled = true
+glow_intensity = 0.9
+glow_bloom = 0.08
+fog_enabled = true
+fog_light_color = Color(0.35, 0.25, 0.18, 1)
+fog_density = 0.004
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.012
+volumetric_fog_albedo = Color(0.95, 0.8, 0.65, 1)
+volumetric_fog_emission = Color(0.04, 0.025, 0.015, 1)
+
+[sub_resource type="Resource" id="Room_boiler"]
+script = ExtResource("3_room")
+room_name = "Boiler Room"
+width = 18.0
+depth = 18.0
+floor_texture = ExtResource("22_floor_stone")
+wall_texture = ExtResource("23_wall_cellar")
+floor_tint = Color(0.95, 0.85, 0.75, 1)
+light_color = Color(1, 0.62, 0.35, 1)
+light_energy = 2.5
+pillars = PackedVector2Array(-3, -3, 3, 4)
+dressing_theme = 0
+dressing_seed = 11
+clutter_density = 0.3
+grime_density = 0.6
+
+[sub_resource type="Resource" id="Room_cutting"]
+script = ExtResource("3_room")
+room_name = "Gear Cutting Floor"
+width = 24.0
+depth = 22.0
+floor_texture = ExtResource("24_floor_iron")
+wall_texture = ExtResource("25_wall_metal")
+floor_tint = Color(0.9, 0.85, 0.8, 1)
+light_color = Color(1, 0.8, 0.55, 1)
+light_energy = 2.8
+pillars = PackedVector2Array(-7, 5, 3, -7)
+dressing_theme = 1
+dressing_seed = 23
+clutter_density = 0.28
+grime_density = 0.5
+
+[sub_resource type="Resource" id="Room_vats"]
+script = ExtResource("3_room")
+room_name = "Smelting Vats"
+width = 26.0
+depth = 24.0
+floor_texture = ExtResource("26_floor_grate")
+wall_texture = ExtResource("27_wall_brick")
+floor_tint = Color(0.85, 0.75, 0.65, 1)
+light_color = Color(1, 0.5, 0.25, 1)
+light_energy = 2.2
+pillars = PackedVector2Array(0, 5, 8, -4)
+dressing_theme = 2
+dressing_seed = 37
+clutter_density = 0.24
+grime_density = 0.6
+
+[sub_resource type="Resource" id="Room_vault"]
+script = ExtResource("3_room")
+room_name = "Master Clock Vault"
+width = 16.0
+depth = 16.0
+floor_texture = ExtResource("28_floor_octagon")
+wall_texture = ExtResource("25_wall_metal")
+floor_tint = Color(1, 0.92, 0.75, 1)
+light_color = Color(1, 0.85, 0.55, 1)
+light_energy = 3.0
+pillars = PackedVector2Array(-5, -5, -5, 5)
+dressing_theme = 3
+dressing_seed = 41
+clutter_density = 0.14
+grime_density = 0.15
+
+[sub_resource type="Resource" id="Rumor_arrival"]
+script = ExtResource("4_rumor")
+rumor_id = &"arrival_log"
+title = "Dispatch #7: The Great Foundry"
+body = "Pneumatic dispatch, recovered from the intake tube.\n\nYou made it, Technician. The yard, the tramline, the showroom, the cisterns, the gardens and the coal seam: all behind you. This is the Great Foundry itself, where the night shift vanished eleven years ago and the automatons never stopped working.\n\nWhatever Master Hargreaves hid is somewhere past the boiler rooms, the cutting floor and the smelting vats. The Guild is listening for your signal. Find the gear that never grinds, and bring it home."
+hint = "The way deeper lies east, through the Boiler Room bulkhead."
+
+[sub_resource type="Resource" id="Rumor_valve"]
+script = ExtResource("4_rumor")
+rumor_id = &"valve_memo"
+title = "Memo: Bulkhead B-1"
+body = "To the night shift:\n\nThe east bulkhead is held shut by back-pressure from the main line. The release valve beside it has seized solid again. The manual says lubricate. The manual is wrong. Three honest blows with a wrench will shake it loose, as they always have.\n\n- E. Pell, Boiler Steward"
+hint = "Bash the seized valve near the east bulkhead with your wrench (3 hits)."
+
+[sub_resource type="Resource" id="Rumor_override"]
+script = ExtResource("4_rumor")
+rumor_id = &"cutting_floor_override"
+title = "Foreman's Override Card"
+body = "Punched brass card, stamped SMELTING ACCESS.\n\nThe Smelting bulkhead obeys no valve. It answers only to the foreman's override sequence: seven, one, one, four, then a half-turn of the governor. Do not lose this card. Do not let the skitterers nest in the governor housing again."
+hint = "You know the override now. Use the lock panel on the east bulkhead of the Gear Cutting Floor."
+
+[sub_resource type="Resource" id="Rumor_golden"]
+script = ExtResource("4_rumor")
+rumor_id = &"golden_rumor"
+title = "Workshop Rumor: The Frictionless Cog"
+body = "Scrawled on the back of a tooth-gauge chart:\n\nThey say Hargreaves cut one gear by hand over seven winters. Gold, they say, but no gold ever behaved like it. It turns without heat. Its teeth never wear. Seat it in any engine and the whole train runs true.\n\nThey say he kept it past the Smelting Vats, where the Bruisers stand guard, and that the vault below would not open without it."
+hint = "The Golden Gear rests on a pedestal at the far end of the Smelting Vats."
+
+[sub_resource type="Resource" id="Rumor_foreman"]
+script = ExtResource("4_rumor")
+rumor_id = &"foreman_log"
+title = "Foreman's Log: The Vault Elevator"
+body = "Day 4012. The Master Clock Vault elevator is driven by a single master cog. Hargreaves keyed the vault bulkhead to its resonance, so only the Golden Gear can unseal it. When the automatons turned, he set the Gear upon the pedestal and told us to run.\n\nWe ran. The arc turrets still sing at night."
+hint = "Recovering the Golden Gear unseals the vault bulkhead and wakes the elevator."
+
+[sub_resource type="Resource" id="Rumor_vault"]
+script = ExtResource("4_rumor")
+rumor_id = &"vault_inscription"
+title = "Etched Blueprint: The Master Clock"
+body = "An etching on brass plate, signed A. Hargreaves:\n\nEvery engine fails in time. Friction is the debt we pay for motion, and wear is how the debt is collected. I have spent my life looking for a gear that owes nothing.\n\nWhoever carries it now: ride the elevator up, and let the foundry rest."
+hint = "Step onto the elevator platform to leave the foundry."
+
+[node name="FoundryLevel" type="Node3D"]
+script = ExtResource("1_level")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_foundry")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.383022, 0.321394, 0, 0.642788, 0.766044, -0.5, -0.663414, 0.556670, 0, 20, 0)
+light_color = Color(1, 0.82, 0.62, 1)
+light_energy = 0.55
+shadow_enabled = true
+directional_shadow_max_distance = 60.0
+
+[node name="Navigation" type="NavigationRegion3D" parent="."]
+script = ExtResource("2_builder")
+rooms = Array[ExtResource("3_room")]([SubResource("Room_boiler"), SubResource("Room_cutting"), SubResource("Room_vats"), SubResource("Room_vault")])
+start_x = -9.0
+player_path = NodePath("../Technician")
+keep_clear_roots = Array[NodePath]([NodePath("../Doors"), NodePath("../Interactables"), NodePath("../Hazards"), NodePath("../Props"), NodePath("../Enemies")])
+
+[node name="Technician" parent="." instance=ExtResource("5_tech")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.05, 1)
+
+[node name="CameraRig" parent="." instance=ExtResource("6_cam")]
+target_path = NodePath("../Technician")
+
+[node name="HUD" parent="." instance=ExtResource("7_hud")]
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="BoilerBulkhead" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 0)
+door_id = &"boiler_door"
+condition = 1
+locked_hint = "The bulkhead is held by back-pressure. Free the seized valve to release it."
+
+[node name="CuttingBulkhead" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 0, 0)
+door_id = &"cutting_door"
+condition = 2
+required_rumor_id = &"cutting_floor_override"
+locked_hint = "An override sequence is required. The foreman must have left it somewhere on this floor."
+
+[node name="VaultBulkhead" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 59, 0, 0)
+door_id = &"vault_door"
+condition = 3
+locked_hint = "The vault bulkhead hums, waiting for a frictionless master cog."
+
+[node name="Interactables" type="Node3D" parent="."]
+
+[node name="ArrivalTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, -7.5)
+rumor = SubResource("Rumor_arrival")
+
+[node name="ValveTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, -7.5)
+rumor = SubResource("Rumor_valve")
+
+[node name="SeizedValve" parent="Interactables" instance=ExtResource("13_valve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, 4)
+door_id = &"boiler_door"
+
+[node name="OverrideTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, -9.5)
+rumor = SubResource("Rumor_override")
+
+[node name="GoldenRumorTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 12, 0, 9.5)
+rumor = SubResource("Rumor_golden")
+
+[node name="ForemanTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 38, 0, 10.5)
+rumor = SubResource("Rumor_foreman")
+
+[node name="GoldenGearPedestal" parent="Interactables" instance=ExtResource("14_ped")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 0, 0)
+
+[node name="VaultTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 62, 0, 6.5)
+rumor = SubResource("Rumor_vault")
+
+[node name="Elevator" parent="Interactables" instance=ExtResource("18_elev")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 69, 0, 0)
+
+[node name="ScrapGearCache" parent="Interactables" instance=ExtResource("21_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 8)
+
+[node name="Hazards" type="Node3D" parent="."]
+
+[node name="BoilerFurnace" parent="Hazards" instance=ExtResource("16_furnace")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -7.6)
+
+[node name="BoilerVent" parent="Hazards" instance=ExtResource("17_vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
+
+[node name="GrinderCogWest" parent="Hazards" instance=ExtResource("15_cog")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0.2, -5)
+radius = 2.2
+teeth = 16
+spin_speed = 1.2
+material_kind = 3
+is_hazard = true
+
+[node name="GrinderCogEast" parent="Hazards" instance=ExtResource("15_cog")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0.2, 5)
+radius = 2.4
+teeth = 18
+spin_speed = -1.0
+material_kind = 3
+is_hazard = true
+
+[node name="CuttingVentNorth" parent="Hazards" instance=ExtResource("17_vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, -6)
+phase_offset = 1.5
+
+[node name="CuttingVentSouth" parent="Hazards" instance=ExtResource("17_vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, 8)
+phase_offset = 3.0
+
+[node name="VatsFurnaceNorth" parent="Hazards" instance=ExtResource("16_furnace")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37, 0, -10.6)
+
+[node name="VatsFurnaceSouth" parent="Hazards" instance=ExtResource("16_furnace")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 55, 0, 10.6)
+
+[node name="VatsVentWest" parent="Hazards" instance=ExtResource("17_vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 0, 2)
+
+[node name="VatsVentEast" parent="Hazards" instance=ExtResource("17_vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, -1.5)
+phase_offset = 2.0
+
+[node name="Props" type="Node3D" parent="."]
+
+[node name="BoilerTankA" parent="Props" instance=ExtResource("19_prop")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 6.5)
+texture = ExtResource("29_boiler")
+pixel_size = 0.016
+collision_radius = 1.1
+
+[node name="BoilerTankB" parent="Props" instance=ExtResource("19_prop")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 7)
+texture = ExtResource("29_boiler")
+pixel_size = 0.014
+collision_radius = 1.0
+
+[node name="BoilerWallCog" parent="Props" instance=ExtResource("15_cog")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2.4, -8.4)
+radius = 1.2
+teeth = 12
+spin_speed = 0.6
+upright = true
+
+[node name="CuttingWallCogA" parent="Props" instance=ExtResource("15_cog")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 2.6, -10.4)
+radius = 1.6
+teeth = 14
+spin_speed = 0.7
+upright = true
+
+[node name="CuttingWallCogB" parent="Props" instance=ExtResource("15_cog")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.7, 1.9, -10.3)
+radius = 1.0
+teeth = 10
+spin_speed = -1.1
+upright = true
+material_kind = 1
+
+[node name="CuttingWallCogC" parent="Props" instance=ExtResource("15_cog")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2.7, -10.4)
+radius = 1.8
+teeth = 16
+spin_speed = 0.5
+upright = true
+
+[node name="GearStack" parent="Props" instance=ExtResource("19_prop")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 0, 8.5)
+texture = ExtResource("30_gear_stack")
+pixel_size = 0.012
+collision_radius = 0.9
+
+[node name="ScrapHead" parent="Props" instance=ExtResource("19_prop")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.8, 0, -9.5)
+texture = ExtResource("32_head")
+pixel_size = 0.009
+collision_radius = 0.7
+
+[node name="VatWest" parent="Props" instance=ExtResource("20_vat")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 0, -6)
+
+[node name="VatCenter" parent="Props" instance=ExtResource("20_vat")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 0, -8)
+radius = 1.8
+
+[node name="VatEast" parent="Props" instance=ExtResource("20_vat")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.5, 0, -7.5)
+
+[node name="VatSouth" parent="Props" instance=ExtResource("20_vat")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 0, 7.5)
+radius = 1.4
+height = 1.4
+
+[node name="VaultClockCogA" parent="Props" instance=ExtResource("15_cog")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, 3.2, -7.4)
+radius = 2.5
+teeth = 24
+spin_speed = 0.25
+upright = true
+
+[node name="VaultClockCogB" parent="Props" instance=ExtResource("15_cog")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68.2, 2.6, -7.3)
+radius = 1.6
+teeth = 16
+spin_speed = -0.4
+upright = true
+
+[node name="VaultClockCogC" parent="Props" instance=ExtResource("15_cog")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 71.4, 4.0, -7.2)
+radius = 1.0
+teeth = 10
+spin_speed = 0.65
+upright = true
+material_kind = 1
+
+[node name="GrandfatherClock" parent="Props" instance=ExtResource("19_prop")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 73, 0, 5.5)
+texture = ExtResource("31_clock")
+pixel_size = 0.016
+collision_radius = 0.7
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="BoilerSkittererA" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.05, 0)
+
+[node name="BoilerSkittererB" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.05, -3)
+
+[node name="CuttingSkittererA" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.05, 1)
+
+[node name="CuttingSkittererB" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0.05, -3)
+
+[node name="CuttingSkittererC" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.05, 1.5)
+
+[node name="CuttingSkittererD" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0.05, -4)
+
+[node name="CuttingSkittererE" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0.05, 5)
+
+[node name="VatsBruiserA" parent="Enemies" instance=ExtResource("9_brute")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0.05, -2.5)
+
+[node name="VatsBruiserB" parent="Enemies" instance=ExtResource("9_brute")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 0.05, 5)
+
+[node name="VatsTurretNE" parent="Enemies" instance=ExtResource("10_turret")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, 0, -10)
+
+[node name="VatsTurretSW" parent="Enemies" instance=ExtResource("10_turret")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.5, 0, 10)
+
+[node name="VatsSkittererA" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0.05, 3)
+
+[node name="VatsSkittererB" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0.05, 8)

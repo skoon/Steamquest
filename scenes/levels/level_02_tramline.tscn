@@ -1,0 +1,245 @@
+[gd_scene load_steps=36 format=3]
+
+[ext_resource type="Script" path="res://scenes/world/foundry_level.gd" id="1_level"]
+[ext_resource type="Script" path="res://scenes/world/foundry_builder.gd" id="2_builder"]
+[ext_resource type="Script" path="res://scripts/config/room_def.gd" id="3_room"]
+[ext_resource type="Script" path="res://scripts/resources/rumor_data.gd" id="4_rumor"]
+[ext_resource type="PackedScene" path="res://scenes/player/technician.tscn" id="5_tech"]
+[ext_resource type="PackedScene" path="res://scenes/player/camera_rig.tscn" id="6_cam"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="7_hud"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/scrap_skitterer.tscn" id="8_skit"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/piston_bruiser.tscn" id="9_brute"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/arc_turret.tscn" id="10_turret"]
+[ext_resource type="PackedScene" path="res://scenes/world/rumor_terminal.tscn" id="11_term"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_door.tscn" id="12_door"]
+[ext_resource type="PackedScene" path="res://scenes/world/jammed_valve.tscn" id="13_valve"]
+[ext_resource type="PackedScene" path="res://scenes/world/rotating_cog.tscn" id="15_cog"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_vent.tscn" id="17_vent"]
+[ext_resource type="PackedScene" path="res://scenes/world/elevator.tscn" id="18_elev"]
+[ext_resource type="PackedScene" path="res://scenes/world/decor_prop.tscn" id="19_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/gear_pickup.tscn" id="21_pickup"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/clockwork_hound.tscn" id="22_hound"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/brass_sentry.tscn" id="23_sentry"]
+[ext_resource type="PackedScene" path="res://scenes/world/key_pickup.tscn" id="24_key"]
+[ext_resource type="PackedScene" path="res://scenes/world/tram_crossing.tscn" id="25_tram"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_tile_octagon.png" id="t_octagon"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_brick.png" id="t_w_brick"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_iron_plate.png" id="t_iron"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_metal_plate.png" id="t_w_metal"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_grate.png" id="t_grate"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_brick_cellar.png" id="t_w_cellar"]
+
+[sub_resource type="Environment" id="Env_level"]
+background_mode = 1
+background_color = Color(0.03, 0.035, 0.035, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.6, 0.7, 0.65, 1)
+ambient_light_energy = 0.5
+tonemap_mode = 2
+tonemap_exposure = 1.05
+glow_enabled = true
+glow_intensity = 0.9
+glow_bloom = 0.08
+fog_enabled = true
+fog_light_color = Color(0.2, 0.25, 0.23, 1)
+fog_density = 0.004
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.014
+volumetric_fog_albedo = Color(0.95, 0.8, 0.65, 1)
+volumetric_fog_emission = Color(0.04, 0.025, 0.015, 1)
+
+[sub_resource type="Resource" id="Room_concourse"]
+script = ExtResource("3_room")
+room_name = "Station Concourse"
+width = 16
+depth = 16
+floor_texture = ExtResource("t_octagon")
+wall_texture = ExtResource("t_w_brick")
+floor_tint = Color(0.95, 0.9, 0.85, 1)
+light_color = Color(1, 0.78, 0.5, 1)
+light_energy = 2.6
+pillars = PackedVector2Array(-3, 3)
+dressing_theme = 5
+dressing_seed = 201
+clutter_density = 0.28
+grime_density = 0.45
+
+[sub_resource type="Resource" id="Room_tunnel"]
+script = ExtResource("3_room")
+room_name = "Tram Tunnel"
+width = 28
+depth = 14
+floor_texture = ExtResource("t_iron")
+wall_texture = ExtResource("t_w_metal")
+floor_tint = Color(0.85, 0.85, 0.85, 1)
+light_color = Color(0.85, 0.9, 1, 1)
+light_energy = 2.4
+pillars = PackedVector2Array()
+dressing_theme = 5
+dressing_seed = 203
+clutter_density = 0.2
+grime_density = 0.55
+
+[sub_resource type="Resource" id="Room_signal"]
+script = ExtResource("3_room")
+room_name = "Signal Hall"
+width = 18
+depth = 18
+floor_texture = ExtResource("t_grate")
+wall_texture = ExtResource("t_w_metal")
+floor_tint = Color(0.85, 0.8, 0.75, 1)
+light_color = Color(1, 0.6, 0.35, 1)
+light_energy = 2.4
+pillars = PackedVector2Array(-4, -4, 4, 4)
+dressing_theme = 5
+dressing_seed = 207
+clutter_density = 0.24
+grime_density = 0.5
+
+[sub_resource type="Resource" id="Room_freight"]
+script = ExtResource("3_room")
+room_name = "Freight Lift"
+width = 12
+depth = 12
+floor_texture = ExtResource("t_iron")
+wall_texture = ExtResource("t_w_cellar")
+floor_tint = Color(0.9, 0.85, 0.8, 1)
+light_color = Color(1, 0.75, 0.45, 1)
+light_energy = 2.2
+pillars = PackedVector2Array()
+dressing_theme = 5
+dressing_seed = 211
+clutter_density = 0.18
+grime_density = 0.4
+
+[sub_resource type="Resource" id="Rumor_tramline_suspended"]
+script = ExtResource("4_rumor")
+rumor_id = &"tramline_suspended"
+title = "Line Notice: Service Suspended"
+body = "POSTED BY ORDER OF THE TRAMWAYS BOARD.\n\nThe freight lift to the Foundry gates is locked out while line pressure is down. Both pressure valves must be opened, the concourse valve and the signal-hall valve, before the lift will answer.\n\nThe trams themselves still run on the old timetable. Nobody knows who is driving them."
+hint = "Bash the concourse valve and the signal-hall valve. Both must be open before the Freight Lift door unseals."
+
+[sub_resource type="Resource" id="Rumor_signalman_log"]
+script = ExtResource("4_rumor")
+rumor_id = &"signalman_log"
+title = "Signalman's Log"
+body = "Night 1: The lamps rang and the 11:40 came through empty. No driver. Brakes never touched.\n\nNight 9: Something with too many legs was riding the roof of the 2:15. It looked at me.\n\nNight 30: The dogs came up out of the tunnel tonight. Clockwork, and hungry for it, and they hunt together. Never let them get round behind you. When the bell rings, get off the rails. The trams do not stop for them either."
+hint = "When the signal lamps flash and the bell rings, clear the rails. Trams hit automatons too."
+
+[node name="Level02Tramline" type="Node3D"]
+script = ExtResource("1_level")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_level")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.383022, 0.321394, 0, 0.642788, 0.766044, -0.5, -0.663414, 0.55667, 0, 20, 0)
+light_color = Color(0.8, 0.85, 0.8, 1)
+light_energy = 0.4
+shadow_enabled = true
+directional_shadow_max_distance = 60.0
+
+[node name="Navigation" type="NavigationRegion3D" parent="."]
+script = ExtResource("2_builder")
+rooms = Array[ExtResource("3_room")]([SubResource("Room_concourse"), SubResource("Room_tunnel"), SubResource("Room_signal"), SubResource("Room_freight")])
+start_x = -9.0
+player_path = NodePath("../Technician")
+keep_clear_roots = Array[NodePath]([NodePath("../Doors"), NodePath("../Interactables"), NodePath("../Hazards"), NodePath("../Props"), NodePath("../Enemies")])
+
+[node name="Technician" parent="." instance=ExtResource("5_tech")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.05, 1)
+
+[node name="CameraRig" parent="." instance=ExtResource("6_cam")]
+target_path = NodePath("../Technician")
+
+[node name="HUD" parent="." instance=ExtResource("7_hud")]
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="ConcourseGate" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0)
+door_id = &"concourse_gate"
+condition = 0
+locked_hint = ""
+
+[node name="TunnelGate" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 0)
+door_id = &"tunnel_gate"
+condition = 0
+locked_hint = ""
+
+[node name="FreightDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53, 0, 0)
+door_id = &"freight_door"
+condition = 4
+locked_hint = "Line pressure is down. Both pressure valves must be opened"
+required_unlock_ids = Array[StringName]([&"concourse_valve", &"signal_valve"])
+
+[node name="Interactables" type="Node3D" parent="."]
+
+[node name="LineNoticeTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -6.5)
+rumor = SubResource("Rumor_tramline_suspended")
+
+[node name="ConcourseValve" parent="Interactables" instance=ExtResource("13_valve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 5)
+door_id = &"concourse_valve"
+
+[node name="SignalmanTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, -7.5)
+rumor = SubResource("Rumor_signalman_log")
+
+[node name="SignalValve" parent="Interactables" instance=ExtResource("13_valve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, 6)
+door_id = &"signal_valve"
+
+[node name="ScrapGearCache" parent="Interactables" instance=ExtResource("21_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, 7)
+
+[node name="Elevator" parent="Interactables" instance=ExtResource("18_elev")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61, 0, 0)
+exit_mode = 1
+
+[node name="Hazards" type="Node3D" parent="."]
+
+[node name="TramCrossingWest" parent="Hazards" instance=ExtResource("25_tram")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 0)
+track_length = 14.0
+interval = 7.0
+phase_offset = 0.0
+
+[node name="TramCrossingEast" parent="Hazards" instance=ExtResource("25_tram")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 0)
+track_length = 14.0
+interval = 7.0
+phase_offset = 3.5
+direction = -1.0
+
+[node name="SignalVent" parent="Hazards" instance=ExtResource("17_vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, -2)
+phase_offset = 1.0
+
+[node name="Props" type="Node3D" parent="."]
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="ConcourseHound" parent="Enemies" instance=ExtResource("22_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.05, -3)
+
+[node name="TunnelHoundA" parent="Enemies" instance=ExtResource("22_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.05, -3)
+
+[node name="TunnelHoundB" parent="Enemies" instance=ExtResource("22_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 0.05, 3)
+
+[node name="TunnelHoundC" parent="Enemies" instance=ExtResource("22_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 0.05, 0)
+
+[node name="SignalSkittererA" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 0.05, 3)
+
+[node name="SignalSkittererB" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 0.05, -4)
+
+[node name="SignalTurret" parent="Enemies" instance=ExtResource("10_turret")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 0, -7.5)

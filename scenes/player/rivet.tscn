@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/projectile.gd" id="1_proj"]
+
+[sub_resource type="SphereShape3D" id="Shape_rivet"]
+radius = 0.18
+
+[sub_resource type="StandardMaterial3D" id="Mat_rivet"]
+albedo_color = Color(0.85, 0.65, 0.3, 1)
+metallic = 0.9
+roughness = 0.3
+emission_enabled = true
+emission = Color(1, 0.7, 0.3, 1)
+emission_energy_multiplier = 0.8
+
+[sub_resource type="CylinderMesh" id="Mesh_rivet"]
+material = SubResource("Mat_rivet")
+top_radius = 0.05
+bottom_radius = 0.08
+height = 0.45
+
+[node name="Rivet" type="Area3D"]
+collision_layer = 8
+collision_mask = 5
+script = ExtResource("1_proj")
+impact_fx = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("Shape_rivet")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("Mesh_rivet")

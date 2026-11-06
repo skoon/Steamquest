@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="GearItem" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/gear_item.gd" id="1_gear"]
+
+[resource]
+script = ExtResource("1_gear")
+gear_name = "Wrench-Arm Spur Gear"
+friction_rate = 0.02
+wear_rate = 0.14
+max_durability = 100.0
+durability = 80.0
+jam_chance_per_work = 0.015
+cooling_rate = 0.012

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="GearItem" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/gear_item.gd" id="1_gear"]
+
+[resource]
+script = ExtResource("1_gear")
+gear_name = "Boiler Pump Pinion"
+friction_rate = 0.015
+wear_rate = 0.1
+max_durability = 100.0
+durability = 90.0
+jam_chance_per_work = 0.01
+cooling_rate = 0.01

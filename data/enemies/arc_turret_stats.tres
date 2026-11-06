@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3]
+
+[ext_resource type="Script" path="res://scripts/config/enemy_stats.gd" id="1_stats"]
+
+[resource]
+script = ExtResource("1_stats")
+display_name = "Arc Turret"
+max_health = 90.0
+move_speed = 0.0
+armor = 2.0
+knockback_resistance = 1.0
+aggro_range = 18.0
+attack_damage = 14.0
+attack_range = 18.0
+attack_cooldown = 2.0
+telegraph_time = 0.8
+area_radius = 0.0
+attack_knockback = 4.0
+projectile_speed = 14.0
+gear_drop_chance = 0.4
