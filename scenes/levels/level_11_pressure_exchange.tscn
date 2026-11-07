@@ -1,0 +1,303 @@
+[gd_scene load_steps=62 format=3]
+
+[ext_resource type="Script" path="res://scenes/world/foundry_level.gd" id="1_level"]
+[ext_resource type="Script" path="res://scenes/world/foundry_builder.gd" id="2_builder"]
+[ext_resource type="Script" path="res://scripts/config/room_def.gd" id="3_room"]
+[ext_resource type="Script" path="res://scripts/resources/rumor_data.gd" id="4_rumor"]
+[ext_resource type="PackedScene" path="res://scenes/player/technician.tscn" id="5_tech"]
+[ext_resource type="PackedScene" path="res://scenes/player/camera_rig.tscn" id="6_cam"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="7_hud"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/scrap_skitterer.tscn" id="8_skit"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/piston_bruiser.tscn" id="9_brute"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/arc_turret.tscn" id="10_turret"]
+[ext_resource type="PackedScene" path="res://scenes/world/rumor_terminal.tscn" id="11_term"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_door.tscn" id="12_door"]
+[ext_resource type="PackedScene" path="res://scenes/world/jammed_valve.tscn" id="13_valve"]
+[ext_resource type="PackedScene" path="res://scenes/world/rotating_cog.tscn" id="15_cog"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_vent.tscn" id="17_vent"]
+[ext_resource type="PackedScene" path="res://scenes/world/elevator.tscn" id="18_elev"]
+[ext_resource type="PackedScene" path="res://scenes/world/decor_prop.tscn" id="19_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/gear_pickup.tscn" id="21_pickup"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/clockwork_hound.tscn" id="22_hound"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/brass_sentry.tscn" id="23_sentry"]
+[ext_resource type="PackedScene" path="res://scenes/world/key_pickup.tscn" id="24_key"]
+[ext_resource type="PackedScene" path="res://scenes/world/tram_crossing.tscn" id="25_tram"]
+[ext_resource type="PackedScene" path="res://scenes/world/water_pool.tscn" id="26_pool"]
+[ext_resource type="PackedScene" path="res://scenes/world/pump_sequence.tscn" id="27_pumpseq"]
+[ext_resource type="PackedScene" path="res://scenes/world/pump_valve.tscn" id="28_pumpvalve"]
+[ext_resource type="PackedScene" path="res://scenes/world/humid_zone.tscn" id="29_humid"]
+[ext_resource type="PackedScene" path="res://scenes/world/enemy_nest.tscn" id="30_nest"]
+[ext_resource type="PackedScene" path="res://scenes/world/wall_lantern_switch.tscn" id="31_lantern"]
+[ext_resource type="PackedScene" path="res://scenes/world/winch.tscn" id="32_winch"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/cistern_warden.tscn" id="33_warden"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/tesla_drone.tscn" id="34_drone"]
+[ext_resource type="PackedScene" path="res://scenes/world/alarm_bell.tscn" id="35_alarm"]
+[ext_resource type="PackedScene" path="res://scenes/world/wind_zone.tscn" id="36_wind"]
+[ext_resource type="PackedScene" path="res://scenes/world/fall_zone.tscn" id="37_fall"]
+[ext_resource type="PackedScene" path="res://scenes/world/propeller.tscn" id="38_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/gangway_lever.tscn" id="39_lever"]
+[ext_resource type="PackedScene" path="res://scenes/world/electric_plates.tscn" id="40_plates"]
+[ext_resource type="PackedScene" path="res://scenes/world/power_router.tscn" id="41_router"]
+[ext_resource type="PackedScene" path="res://scenes/world/junction_switch.tscn" id="42_junction"]
+[ext_resource type="PackedScene" path="res://scenes/world/tesla_coil.tscn" id="43_coil"]
+[ext_resource type="PackedScene" path="res://scenes/world/conveyor.tscn" id="44_conveyor"]
+[ext_resource type="PackedScene" path="res://scenes/world/stamping_press.tscn" id="45_press"]
+[ext_resource type="PackedScene" path="res://scenes/world/drive_governor.tscn" id="46_governor"]
+[ext_resource type="PackedScene" path="res://scenes/world/assembly_line.tscn" id="47_line"]
+[ext_resource type="PackedScene" path="res://scenes/world/gear_workbench.tscn" id="48_bench"]
+[ext_resource type="PackedScene" path="res://scenes/world/pressure_system.tscn" id="49_pressure"]
+[ext_resource type="PackedScene" path="res://scenes/world/relief_valve.tscn" id="50_relief"]
+[ext_resource type="PackedScene" path="res://scenes/world/burst_route.tscn" id="51_route"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/steam_walker.tscn" id="52_walker"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_grate.png" id="t_grate"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_metal_plate.png" id="t_w_metal"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_iron_plate.png" id="t_iron"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_brick_cellar.png" id="t_w_cellar"]
+
+[sub_resource type="Environment" id="Env_level"]
+background_mode = 1
+background_color = Color(0.03, 0.035, 0.035, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.7, 0.78, 0.72, 1)
+ambient_light_energy = 0.5
+tonemap_mode = 2
+tonemap_exposure = 1.05
+glow_enabled = true
+glow_intensity = 0.9
+glow_bloom = 0.08
+fog_enabled = true
+fog_light_color = Color(0.22, 0.26, 0.24, 1)
+fog_density = 0.004
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.018
+volumetric_fog_albedo = Color(0.95, 0.8, 0.65, 1)
+volumetric_fog_emission = Color(0.04, 0.025, 0.015, 1)
+
+[sub_resource type="Resource" id="Room_gauges"]
+script = ExtResource("3_room")
+room_name = "Gauge Gallery"
+width = 16
+depth = 14
+floor_texture = ExtResource("t_grate")
+wall_texture = ExtResource("t_w_metal")
+floor_tint = Color(0.85, 0.88, 0.86, 1)
+light_color = Color(1, 0.82, 0.55, 1)
+light_energy = 2.4
+pillars = PackedVector2Array()
+dressing_theme = 14
+dressing_seed = 1101
+clutter_density = 0.22
+grime_density = 0.55
+
+[sub_resource type="Resource" id="Room_stacks"]
+script = ExtResource("3_room")
+room_name = "Relief Stacks"
+width = 24
+depth = 18
+floor_texture = ExtResource("t_iron")
+wall_texture = ExtResource("t_w_cellar")
+floor_tint = Color(0.82, 0.86, 0.84, 1)
+light_color = Color(0.9, 0.95, 1, 1)
+light_energy = 2.6
+pillars = PackedVector2Array(-8, -4, 8, 4)
+dressing_theme = 14
+dressing_seed = 1103
+clutter_density = 0.16
+grime_density = 0.6
+
+[sub_resource type="Resource" id="Room_manifold"]
+script = ExtResource("3_room")
+room_name = "Manifold Hall"
+width = 22
+depth = 16
+floor_texture = ExtResource("t_grate")
+wall_texture = ExtResource("t_w_metal")
+floor_tint = Color(0.85, 0.86, 0.85, 1)
+light_color = Color(1, 0.8, 0.5, 1)
+light_energy = 2.6
+pillars = PackedVector2Array()
+dressing_theme = 14
+dressing_seed = 1107
+clutter_density = 0.16
+grime_density = 0.55
+
+[sub_resource type="Resource" id="Room_lift"]
+script = ExtResource("3_room")
+room_name = "Exchange Lift"
+width = 12
+depth = 12
+floor_texture = ExtResource("t_iron")
+wall_texture = ExtResource("t_w_cellar")
+floor_tint = Color(0.88, 0.88, 0.86, 1)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 2.2
+pillars = PackedVector2Array()
+dressing_theme = 14
+dressing_seed = 1111
+clutter_density = 0.14
+grime_density = 0.45
+
+[sub_resource type="Resource" id="Rumor_exchange_duty_card"]
+script = ExtResource("4_rumor")
+rumor_id = &"exchange_duty_card"
+title = "Duty Card: Exchange Steward"
+body = "The exchange takes the whole Foundry's back-pressure. The great gauge climbs on its own, all shift, every shift.\n\nKeep it out of the red. A blow on any relief valve vents a good share of it, then the valve wants a few breaths to reseal. Let the gauge peak and the strained runs - the ones painted in hazard orange - burst wide open. Stay off the orange when the klaxon sounds."
+hint = "Room pressure climbs constantly (HUD). Bash relief valves to vent it. Above the red line the orange-marked pipe runs steam; at full pressure they burst."
+
+[sub_resource type="Resource" id="Rumor_steward_last_entry"]
+script = ExtResource("4_rumor")
+rumor_id = &"steward_last_entry"
+title = "Pressure Clerk's Last Entries"
+body = "Eleven o'clock. An order came down the tube in the Master's own hand: divert everything to the Gear vault. Every valve, every main, all of it, and let the rest of the works go short.\n\nMidnight. The night shift came through on the Master's order, all three hundred of them, single file, down to the deep foundry. Brack at the front, not looking at anyone.\n\nThe automatons stood aside to let them pass. They have never stood aside for anyone before.\n\nThe gauge is climbing faster tonight. Something below is drawing hard."
+hint = ""
+
+[sub_resource type="Resource" id="Rumor_main_stack_notice"]
+script = ExtResource("4_rumor")
+rumor_id = &"main_stack_notice"
+title = "Notice: Main Relief Stack"
+body = "The lift to the Overseer's yard is held by the main relief stack at the end of the manifold hall. It seized the night the shift went down and nobody has had the nerve to touch it since.\n\nThree good blows should free it. Watch the gauge while you work."
+hint = "Free the Main Relief Stack valve in the Manifold Hall (3 hits) to open the Exchange Lift."
+
+[node name="Level11PressureExchange" type="Node3D"]
+script = ExtResource("1_level")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_level")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.383022, 0.321394, 0, 0.642788, 0.766044, -0.5, -0.663414, 0.55667, 0, 20, 0)
+light_color = Color(0.9, 0.9, 0.85, 1)
+light_energy = 0.35
+shadow_enabled = true
+directional_shadow_max_distance = 60.0
+
+[node name="Navigation" type="NavigationRegion3D" parent="."]
+script = ExtResource("2_builder")
+rooms = Array[ExtResource("3_room")]([SubResource("Room_gauges"), SubResource("Room_stacks"), SubResource("Room_manifold"), SubResource("Room_lift")])
+start_x = -9.0
+player_path = NodePath("../Technician")
+keep_clear_roots = Array[NodePath]([NodePath("../Doors"), NodePath("../Interactables"), NodePath("../Hazards"), NodePath("../Props"), NodePath("../Enemies")])
+
+[node name="Technician" parent="." instance=ExtResource("5_tech")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.05, 1)
+
+[node name="CameraRig" parent="." instance=ExtResource("6_cam")]
+target_path = NodePath("../Technician")
+
+[node name="HUD" parent="." instance=ExtResource("7_hud")]
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="GalleryDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0)
+door_id = &"gallery_door"
+condition = 0
+locked_hint = ""
+
+[node name="StacksDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 0, 0)
+door_id = &"stacks_door"
+condition = 0
+locked_hint = ""
+
+[node name="ExchangeLiftDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53, 0, 0)
+door_id = &"exchange_lift"
+condition = 1
+locked_hint = "The lift is held by back-pressure. Free the Main Relief Stack."
+
+[node name="Interactables" type="Node3D" parent="."]
+
+[node name="DutyTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -5.5)
+rumor = SubResource("Rumor_exchange_duty_card")
+
+[node name="StewardTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -8)
+rumor = SubResource("Rumor_steward_last_entry")
+
+[node name="StackTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, -7)
+rumor = SubResource("Rumor_main_stack_notice")
+
+[node name="PressureSystem" parent="Interactables" instance=ExtResource("49_pressure")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+routes = Array[NodePath]([NodePath("../../Hazards/RouteStacksWest"), NodePath("../../Hazards/RouteStacksEast"), NodePath("../../Hazards/RouteManifoldCross"), NodePath("../../Hazards/RouteManifoldRun")])
+
+[node name="ReliefGallery" parent="Interactables" instance=ExtResource("50_relief")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -5.5)
+
+[node name="ReliefStacksNorth" parent="Interactables" instance=ExtResource("50_relief")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, -7.5)
+
+[node name="ReliefStacksSouth" parent="Interactables" instance=ExtResource("50_relief")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 7.5)
+
+[node name="ReliefManifoldSouth" parent="Interactables" instance=ExtResource("50_relief")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 6.5)
+
+[node name="ReliefManifoldNorth" parent="Interactables" instance=ExtResource("50_relief")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, 0, -6.5)
+
+[node name="MainReliefStack" parent="Interactables" instance=ExtResource("13_valve")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, 4.5)
+door_id = &"exchange_lift"
+
+[node name="ScrapGearCache" parent="Interactables" instance=ExtResource("21_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 7.5)
+
+[node name="Elevator" parent="Interactables" instance=ExtResource("18_elev")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61, 0, 0)
+exit_mode = 1
+
+[node name="Hazards" type="Node3D" parent="."]
+
+[node name="RouteStacksWest" parent="Hazards" instance=ExtResource("51_route")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 15, 0, 0)
+size = Vector2(16, 2)
+
+[node name="RouteStacksEast" parent="Hazards" instance=ExtResource("51_route")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 24, 0, 0)
+size = Vector2(16, 2)
+
+[node name="RouteManifoldCross" parent="Hazards" instance=ExtResource("51_route")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 38, 0, 0)
+size = Vector2(14, 2)
+
+[node name="RouteManifoldRun" parent="Hazards" instance=ExtResource("51_route")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, -3.5)
+size = Vector2(12, 2)
+
+[node name="Props" type="Node3D" parent="."]
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="GallerySkittererA" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.05, 3)
+
+[node name="GallerySkittererB" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.05, -2)
+
+[node name="StacksHoundA" parent="Enemies" instance=ExtResource("22_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 0.05, -4)
+
+[node name="StacksHoundB" parent="Enemies" instance=ExtResource("22_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0.05, 4)
+
+[node name="StacksSentry" parent="Enemies" instance=ExtResource("23_sentry")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 27, 0.05, 0)
+
+[node name="StacksDrone" parent="Enemies" instance=ExtResource("34_drone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0.05, -6)
+
+[node name="ManifoldTurret" parent="Enemies" instance=ExtResource("10_turret")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 0, 6.5)
+
+[node name="ManifoldBruiser" parent="Enemies" instance=ExtResource("9_brute")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 0.05, 2)
+
+[node name="ManifoldDrone" parent="Enemies" instance=ExtResource("34_drone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0.05, -4)
+
+[node name="ManifoldSkitterer" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0.05, -2)

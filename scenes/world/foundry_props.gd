@@ -203,6 +203,47 @@ static func catalog(theme: RoomDef.DressingTheme) -> Array[Dictionary]:
 				_spec(&"bolts", 0.3, 2.0, P_FLOOR, false),
 				_spec(&"shavings", 0.3, 1.0, P_FLOOR, false),
 			])
+		RoomDef.DressingTheme.ASSEMBLY:
+			entries.append_array([
+				_spec(&"automaton_frame", 0.7, 3.0, P_BAND, true),
+				_spec(&"parts_bin", 0.65, 2.0, P_BAND, true),
+				_spec(&"gear_crate", 0.65, 1.5, P_BAND, true),
+				_spec(&"workbench", 1.0, 1.0, P_BAND, true),
+				_spec(&"drum_cluster", 0.9, 0.8, P_BAND, true),
+				_spec(&"tool_board", 0.65, 1.5, P_MOUNT, false),
+				_spec(&"wall_cog_cluster", 0.7, 1.5, P_MOUNT, false),
+				_spec(&"hanging_chain", 0.25, 1.5, P_MOUNT, false),
+				_spec(&"bolts", 0.3, 2.5, P_FLOOR, false),
+				_spec(&"shavings", 0.4, 1.5, P_FLOOR, false),
+				_spec(&"gear_blank", 0.3, 1.5, P_FLOOR, false),
+			])
+		RoomDef.DressingTheme.EXCHANGE:
+			entries.append_array([
+				_spec(&"valve_manifold", 0.6, 2.5, P_BAND, true),
+				_spec(&"pressure_tank", 0.7, 2.0, P_BAND, true),
+				_spec(&"drum_cluster", 0.9, 1.0, P_BAND, true),
+				_spec(&"barrel", 0.45, 0.8, P_BAND, true),
+				_spec(&"big_gauge", 0.75, 2.5, P_MOUNT, false),
+				_spec(&"pipe_riser", 0.3, 2.0, P_MOUNT, false),
+				_spec(&"pipe_run", 1.5, 2.0, P_MOUNT, false),
+				_spec(&"gauge_panel", 0.55, 1.0, P_MOUNT, false),
+				_spec(&"bolts", 0.3, 1.5, P_FLOOR, false),
+				_spec(&"puddle_stones", 0.4, 1.5, P_FLOOR, false),
+			])
+		RoomDef.DressingTheme.ENGINE_YARD:
+			entries.append_array([
+				_spec(&"boiler_horizontal", 1.4, 2.0, P_BAND, true),
+				_spec(&"scrap_heap", 0.8, 2.0, P_BAND, true),
+				_spec(&"coal_pile", 0.9, 1.5, P_BAND, true),
+				_spec(&"walker_leg", 0.7, 1.5, P_BAND, true),
+				_spec(&"ore_cart", 1.35, 0.8, P_BAND, true),
+				_spec(&"pipe_run", 1.5, 1.5, P_MOUNT, false),
+				_spec(&"hanging_chain", 0.25, 1.5, P_MOUNT, false),
+				_spec(&"gauge_panel", 0.55, 1.0, P_MOUNT, false),
+				_spec(&"slag_bits", 0.4, 2.0, P_FLOOR, false),
+				_spec(&"coal_lumps", 0.4, 2.0, P_FLOOR, false),
+				_spec(&"bolts", 0.3, 1.5, P_FLOOR, false),
+			])
 	return entries
 
 
@@ -233,6 +274,12 @@ static func floor_grime(theme: RoomDef.DressingTheme) -> Array[GrimeTextures.Kin
 			return [GrimeTextures.Kind.SOOT]
 		RoomDef.DressingTheme.GENERATOR:
 			return [GrimeTextures.Kind.SCORCH, GrimeTextures.Kind.OIL, GrimeTextures.Kind.SOOT]
+		RoomDef.DressingTheme.ASSEMBLY:
+			return [GrimeTextures.Kind.OIL, GrimeTextures.Kind.OIL, GrimeTextures.Kind.SOOT]
+		RoomDef.DressingTheme.EXCHANGE:
+			return [GrimeTextures.Kind.PUDDLE, GrimeTextures.Kind.OIL, GrimeTextures.Kind.PUDDLE]
+		RoomDef.DressingTheme.ENGINE_YARD:
+			return [GrimeTextures.Kind.SOOT, GrimeTextures.Kind.SCORCH, GrimeTextures.Kind.OIL]
 		_:
 			return [GrimeTextures.Kind.OIL]
 
@@ -253,6 +300,10 @@ static func wall_grime(theme: RoomDef.DressingTheme) -> Array[GrimeTextures.Kind
 			return [GrimeTextures.Kind.SOOT_STREAK]
 		RoomDef.DressingTheme.GENERATOR:
 			return [GrimeTextures.Kind.SOOT_STREAK, GrimeTextures.Kind.RUST_STREAK]
+		RoomDef.DressingTheme.EXCHANGE:
+			return [GrimeTextures.Kind.RUST_STREAK, GrimeTextures.Kind.RUST_STREAK, GrimeTextures.Kind.SOOT_STREAK]
+		RoomDef.DressingTheme.ENGINE_YARD:
+			return [GrimeTextures.Kind.SOOT_STREAK, GrimeTextures.Kind.SOOT_STREAK, GrimeTextures.Kind.RUST_STREAK]
 		_:
 			return [GrimeTextures.Kind.RUST_STREAK, GrimeTextures.Kind.SOOT_STREAK]
 
@@ -338,6 +389,11 @@ static func build(kind: StringName, rng: RandomNumberGenerator) -> Node3D:
 		&"coil_cabinet": _coil_cabinet(root, rng)
 		&"insulator_stack": _insulator_stack(root, rng)
 		&"cable_bundle": _cable_bundle(root, rng)
+		&"automaton_frame": _automaton_frame(root, rng)
+		&"parts_bin": _parts_bin(root, rng)
+		&"pressure_tank": _pressure_tank(root, rng)
+		&"big_gauge": _big_gauge(root, rng)
+		&"walker_leg": _walker_leg(root, rng)
 		_:
 			assert(false, "FoundryProps.build: unknown prop kind %s" % kind)
 	return root
@@ -1340,3 +1396,70 @@ static func _cable_bundle(root: Node3D, rng: RandomNumberGenerator) -> void:
 		_cyl(root, 0.05, 0.05, 2.2, rubber, Vector3(0.0, 2.4 - 0.12 * float(i), 0.08), Vector3(0.0, 0.0, PI * 0.5), 6)
 	for x: float in [-0.9, 0.0, 0.9]:
 		_box(root, Vector3(0.08, 0.5, 0.12), _m(FoundryMaterials.Kind.BRASS), Vector3(x, 2.2, 0.06))
+
+
+# --- Assembly line / Pressure exchange / Engine yard ---------------------------------------
+
+## A half-built automaton hanging in its assembly cradle: torso drum, one arm, empty sockets.
+static func _automaton_frame(root: Node3D, rng: RandomNumberGenerator) -> void:
+	var iron: StandardMaterial3D = _m(FoundryMaterials.Kind.CAST_IRON)
+	var brass: StandardMaterial3D = _m(FoundryMaterials.Kind.BRASS)
+	for x: float in [-0.6, 0.6]:
+		_box(root, Vector3(0.1, 2.2, 0.1), iron, Vector3(x, 1.1, -0.2))
+	_box(root, Vector3(1.3, 0.1, 0.1), iron, Vector3(0.0, 2.2, -0.2))
+	_cyl(root, 0.02, 0.02, 0.5, iron, Vector3(0.0, 1.95, 0.0))
+	_cyl(root, 0.32, 0.36, 0.7, _pick(rng, [FoundryMaterials.Kind.BRASS, FoundryMaterials.Kind.DARK_STEEL]), Vector3(0.0, 1.35, 0.0))
+	_sphere(root, 0.2, brass, Vector3(0.0, 1.85, 0.0))
+	_sphere(root, 0.05, FoundryMaterials.emissive(Color(0.9, 0.3, 0.15), 0.8 if rng.randf() < 0.5 else 0.0), Vector3(0.0, 1.88, 0.18))
+	_box(root, Vector3(0.1, 0.55, 0.1), iron, Vector3(0.42, 1.25, 0.0), Vector3(0.0, 0.0, rng.randf_range(-0.4, 0.2)))
+	_cyl(root, 0.08, 0.08, 0.3, iron, Vector3(-0.15, 0.85, 0.0))
+	_cyl(root, 0.08, 0.08, 0.3, iron, Vector3(0.15, 0.85, 0.0))
+	Layers.add_static_box(root, Vector3(1.4, 2.2, 0.8), Vector3(0.0, 1.1, -0.1))
+
+
+## An open bin of spare parts: limbs, cogs and plates.
+static func _parts_bin(root: Node3D, rng: RandomNumberGenerator) -> void:
+	var wood: StandardMaterial3D = _m(FoundryMaterials.Kind.WOOD)
+	_box(root, Vector3(1.1, 0.08, 0.9), wood, Vector3(0.0, 0.04, 0.0))
+	for side: float in [-1.0, 1.0]:
+		_box(root, Vector3(1.1, 0.6, 0.06), wood, Vector3(0.0, 0.3, side * 0.42))
+		_box(root, Vector3(0.06, 0.6, 0.9), wood, Vector3(side * 0.52, 0.3, 0.0))
+	for i: int in rng.randi_range(4, 7):
+		var mat: StandardMaterial3D = _pick(rng, [FoundryMaterials.Kind.BRASS, FoundryMaterials.Kind.DARK_STEEL, FoundryMaterials.Kind.CAST_IRON])
+		var pos: Vector3 = Vector3(rng.randf_range(-0.35, 0.35), rng.randf_range(0.5, 0.7), rng.randf_range(-0.25, 0.25))
+		if i % 2 == 0:
+			_cyl(root, 0.06, 0.06, 0.45, mat, pos, Vector3(rng.randf_range(0.0, PI), 0.0, rng.randf_range(0.0, PI)), 8)
+		else:
+			_cyl(root, 0.14, 0.14, 0.05, mat, pos, Vector3(rng.randf_range(-0.6, 0.6), 0.0, rng.randf_range(-0.6, 0.6)), 10)
+	Layers.add_static_box(root, Vector3(1.1, 0.7, 0.9), Vector3(0.0, 0.35, 0.0))
+
+
+## An upright riveted pressure receiver with a gauge and a safety valve.
+static func _pressure_tank(root: Node3D, rng: RandomNumberGenerator) -> void:
+	var copper: StandardMaterial3D = _m(FoundryMaterials.Kind.COPPER_OXIDIZED)
+	var iron: StandardMaterial3D = _m(FoundryMaterials.Kind.CAST_IRON)
+	var height: float = rng.randf_range(1.6, 2.2)
+	_cyl(root, 0.6, 0.6, height, copper, Vector3(0.0, height * 0.5 + 0.1, 0.0))
+	_sphere(root, 0.6, copper, Vector3(0.0, height + 0.1, 0.0), Vector3(1.0, 0.4, 1.0))
+	for y: float in [0.3, height * 0.5, height - 0.1]:
+		_cyl(root, 0.63, 0.63, 0.06, iron, Vector3(0.0, y, 0.0))
+	_cyl(root, 0.08, 0.08, 0.35, _m(FoundryMaterials.Kind.BRASS), Vector3(0.0, height + 0.45, 0.0))
+	_gauge(root, Vector3(0.0, height * 0.6, 0.62), 0.16, rng)
+	Layers.add_static_cylinder(root, 0.62, height + 0.4, Vector3.ZERO)
+
+
+## A giant wall-mounted pressure gauge with a red danger arc.
+static func _big_gauge(root: Node3D, rng: RandomNumberGenerator) -> void:
+	_gauge(root, Vector3(0.0, 2.3, 0.08), 0.6, rng)
+	_cyl(root, 0.5, 0.5, 0.012, _m(FoundryMaterials.Kind.WARNING_RED), Vector3(0.18, 2.48, 0.112), Vector3(PI * 0.5, 0.0, 0.0), 6)
+	_box(root, Vector3(0.12, 1.6, 0.12), _m(FoundryMaterials.Kind.COPPER_OXIDIZED), Vector3(0.0, 0.9, 0.06))
+
+
+## A spare boiler-leg for the Walkers: a jointed iron column lying in the yard.
+static func _walker_leg(root: Node3D, rng: RandomNumberGenerator) -> void:
+	var iron: StandardMaterial3D = _m(FoundryMaterials.Kind.CAST_IRON)
+	var yaw: float = rng.randf_range(-0.4, 0.4)
+	_cyl(root, 0.3, 0.38, 1.6, iron, Vector3(-0.3, 0.38, 0.0), Vector3(0.0, yaw, PI * 0.5))
+	_sphere(root, 0.42, _m(FoundryMaterials.Kind.BRASS), Vector3(0.55, 0.42, 0.0))
+	_box(root, Vector3(0.9, 0.2, 0.7), _m(FoundryMaterials.Kind.DARK_STEEL), Vector3(0.9, 0.1, 0.0), Vector3(0.0, yaw, 0.0))
+	Layers.add_static_box(root, Vector3(2.0, 0.8, 0.8), Vector3(0.1, 0.4, 0.0))

@@ -1,0 +1,231 @@
+[gd_scene load_steps=62 format=3]
+
+[ext_resource type="Script" path="res://scenes/world/foundry_level.gd" id="1_level"]
+[ext_resource type="Script" path="res://scenes/world/foundry_builder.gd" id="2_builder"]
+[ext_resource type="Script" path="res://scripts/config/room_def.gd" id="3_room"]
+[ext_resource type="Script" path="res://scripts/resources/rumor_data.gd" id="4_rumor"]
+[ext_resource type="PackedScene" path="res://scenes/player/technician.tscn" id="5_tech"]
+[ext_resource type="PackedScene" path="res://scenes/player/camera_rig.tscn" id="6_cam"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="7_hud"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/scrap_skitterer.tscn" id="8_skit"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/piston_bruiser.tscn" id="9_brute"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/arc_turret.tscn" id="10_turret"]
+[ext_resource type="PackedScene" path="res://scenes/world/rumor_terminal.tscn" id="11_term"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_door.tscn" id="12_door"]
+[ext_resource type="PackedScene" path="res://scenes/world/jammed_valve.tscn" id="13_valve"]
+[ext_resource type="PackedScene" path="res://scenes/world/rotating_cog.tscn" id="15_cog"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_vent.tscn" id="17_vent"]
+[ext_resource type="PackedScene" path="res://scenes/world/elevator.tscn" id="18_elev"]
+[ext_resource type="PackedScene" path="res://scenes/world/decor_prop.tscn" id="19_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/gear_pickup.tscn" id="21_pickup"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/clockwork_hound.tscn" id="22_hound"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/brass_sentry.tscn" id="23_sentry"]
+[ext_resource type="PackedScene" path="res://scenes/world/key_pickup.tscn" id="24_key"]
+[ext_resource type="PackedScene" path="res://scenes/world/tram_crossing.tscn" id="25_tram"]
+[ext_resource type="PackedScene" path="res://scenes/world/water_pool.tscn" id="26_pool"]
+[ext_resource type="PackedScene" path="res://scenes/world/pump_sequence.tscn" id="27_pumpseq"]
+[ext_resource type="PackedScene" path="res://scenes/world/pump_valve.tscn" id="28_pumpvalve"]
+[ext_resource type="PackedScene" path="res://scenes/world/humid_zone.tscn" id="29_humid"]
+[ext_resource type="PackedScene" path="res://scenes/world/enemy_nest.tscn" id="30_nest"]
+[ext_resource type="PackedScene" path="res://scenes/world/wall_lantern_switch.tscn" id="31_lantern"]
+[ext_resource type="PackedScene" path="res://scenes/world/winch.tscn" id="32_winch"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/cistern_warden.tscn" id="33_warden"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/tesla_drone.tscn" id="34_drone"]
+[ext_resource type="PackedScene" path="res://scenes/world/alarm_bell.tscn" id="35_alarm"]
+[ext_resource type="PackedScene" path="res://scenes/world/wind_zone.tscn" id="36_wind"]
+[ext_resource type="PackedScene" path="res://scenes/world/fall_zone.tscn" id="37_fall"]
+[ext_resource type="PackedScene" path="res://scenes/world/propeller.tscn" id="38_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/gangway_lever.tscn" id="39_lever"]
+[ext_resource type="PackedScene" path="res://scenes/world/electric_plates.tscn" id="40_plates"]
+[ext_resource type="PackedScene" path="res://scenes/world/power_router.tscn" id="41_router"]
+[ext_resource type="PackedScene" path="res://scenes/world/junction_switch.tscn" id="42_junction"]
+[ext_resource type="PackedScene" path="res://scenes/world/tesla_coil.tscn" id="43_coil"]
+[ext_resource type="PackedScene" path="res://scenes/world/conveyor.tscn" id="44_conveyor"]
+[ext_resource type="PackedScene" path="res://scenes/world/stamping_press.tscn" id="45_press"]
+[ext_resource type="PackedScene" path="res://scenes/world/drive_governor.tscn" id="46_governor"]
+[ext_resource type="PackedScene" path="res://scenes/world/assembly_line.tscn" id="47_line"]
+[ext_resource type="PackedScene" path="res://scenes/world/gear_workbench.tscn" id="48_bench"]
+[ext_resource type="PackedScene" path="res://scenes/world/pressure_system.tscn" id="49_pressure"]
+[ext_resource type="PackedScene" path="res://scenes/world/relief_valve.tscn" id="50_relief"]
+[ext_resource type="PackedScene" path="res://scenes/world/burst_route.tscn" id="51_route"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/steam_walker.tscn" id="52_walker"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_stone_slab.png" id="t_stone"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_brick.png" id="t_w_brick"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_brick_cellar.png" id="t_w_cellar"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_iron_plate.png" id="t_iron"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_metal_plate.png" id="t_w_metal"]
+
+[sub_resource type="Environment" id="Env_level"]
+background_mode = 1
+background_color = Color(0.03, 0.025, 0.02, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.85, 0.65, 0.5, 1)
+ambient_light_energy = 0.45
+tonemap_mode = 2
+tonemap_exposure = 1.05
+glow_enabled = true
+glow_intensity = 0.9
+glow_bloom = 0.08
+fog_enabled = true
+fog_light_color = Color(0.28, 0.2, 0.14, 1)
+fog_density = 0.004
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.014
+volumetric_fog_albedo = Color(0.95, 0.8, 0.65, 1)
+volumetric_fog_emission = Color(0.04, 0.025, 0.015, 1)
+
+[sub_resource type="Resource" id="Room_gate"]
+script = ExtResource("3_room")
+room_name = "Yard Gate"
+width = 14
+depth = 14
+floor_texture = ExtResource("t_stone")
+wall_texture = ExtResource("t_w_brick")
+floor_tint = Color(0.9, 0.85, 0.8, 1)
+light_color = Color(1, 0.75, 0.48, 1)
+light_energy = 2.4
+pillars = PackedVector2Array()
+dressing_theme = 15
+dressing_seed = 1201
+clutter_density = 0.24
+grime_density = 0.5
+
+[sub_resource type="Resource" id="Room_yard"]
+script = ExtResource("3_room")
+room_name = "Engine Yard"
+width = 34
+depth = 24
+floor_texture = ExtResource("t_stone")
+wall_texture = ExtResource("t_w_cellar")
+floor_tint = Color(0.85, 0.8, 0.75, 1)
+light_color = Color(1, 0.7, 0.45, 1)
+light_energy = 3
+pillars = PackedVector2Array(-9, -6, 9, 6, -9, 6, 9, -6)
+dressing_theme = 15
+dressing_seed = 1203
+clutter_density = 0.1
+grime_density = 0.55
+
+[sub_resource type="Resource" id="Room_foundry_gate"]
+script = ExtResource("3_room")
+room_name = "Foundry Gate"
+width = 12
+depth = 12
+floor_texture = ExtResource("t_iron")
+wall_texture = ExtResource("t_w_metal")
+floor_tint = Color(0.9, 0.85, 0.75, 1)
+light_color = Color(1, 0.82, 0.5, 1)
+light_energy = 2.4
+pillars = PackedVector2Array()
+dressing_theme = 3
+dressing_seed = 1207
+clutter_density = 0.12
+grime_density = 0.3
+
+[sub_resource type="Resource" id="Rumor_overseer_yard_log"]
+script = ExtResource("4_rumor")
+rumor_id = &"overseer_yard_log"
+title = "The Overseer's Commission Plate"
+body = "Riveted to the Walker's cradle: COMMISSIONED BY THE MASTER, OVERSEER OF THE ENGINE YARD.\n\nScratched beneath it by the yard crew: The Walker is the last line. The Master had it built to stand in front of the Foundry Gate and let nothing past, and it has stood there eleven years, cold, waiting.\n\nIt stamps when you are close. When its boiler is hot it breathes steam across the whole yard, then has to stand and blow off. That is when its boiler valve shows. Hit the valve and it will reel.\n\nIf it is losing, it whistles up the yard automatons and runs at you. Watch for the red lane."
+hint = "The Steam Walker stomps, then breathes steam and overheats: bash its exposed boiler valve 3 times to stagger it, then pile on the damage. When hurt, it summons automatons and charges down a red lane."
+
+[sub_resource type="Resource" id="Rumor_foundry_seal_note"]
+script = ExtResource("4_rumor")
+rumor_id = &"foundry_seal_note"
+title = "Brass Plate on the Foundry Gate"
+body = "THE GREAT FOUNDRY.\nBY ORDER OF THE MASTER THIS GATE ANSWERS ONLY TO THE FOUNDRY SEAL.\n\nThe seal is carried by the Yard's guardian."
+hint = "Defeat the Steam Walker and pick up the Foundry Seal to open the Foundry Gate."
+
+[sub_resource type="Resource" id="Rumor_guild_dispatch_12"]
+script = ExtResource("4_rumor")
+rumor_id = &"guild_dispatch_12"
+title = "Dispatch #12: The Last Gate"
+body = "Pneumatic dispatch, Guild of Mechanical Trades. The last tube that reaches this deep.\n\nTechnician, your signal is faint but steady. Past this yard lies the Great Foundry. The old Overseer's machine still holds the gate, and the gate answers only to the Foundry Seal it carries.\n\nWe cannot send help this far down. Bring the Walker down, take the seal, and go in. The families are still waiting."
+hint = ""
+
+[node name="Level12EngineYard" type="Node3D"]
+script = ExtResource("1_level")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_level")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.383022, 0.321394, 0, 0.642788, 0.766044, -0.5, -0.663414, 0.55667, 0, 20, 0)
+light_color = Color(1, 0.75, 0.5, 1)
+light_energy = 0.45
+shadow_enabled = true
+directional_shadow_max_distance = 60.0
+
+[node name="Navigation" type="NavigationRegion3D" parent="."]
+script = ExtResource("2_builder")
+rooms = Array[ExtResource("3_room")]([SubResource("Room_gate"), SubResource("Room_yard"), SubResource("Room_foundry_gate")])
+start_x = -9.0
+player_path = NodePath("../Technician")
+keep_clear_roots = Array[NodePath]([NodePath("../Doors"), NodePath("../Interactables"), NodePath("../Hazards"), NodePath("../Props"), NodePath("../Enemies")])
+
+[node name="Technician" parent="." instance=ExtResource("5_tech")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.05, 1)
+
+[node name="CameraRig" parent="." instance=ExtResource("6_cam")]
+target_path = NodePath("../Technician")
+
+[node name="HUD" parent="." instance=ExtResource("7_hud")]
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="YardDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
+door_id = &"yard_door"
+condition = 0
+locked_hint = ""
+
+[node name="FoundryGate" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, 0, 0)
+door_id = &"foundry_gate"
+condition = 5
+locked_hint = "The Foundry Gate answers only to the Foundry Seal."
+required_item_id = &"foundry_seal"
+
+[node name="Interactables" type="Node3D" parent="."]
+
+[node name="OverseerTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -5.5)
+rumor = SubResource("Rumor_overseer_yard_log")
+
+[node name="DispatchTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 1, 0, 5.5)
+rumor = SubResource("Rumor_guild_dispatch_12")
+
+[node name="SealTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 36, 0, 9.5)
+rumor = SubResource("Rumor_foundry_seal_note")
+
+[node name="YardGearCache" parent="Interactables" instance=ExtResource("21_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -4)
+
+[node name="Elevator" parent="Interactables" instance=ExtResource("18_elev")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 0, 0)
+exit_mode = 1
+
+[node name="Hazards" type="Node3D" parent="."]
+
+[node name="YardVentWest" parent="Hazards" instance=ExtResource("17_vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 9)
+
+[node name="YardVentEast" parent="Hazards" instance=ExtResource("17_vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 0, -9)
+phase_offset = 2.0
+
+[node name="Props" type="Node3D" parent="."]
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="SteamWalker" parent="Enemies" instance=ExtResource("52_walker")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0.05, 0)
+add_spawn_points = PackedVector3Array(8, 0, -10, 36, 0, 10, 8, 0, 10, 36, 0, -10)
+
+[node name="GateSkittererA" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, -3)
+
+[node name="GateSkittererB" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.05, 3)

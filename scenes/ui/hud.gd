@@ -8,7 +8,7 @@ const TEXT: Color = Color(1.0, 0.9, 0.72)
 const NOTICE_TIME: float = 3.5
 const ROOM_TOAST_TIME: float = 3.0
 const LEVEL_CARD_TIME: float = 4.0
-const CONTROLS_TEXT: String = "WASD move  |  Space steam-dash  |  LMB wrench  |  RMB rivet gun  |  R lubricant vent  |  F interact  |  Q/E rotate  |  Wheel zoom  |  Tab log  |  G maintenance"
+const CONTROLS_TEXT: String = "WASD move  |  Space steam-dash  |  LMB wrench  |  RMB rivet gun  |  R lubricant vent  |  F interact  |  Q/E rotate  |  Wheel zoom  |  Tab log  |  G maintenance  |  Esc pause"
 
 var _health_bar: ProgressBar
 var _health_label: Label
@@ -40,6 +40,12 @@ var _level_card_title: Label
 var _level_card_time_left: float = 0.0
 var _golden: bool = false
 var _overclocked: bool = false
+var _room_pressure_box: VBoxContainer
+var _room_pressure_label: Label
+var _room_pressure_bar: ProgressBar
+var _boss_box: VBoxContainer
+var _boss_label: Label
+var _boss_bar: ProgressBar
 
 
 func _ready() -> void:
@@ -55,6 +61,7 @@ func _ready() -> void:
 	_build_level_card(root)
 	_build_overlay(root)
 	_build_controls_hint(root)
+	_build_meters(root)
 	_connect_signals()
 	_refresh_maintenance(GameState.rig)
 
@@ -74,6 +81,9 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_log"):
+		# Something else (the pause menu) has the game paused; leave it in charge.
+		if get_tree().paused and not _log_panel.visible:
+			return
 		_set_log_open(not _log_panel.visible)
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("toggle_maintenance"):
@@ -102,6 +112,8 @@ func _connect_signals() -> void:
 	GameState.victory.connect(_on_victory)
 	GameState.level_started.connect(_on_level_started)
 	GameState.level_completed.connect(_on_level_completed)
+	GameState.room_pressure_changed.connect(_on_room_pressure_changed)
+	GameState.boss_health_changed.connect(_on_boss_health_changed)
 
 
 # --- Signal handlers ------------------------------------------------------------
@@ -382,6 +394,54 @@ func _build_center_labels(root: Control) -> void:
 	_place(_prompt_label, Control.PRESET_CENTER_BOTTOM, -400, -90, 400, -60)
 	_prompt_label.visible = false
 	root.add_child(_prompt_label)
+
+
+## Level-specific meters: the room pressure bar (Pressure Exchange) and the boss bar. Hidden by default.
+func _build_meters(root: Control) -> void:
+	_room_pressure_box = VBoxContainer.new()
+	_room_pressure_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_place(_room_pressure_box, Control.PRESET_TOP_RIGHT, -336, 16, -16, 76)
+	_room_pressure_label = _make_label("ROOM PRESSURE", 14, BRASS)
+	_room_pressure_box.add_child(_room_pressure_label)
+	_room_pressure_bar = _make_bar(1.0, Color(0.95, 0.7, 0.2), 320.0)
+	_room_pressure_box.add_child(_room_pressure_bar)
+	_room_pressure_box.visible = false
+	root.add_child(_room_pressure_box)
+	_boss_box = VBoxContainer.new()
+	_boss_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_place(_boss_box, Control.PRESET_CENTER_TOP, -260, 80, 260, 130)
+	_boss_label = _make_label("", 18, Color(1.0, 0.75, 0.5))
+	_boss_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_boss_box.add_child(_boss_label)
+	_boss_bar = _make_bar(1.0, Color(0.85, 0.3, 0.12), 520.0)
+	_boss_box.add_child(_boss_bar)
+	_boss_box.visible = false
+	root.add_child(_boss_box)
+
+
+func is_room_pressure_shown() -> bool:
+	return _room_pressure_box.visible
+
+
+func is_boss_bar_shown() -> bool:
+	return _boss_box.visible
+
+
+func _on_room_pressure_changed(ratio: float, warning: bool) -> void:
+	_room_pressure_box.visible = ratio >= 0.0
+	if ratio < 0.0:
+		return
+	_room_pressure_bar.value = ratio
+	_room_pressure_label.text = "ROOM PRESSURE  %d%%%s" % [roundi(ratio * 100.0), "  - VENT IT!" if warning else ""]
+	_room_pressure_label.add_theme_color_override("font_color", Color(1.0, 0.35, 0.2) if warning else BRASS)
+
+
+func _on_boss_health_changed(boss_name: String, ratio: float) -> void:
+	_boss_box.visible = ratio >= 0.0
+	if ratio < 0.0:
+		return
+	_boss_label.text = boss_name
+	_boss_bar.value = ratio
 
 
 func _build_controls_hint(root: Control) -> void:

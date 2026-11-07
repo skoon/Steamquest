@@ -8,6 +8,9 @@ enum ExitMode { VICTORY, NEXT_LEVEL }
 
 const DORMANT_COLOR: Color = Color(0.6, 0.15, 0.1)
 const ACTIVE_COLOR: Color = Color(1.0, 0.8, 0.3)
+## How far the lift sinks, and how long it takes; matches the level's exit fade.
+const DESCENT_DEPTH: float = 4.0
+const DESCENT_TIME: float = 1.2
 
 @export var platform_radius: float = 1.8
 @export var exit_mode: ExitMode = ExitMode.VICTORY
@@ -60,9 +63,23 @@ func _on_body_entered(body: Node3D) -> void:
 		GameState.declare_victory()
 		return
 	Audio.play_ui(&"lift_rise")
-	tween.parallel().tween_property(_platform, "position:y", 0.6, 1.0)
+	_descend(body as Technician)
 	GameState.post_notice("The lift rattles into motion...")
 	GameState.complete_level()
+
+
+## Sinks the platform with the Technician aboard while the camera holds still, so they drop
+## out of sight before the level fades.
+func _descend(rider: Technician) -> void:
+	rider.ride_lift()
+	var camera_rig: CameraRig = get_tree().get_first_node_in_group(&"camera_rig") as CameraRig
+	assert(camera_rig != null, "FoundryElevator: no CameraRig to hold still")
+	camera_rig.stop_following()
+	var rider_offset: float = rider.global_position.y - _platform.global_position.y
+	var descent: Tween = create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	descent.tween_property(_platform, "position:y", -DESCENT_DEPTH, DESCENT_TIME)
+	descent.tween_property(rider, "global_position:y",
+			_platform.global_position.y - DESCENT_DEPTH + rider_offset, DESCENT_TIME)
 
 
 func _set_lamp(color: Color) -> void:

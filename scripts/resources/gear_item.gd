@@ -69,6 +69,12 @@ func lubricate() -> void:
 
 ## Output multiplier of a working gear: 1 / (1 + friction). Golden gears are always 1.0.
 ## Returns 0.0 for jammed or shattered gears; callers decide the fallback output.
+func repair_fully() -> void:
+	durability = max_durability
+	friction = 0.0
+	state = GearState.OK
+
+
 func penalty_multiplier() -> float:
 	if is_golden_gear:
 		return 1.0

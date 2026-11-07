@@ -12,6 +12,9 @@ const LEVEL_6: String = "res://scenes/levels/level_06_coal_seam.tscn"
 const LEVEL_7: String = "res://scenes/levels/level_07_airship_tower.tscn"
 const LEVEL_8: String = "res://scenes/levels/level_08_blueprint_archive.tscn"
 const LEVEL_9: String = "res://scenes/levels/level_09_tesla_generator.tscn"
+const LEVEL_10: String = "res://scenes/levels/level_10_assembly_line.tscn"
+const LEVEL_11: String = "res://scenes/levels/level_11_pressure_exchange.tscn"
+const LEVEL_12: String = "res://scenes/levels/level_12_engine_yard.tscn"
 const FINALE: String = "res://scenes/world/foundry_level.tscn"
 const TEST_SAVE: String = "user://test_campaign_smoke_save.json"
 const MIN_DRESSING_PROPS: int = 8
@@ -65,6 +68,12 @@ func _run() -> void:
 	await _test_level_8()
 	await _load_level(LEVEL_9)
 	await _test_level_9()
+	await _load_level(LEVEL_10)
+	await _test_level_10()
+	await _load_level(LEVEL_11)
+	await _test_level_11()
+	await _load_level(LEVEL_12)
+	await _test_level_12()
 
 	print("")
 	if _failures.is_empty():
@@ -672,5 +681,238 @@ func _test_level_9() -> void:
 	_check(router.is_solved() and lift.is_open, "the earth-bank routing opens the generator lift")
 	_check(west_plates.state_of(0) == PlatePattern.State.OFF and door_plates.state_of(0) == PlatePattern.State.OFF, "with the current earthed every section is dead")
 	_check(not junction_a.can_interact(), "the junctions lock once the current is earthed")
+	await _kill_all_enemies()
+	await _ride_elevator(LEVEL_10)
+
+
+# --- Level 10 -----------------------------------------------------------------------------------
+
+func _test_level_10() -> void:
+	var player: Technician = _player()
+	_isolate_enemies([])
+	var presses: Array[StampingPress] = []
+	for press_name: String in ["PressWest", "PressEast", "PressReturn"]:
+		var press: StampingPress = _level.get_node("Hazards/" + press_name) as StampingPress
+		press.set_physics_process(false)
+		presses.append(press)
+	var line: AssemblyLine = _level.get_node("Interactables/AssemblyLine") as AssemblyLine
+	line.set_physics_process(false)
+	_restore_player(player)
+
+	player.global_position = Vector3(19.0, 0.05, -4.5)
+	await _frames(30)
+	_check(player.global_position.x > 19.8 and absf(player.global_position.z + 4.5) < 0.6, "the outbound belt carries the Technician east")
+	player.global_position = Vector3(19.0, 0.05, 4.5)
+	await _frames(30)
+	_check(player.global_position.x < 18.2, "the return belt carries the Technician west")
+	player.global_position = Vector3(19.0, 0.05, 0.0)
+	await _frames(3)
+	var resting: Vector3 = player.global_position
+	await _frames(20)
+	_check(player.global_position.distance_to(resting) < 0.2, "off the belt the Technician stops drifting")
+
+	var press_west: StampingPress = presses[0]
+	press_west.set_physics_process(true)
+	_restore_player(player)
+	var crushed: bool = false
+	for i: int in int(press_west.interval * 60.0) + 30:
+		await get_tree().physics_frame
+		if press_west.current_phase() != HazardCycle.Phase.ACTIVE:
+			player.global_position = press_west.global_position + Vector3(0.0, 0.05, 0.0)
+		if player.health < player.stats.max_health:
+			crushed = true
+			break
+	_check(crushed and absf(player.stats.max_health - player.health - press_west.damage) < 1.0, "a stamping press slam takes %d health" % int(press_west.damage))
+	_check(_heard.has(&"press_hiss") and _heard.has(&"press_slam"), "the press hisses before it slams")
+	press_west.set_physics_process(false)
+	_restore_player(player)
+	var press_east: StampingPress = presses[1]
+	var victim: EnemyBase = _level.get_node("Enemies/StoreSkittererA") as EnemyBase
+	press_east.set_physics_process(true)
+	player.global_position = Vector3(26.0, 0.05, 3.0)
+	for i: int in int(press_east.interval * 60.0) + 30:
+		await get_tree().physics_frame
+		if victim.is_dead:
+			break
+		victim.global_position = press_east.global_position + Vector3(0.0, 0.05, 0.0)
+	_check(victim.is_dead, "a press slam crushes an automaton on its bed")
+	press_east.set_physics_process(false)
+
+	line.set_physics_process(true)
+	player.global_position = Vector3(13.0, 0.05, -1.0)
+	for i: int in 240:
+		await get_tree().physics_frame
+		if line.spawned_total > 0:
+			break
+	_check(line.spawned_total > 0 and line.alive_count() > 0, "the running line turns out automatons near the Technician")
+	_isolate_enemies([])
+	var lift: SteamDoor = _level.get_node("Doors/LineLiftDoor") as SteamDoor
+	var names: Array[String] = ["GovernorNorth", "GovernorCentre", "GovernorFar"]
+	for index: int in names.size():
+		_check(not lift.is_open and not line.is_jammed, "the line lift stays shut with %d governors running" % (names.size() - index))
+		var governor: DriveGovernor = _level.get_node("Interactables/" + names[index]) as DriveGovernor
+		for hit: int in governor.hits_required:
+			governor.receive_bash()
+		_check(governor.is_smashed(), "%s smashed after %d blows" % [names[index], governor.hits_required])
+	await _frames(2)
+	_check(line.is_jammed and line.governors_left() == 0 and lift.is_open, "smashing all three governors jams the line and frees the lift")
+	_check(_heard.has(&"governor_break"), "governors fly apart with a crash")
+	var spawned: int = line.spawned_total
+	await _frames(120)
+	_check(line.spawned_total == spawned, "a jammed line builds no more automatons")
+	await _kill_all_enemies()
+	_restore_player(player)
+
+	var bench: GearWorkbench = _level.get_node("Interactables/GearWorkbench") as GearWorkbench
+	var drive: GearItem = GameState.rig.get_gear(FrictionModel.Socket.DRIVE)
+	drive.durability = 5.0
+	drive.friction = 0.6
+	_check(bench.can_interact(), "the workbench is ready to use")
+	bench.interact(player)
+	_check(is_equal_approx(drive.durability, drive.max_durability) and drive.friction == 0.0, "the workbench rebuilds the most worn gear as new")
+	_check(not bench.can_interact() and _heard.has(&"workbench_repair"), "the workbench only has stock for one rebuild")
+	await _ride_elevator(LEVEL_11)
+
+
+# --- Level 11 -----------------------------------------------------------------------------------
+
+func _test_level_11() -> void:
+	var player: Technician = _player()
+	_isolate_enemies([])
+	_restore_player(player)
+	var hud: Hud = _level.get_node("HUD") as Hud
+	var system: PressureSystem = _level.get_node("Interactables/PressureSystem") as PressureSystem
+	_check(hud.is_room_pressure_shown(), "the HUD shows the room pressure in the exchange")
+	var start: float = system.pressure.level
+	await _frames(60)
+	_check(system.pressure.level > start, "room pressure climbs on its own")
+	system.set_physics_process(false)
+
+	var valve: ReliefValve = _level.get_node("Interactables/ReliefGallery") as ReliefValve
+	system.pressure.level = 0.6
+	valve.receive_bash()
+	_check(is_equal_approx(system.pressure.level, 0.3) and _heard.has(&"relief_vent"), "a relief valve vents 30% of the pressure")
+	valve.receive_bash()
+	_check(is_equal_approx(system.pressure.level, 0.3) and not valve.is_ready_to_vent(), "a vented valve must reseal before it vents again")
+
+	var route: BurstRoute = _level.get_node("Hazards/RouteStacksWest") as BurstRoute
+	system.pressure.level = system.pressure.warning_ratio - 0.01
+	system.advance(1.0)
+	_check(route.is_warning and _heard.has(&"pressure_klaxon"), "the klaxon sounds and the marked routes steam in the red")
+	player.global_position = route.global_position + route.global_basis.x * 2.0 + Vector3(0.0, 0.05, 0.0)
+	await _frames(3)
+	system.pressure.level = 0.999
+	system.advance(0.5)
+	await _frames(5)
+	_check(system.bursts == 1 and route.is_bursting() and _heard.has(&"pipe_burst"), "peak pressure bursts the marked routes")
+	_check(absf(player.stats.max_health - player.health - route.damage) < 1.0, "a burst route scalds the Technician for %d" % int(route.damage))
+	_check(system.pressure.level < system.pressure.warning_ratio and not route.is_warning, "after the burst the pressure falls back out of the red")
+	await _frames(int(route.burst_time * 60.0) + 10)
+	_check(not route.is_bursting(), "the burst blows itself out")
+	_restore_player(player)
+
+	var lift: SteamDoor = _level.get_node("Doors/ExchangeLiftDoor") as SteamDoor
+	_check(not lift.is_open, "the exchange lift is held shut")
+	var stack: JammedValve = _level.get_node("Interactables/MainReliefStack") as JammedValve
+	for i: int in stack.hits_required:
+		stack.receive_bash()
+	await _frames(2)
+	_check(lift.is_open, "freeing the Main Relief Stack opens the exchange lift")
+	await _kill_all_enemies()
+	await _ride_elevator(LEVEL_12)
+
+
+# --- Level 12 -----------------------------------------------------------------------------------
+
+func _test_level_12() -> void:
+	var player: Technician = _player()
+	var hud: Hud = _level.get_node("HUD") as Hud
+	var walker: SteamWalker = _level.get_node("Enemies/SteamWalker") as SteamWalker
+	_isolate_enemies([walker])
+	_restore_player(player)
+	_check(not hud.is_boss_bar_shown() and not hud.is_room_pressure_shown(), "no boss bar or pressure gauge before the fight")
+	player.global_position = walker.global_position + Vector3(-9.0, 0.0, 0.0)
+	await _frames(10)
+	_check(walker.is_aggro and hud.is_boss_bar_shown(), "the Steam Walker wakes and its health bar appears")
+
+	_restore_player(player)
+	var stomped: bool = false
+	for i: int in 240:
+		await get_tree().physics_frame
+		player.global_position = walker.global_position + Vector3(-3.0, 0.05, 0.0)
+		if player.health < player.stats.max_health:
+			stomped = true
+			break
+	_check(stomped and _heard.has(&"walker_stomp") and walker.phase() == 1, "in phase 1 the Walker stomps")
+	_restore_player(player)
+
+	walker.health = walker.stats.max_health * 0.6
+	_check(walker.phase() == 2, "below two thirds health the Walker enters phase 2")
+	var before: float = walker.health
+	walker.receive_hit(100.0, Vector3.ZERO)
+	_check(before - walker.health < 60.0, "outside a stagger the armoured Walker shrugs off half the damage")
+
+	player.global_position = walker.global_position + Vector3(-5.0, 0.05, 0.0)
+	await _frames(2)
+	walker._begin_breath_windup()
+	for i: int in 200:
+		await get_tree().physics_frame
+		player.global_position = walker.global_position + Vector3(-5.0, 0.05, 0.0)
+		if walker.is_overheated():
+			break
+	_check(_heard.has(&"walker_breath") and player.health < player.stats.max_health, "the sweeping steam breath scalds the Technician")
+	_check(walker.is_overheated(), "after the breath the Walker overheats")
+	_restore_player(player)
+
+	player.global_position = walker.global_position + Vector3(-2.4, 0.05, 0.0)
+	await _frames(2)
+	player.aim_direction = Vector3.RIGHT
+	for i: int in SteamWalker.VALVE_HITS:
+		player.aim_direction = Vector3.RIGHT
+		player._swing_wrench(GameState.rig)
+		await _frames(2)
+	_check(walker.is_staggered(), "three wrench blows on the exposed valve stagger the Walker")
+	before = walker.health
+	walker.receive_hit(100.0, Vector3.ZERO)
+	_check(before - walker.health > 150.0, "a staggered Walker takes double damage")
+	_restore_player(player)
+
+	walker.health = walker.stats.max_health * 0.3
+	walker.move = SteamWalker.Move.RECOVER
+	walker._since_adds = SteamWalker.ADD_INTERVAL - 0.05
+	await _frames(10)
+	_check(walker.phase() == 3 and walker.alive_adds() == 3, "in phase 3 the Walker whistles up two skitterers and a hound")
+	_isolate_enemies([walker])
+	player.global_position = walker.global_position + Vector3(-10.0, 0.05, 0.0)
+	await _frames(2)
+	walker._begin_charge()
+	_restore_player(player)
+	var charged: bool = false
+	for i: int in 150:
+		await get_tree().physics_frame
+		if player.health < player.stats.max_health:
+			charged = true
+			break
+	_check(charged and _heard.has(&"walker_charge") and player.health <= player.stats.max_health - SteamWalker.CHARGE_DAMAGE + 1.0, "the telegraphed charge runs the Technician down")
+	_restore_player(player)
+
+	var gate: SteamDoor = _level.get_node("Doors/FoundryGate") as SteamDoor
+	walker.receive_hit(100000.0, Vector3.ZERO)
+	await _frames(5)
+	_check(walker.is_dead and not hud.is_boss_bar_shown(), "the Walker falls and its health bar goes")
+	var seal: KeyPickup = null
+	for child: Node in _level.get_node("Enemies").get_children():
+		if child is KeyPickup and (child as KeyPickup).item_id == &"foundry_seal":
+			seal = child as KeyPickup
+	_check(seal != null, "the Walker drops the Foundry Seal")
+	gate.use_panel()
+	_check(not gate.is_open, "the Foundry Gate stays shut without the seal")
+	if seal != null:
+		player.global_position = seal.global_position + Vector3(0.0, 0.05, 0.0)
+		await _frames(5)
+	_check(GameState.has_item(&"foundry_seal"), "the Technician picks up the Foundry Seal")
+	gate.use_panel()
+	await _frames(2)
+	_check(gate.is_open, "the Foundry Seal opens the Foundry Gate")
 	await _kill_all_enemies()
 	await _ride_elevator(FINALE)

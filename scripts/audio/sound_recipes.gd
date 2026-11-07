@@ -65,6 +65,17 @@ const SOUNDS: Dictionary = {
 	&"plate_crackle": {"volume_db": -6.0, "bus": BUS_SFX, "loop": false, "peak": 0.6},
 	&"switch_clunk": {"volume_db": -3.0, "bus": BUS_SFX, "loop": false, "peak": 0.8},
 	&"coil_overload": {"volume_db": 0.0, "bus": BUS_SFX, "loop": false, "peak": 0.9},
+	&"conveyor_rattle": {"volume_db": -10.0, "bus": BUS_SFX, "loop": false, "peak": 0.5},
+	&"press_hiss": {"volume_db": -6.0, "bus": BUS_SFX, "loop": false, "peak": 0.55},
+	&"press_slam": {"volume_db": 1.0, "bus": BUS_SFX, "loop": false, "peak": 0.95},
+	&"governor_break": {"volume_db": -1.0, "bus": BUS_SFX, "loop": false, "peak": 0.85},
+	&"workbench_repair": {"volume_db": -3.0, "bus": BUS_SFX, "loop": false, "peak": 0.75},
+	&"relief_vent": {"volume_db": -2.0, "bus": BUS_SFX, "loop": false, "peak": 0.75},
+	&"pressure_klaxon": {"volume_db": -5.0, "bus": BUS_SFX, "loop": false, "peak": 0.6},
+	&"pipe_burst": {"volume_db": 0.0, "bus": BUS_SFX, "loop": false, "peak": 0.9},
+	&"walker_stomp": {"volume_db": 3.0, "bus": BUS_SFX, "loop": false, "peak": 0.98},
+	&"walker_breath": {"volume_db": -1.0, "bus": BUS_SFX, "loop": false, "peak": 0.8},
+	&"walker_charge": {"volume_db": 0.0, "bus": BUS_SFX, "loop": false, "peak": 0.9},
 }
 
 
@@ -154,6 +165,17 @@ static func _raw(id: StringName, rng: RandomNumberGenerator) -> PackedFloat32Arr
 		&"plate_crackle": return _plate_crackle(rng)
 		&"switch_clunk": return _switch_clunk(rng)
 		&"coil_overload": return _coil_overload(rng)
+		&"conveyor_rattle": return _conveyor_rattle(rng)
+		&"press_hiss": return Synth.envelope_adsr(_hiss(0.9, rng, 1600.0, 8000.0), 0.15, 0.1, 0.8, 0.3)
+		&"press_slam": return _press_slam(rng)
+		&"governor_break": return _governor_break(rng)
+		&"workbench_repair": return _workbench_repair(rng)
+		&"relief_vent": return _relief_vent(rng)
+		&"pressure_klaxon": return _pressure_klaxon()
+		&"pipe_burst": return _pipe_burst(rng)
+		&"walker_stomp": return _walker_stomp(rng)
+		&"walker_breath": return _walker_breath(rng)
+		&"walker_charge": return _walker_charge(rng)
 	assert(false, "SoundRecipes: no recipe for %s" % id)
 	return PackedFloat32Array()
 
@@ -591,3 +613,83 @@ static func _coil_overload(rng: RandomNumberGenerator) -> PackedFloat32Array:
 	var crack: PackedFloat32Array = Synth.envelope_exp_decay(Synth.biquad(Synth.noise(1.2, rng), Synth.Filter.HIGHPASS, 600.0, 0.7), 0.001, 0.25)
 	out = Synth.mix_at(out, crack, 0.35, 1.0)
 	return Synth.mix_at(out, Synth.envelope_exp_decay(Synth.biquad(Synth.noise(0.6, rng), Synth.Filter.LOWPASS, 200.0, 0.7), 0.001, 0.2), 0.35, 0.8)
+
+
+## Belt rollers clattering past: an even run of light clanks over a low motor drone.
+static func _conveyor_rattle(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var out: PackedFloat32Array = Synth.envelope_adsr(Synth.biquad(Synth.saw_sweep(48.0, 48.0, 1.2), Synth.Filter.LOWPASS, 220.0, 0.7), 0.1, 0.1, 0.8, 0.3)
+	for i: int in 10:
+		out = Synth.mix_at(out, _clank(rng.randf_range(420.0, 520.0), 0.04, rng), 0.05 + 0.11 * float(i), 0.3)
+	return out
+
+
+## The die coming down: a crushing boom with a sheet-metal crunch.
+static func _press_slam(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var out: PackedFloat32Array = _thump(110.0, 35.0, 0.7, 0.25)
+	out = Synth.mix_at(out, Synth.envelope_exp_decay(Synth.biquad(Synth.noise(0.5, rng), Synth.Filter.LOWPASS, 900.0, 0.7), 0.001, 0.12), 0.0, 0.8)
+	out = Synth.mix_at(out, _clank(180.0, 0.3, rng), 0.0, 0.6)
+	return Synth.mix_at(out, Synth.envelope_adsr(_hiss(0.6, rng, 2000.0, 8000.0), 0.02, 0.1, 0.5, 0.3), 0.08, 0.4)
+
+
+## A spinning governor flying apart: a high ping, falling clatter and a dying whirr.
+static func _governor_break(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var out: PackedFloat32Array = _clank(700.0, 0.25, rng)
+	out = Synth.mix_at(out, Synth.envelope_exp_decay(Synth.sine_sweep(900.0, 120.0, 1.0), 0.002, 0.4), 0.0, 0.4)
+	for i: int in 8:
+		out = Synth.mix_at(out, _clank(rng.randf_range(400.0, 1100.0), 0.05, rng), rng.randf_range(0.05, 0.8), rng.randf_range(0.25, 0.5))
+	return out
+
+
+## Grinder whine, a few hammer taps and a bright ring as the gear goes back in.
+static func _workbench_repair(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var grind: PackedFloat32Array = Synth.biquad(Synth.noise(0.8, rng), Synth.Filter.BANDPASS, 3500.0, 3.0)
+	var out: PackedFloat32Array = Synth.mix_at(Synth.silence(1.8), Synth.envelope_adsr(grind, 0.1, 0.1, 0.8, 0.2), 0.0, 0.5)
+	for i: int in 3:
+		out = Synth.mix_at(out, _clank(rng.randf_range(600.0, 700.0), 0.08, rng), 0.85 + 0.18 * float(i), 0.6)
+	var ring: PackedFloat32Array = Synth.inharmonic_bell(1040.0, PackedFloat32Array([1.0, 2.0, 3.0]), PackedFloat32Array([0.5, 0.3, 0.15]), PackedFloat32Array([0.6, 0.3, 0.15]), 0.7)
+	return Synth.mix_at(out, ring, 1.45, 0.8)
+
+
+## A relief stack venting: a hard roar that thins into a whistle.
+static func _relief_vent(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var roar: PackedFloat32Array = Synth.envelope_adsr(Synth.biquad(Synth.noise(1.8, rng), Synth.Filter.BANDPASS, 900.0, 0.5), 0.02, 0.3, 0.6, 0.9)
+	return Synth.mix_at(roar, _whistle(1400.0, 1.4, 0.85, rng), 0.3, 0.4)
+
+
+## Two-tone pressure klaxon.
+static func _pressure_klaxon() -> PackedFloat32Array:
+	var out: PackedFloat32Array = Synth.silence(1.4)
+	for i: int in 2:
+		var horn: PackedFloat32Array = Synth.biquad(Synth.saw_sweep(440.0 if i == 0 else 370.0, 440.0 if i == 0 else 370.0, 0.6), Synth.Filter.LOWPASS, 1800.0, 1.2)
+		out = Synth.mix_at(out, Synth.envelope_adsr(horn, 0.03, 0.05, 0.9, 0.08), 0.65 * float(i), 0.8)
+	return out
+
+
+## A pipe seam giving way: a bang, then a howling jet.
+static func _pipe_burst(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var out: PackedFloat32Array = _thump(150.0, 50.0, 0.4, 0.12)
+	out = Synth.mix_at(out, _clank(260.0, 0.2, rng), 0.0, 0.7)
+	var jet: PackedFloat32Array = Synth.mix_at(Synth.biquad(Synth.noise(1.6, rng), Synth.Filter.BANDPASS, 1600.0, 0.6), _hiss(1.6, rng, 3500.0, 11000.0), 0.0, 0.5)
+	return Synth.mix_at(out, Synth.envelope_adsr(jet, 0.01, 0.2, 0.7, 0.6), 0.02, 0.9)
+
+
+## A boiler-legged giant's footfall: a deep boom with an iron groan.
+static func _walker_stomp(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var out: PackedFloat32Array = _thump(70.0, 22.0, 1.2, 0.45)
+	out = Synth.mix_at(out, Synth.envelope_exp_decay(Synth.biquad(Synth.noise(1.0, rng), Synth.Filter.LOWPASS, 200.0, 0.7), 0.002, 0.35), 0.0, 1.0)
+	out = Synth.mix_at(out, Synth.inharmonic_bell(64.0, PackedFloat32Array([1.0, 1.5, 2.2, 3.1]), PackedFloat32Array([1.1, 0.8, 0.5, 0.3]), PackedFloat32Array([0.7, 0.5, 0.35, 0.2]), 1.8), 0.0, 0.9)
+	return Synth.mix_at(out, Synth.envelope_adsr(_hiss(0.8, rng, 1500.0, 7000.0), 0.05, 0.2, 0.5, 0.4), 0.15, 0.3)
+
+
+## The steam breath: a long rushing roar with a low growl underneath.
+static func _walker_breath(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var roar: PackedFloat32Array = Synth.biquad(Synth.noise(1.8, rng), Synth.Filter.BANDPASS, 1100.0, 0.4)
+	roar = Synth.mix_at(roar, Synth.biquad(Synth.saw_sweep(65.0, 55.0, 1.8), Synth.Filter.LOWPASS, 400.0, 0.8), 0.0, 0.5)
+	roar = Synth.mix_at(roar, _hiss(1.8, rng, 3000.0, 10000.0), 0.0, 0.4)
+	return Synth.envelope_adsr(roar, 0.08, 0.2, 0.8, 0.5)
+
+
+## The charge cry: a steam whistle screaming over a rising engine rumble.
+static func _walker_charge(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var rumble: PackedFloat32Array = Synth.envelope_adsr(Synth.biquad(Synth.saw_sweep(45.0, 90.0, 1.4), Synth.Filter.LOWPASS, 300.0, 0.9), 0.2, 0.1, 0.9, 0.3)
+	return Synth.mix_at(rumble, _whistle(620.0, 1.2, 1.3, rng), 0.05, 0.7)

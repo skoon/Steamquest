@@ -63,4 +63,14 @@
   - [x] Levels 7–9 built and added to the campaign (10 entries); finale log renumbered to Dispatch #10
   - [x] Unit tests (180 passing), campaign smoke test runs levels 1–9 to the finale
   - [ ] Scott playtests levels 7–9
-- [ ] Batch 4: levels 10–12 + finale changes
+- [x] Batch 4: levels 10–12 + finale changes
+  - [x] RoomPressure / HitCounter / BossPhases logic; GearItem.repair_fully
+  - [x] Conveyors, stamping presses, drive governors + assembly line spawner, gear workbench
+  - [x] Room pressure system, relief valves, burst routes; HUD room-pressure and boss bars
+  - [x] Steam Walker boss (stomp, breath sweep, overheat valve + stagger, adds, charge) dropping the Foundry Seal
+  - [x] 11 new sounds; ASSEMBLY / EXCHANGE / ENGINE_YARD dressing themes
+  - [x] Levels 10–12 built and added to the campaign (13 entries); finale gets hounds, sentries and drones, log renumbered to Dispatch #13
+  - [x] Unit tests (189 passing), campaign smoke test runs levels 1–12 to the finale
+  - [ ] Scott playtests levels 10–12 and the Walker fight
+- [x] Fit and finish: title-screen button hover (brighter fill, gold border, grow on hover/focus) and a Loading screen with a turning gear after New Game / Continue and between levels
+- [x] Fit and finish: exit lift descends with the Technician aboard; Esc pause menu (Resume / Quit to Title / Quit Game)

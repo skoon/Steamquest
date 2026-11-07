@@ -547,3 +547,79 @@ Batches 1 and 2 built levels 1–6. This batch finishes Act II with the Airship 
 1. Import, then run the unit tests, both smoke tests and the sound export.
 2. Capture screenshots of every new room, especially the open decks and the sight cones, review them, and send them.
 3. Left for your playtest: gust strength, whether falling feels fair, how hard the drones are, how readable and fair the stealth is, and how long the plate sweeps take.
+
+
+# Phase 3, batch 4: levels 10–12 + finale changes (built under the "finish batch 4" goal)
+
+Scott set the goal "finish batch 4", so this plan is written down and built straight away instead of waiting for a separate approval. The defaults below are the ones to push back on after playtesting.
+
+**Built.** 189 unit tests pass; the campaign smoke test runs levels 1–12 into the finale; the finale smoke test passes with the extra enemies; 67 sounds export.
+
+**Deviations from the plan as written:**
+- **Walker plating:** the half-damage plating applies from phase 2 onward (the plan lists it under phase 2). In phase 1 the Walker takes normal damage, so the opening isn't a slog.
+- **The Walker tramples automatons:** it doesn't collide with other automatons, so its own adds can't stop a charge. It still collides with walls and the Technician.
+- **Breath numbers:** the plan gave no damage figure. The cone is 9 m long and ±14° wide, and deals 18 damage every 0.4 s to anyone it sweeps over.
+- **Room pressure starts at 25%**, not zero, so the first warning comes about 30 s into the level rather than 47 s.
+- **Level 10 enemies:** the line's skitterers, two skitterers in the Parts Store, two bruisers and a turret. I first built a hound, a sentry and a drone in place of the second bruiser, and corrected it at verification.
+- **Engine shutdown crash:** one of four campaign smoke runs segfaulted while Godot was shutting down, after every check had passed and the "PASSED" line was printed. The other three exited cleanly. The existing "ObjectDB instances leaked at exit" warning appears on every run.
+
+## Context
+Batches 1–3 built levels 1–9. This batch finishes Act III: the Automaton Assembly Line, the Pressure Exchange and the Engine Yard boss fight against the Steam Walker. It also makes the finale changes from `level_design.md`. After it the campaign runs levels 1–12, then the Great Foundry.
+
+## Defaults I picked (tell me to change any)
+- **Conveyors (level 10):** belts push everything standing on them (the Technician and automatons) at about 3 m/s along the belt. Walking against a belt is slow but possible.
+- **Stamping presses:** each press works on a beat (HazardCycle): a hiss and a shaking head as a warning, then the head slams down. Anyone under it takes 35 damage and is thrown clear. Automatons die under it, the same as under a tram.
+- **The production line:** a spawner at the end of the line turns out a skitterer every few seconds, up to 4 alive at once, until all three drive governors are smashed. Each governor (a spinning flyball governor) takes three wrench blows. Smashing all three jams the line, which stops it spawning and unlocks the lift.
+- **Gear workbench:** one use. F fully repairs the most-worn gear in the rig: durability is restored, friction cleared, and a jam or shatter fixed.
+- **Room pressure (level 11):** a level-wide pressure that climbs about 1.6% per second, shown as a ROOM PRESSURE bar on the HUD only in levels that have it.
+  - Bashing a relief valve with the wrench bleeds off 30%; each valve then needs 6 s to reseal.
+  - Above 75% a klaxon warns you, and the pipe routes marked on the floor start to steam.
+  - At 100% every marked route bursts for 1.5 s: 25 damage plus a shove to anyone standing on one. Pressure then drops back to 40%.
+- **Pressure Exchange gate:** the Main Relief Stack in the last room, a seized valve that takes three blows (the existing JammedValve). The level is a gauntlet of every enemy type, with a guaranteed scrap-gear cache.
+- **Steam Walker (level 12):** 700 HP, slow, `steam_walker` sprite at about 4.5 m tall, and a boss health bar on the HUD.
+  - **Phase 1 (above 66%):** stomps with the bruiser's red ring, scaled up to a 4.5 m radius.
+  - **Phase 2 (66% to 33%):** alternates stomps with a steam breath, a 1 s wind-up and then a cone that sweeps 120° over 1.6 s, damaging anyone inside. It then overheats for 4 s and exposes its boiler valve. Three wrench blows on the valve stagger it for 4 s, and it takes double damage while staggered. Outside a stagger its plating halves the damage it takes.
+  - **Phase 3 (below 33%):** every 12 s it calls in two skitterers and a hound from the yard edges, up to 4 alive at once. It also charges: a red lane telegraphs for 1.2 s, then it rams in a straight line, dealing 35 damage and a big knockback.
+  - **On death** it drops the Foundry Seal (a key item). The Foundry Gate is an ITEM door that takes the seal.
+- **Finale:** the tutorial terminal already moved to level 1 in batch 1, and the elevator victory already ends the campaign. This batch adds hounds, sentries and drones to the Great Foundry, and renumbers its arrival log to Dispatch #13, mentioning the seal.
+
+## Level by level
+### Level 10: Automaton Assembly Line (Act III)
+- Rooms: Parts Store (14×14), Line Floor (30×16: two conveyors, three presses, the line spawner, three governors), Inspection Bay (16×14: the gear workbench), Line Lift (12×12).
+- Enemies: skitterers from the line, two bruisers, a turret.
+- Story: an output ledger counting "guards produced", and the foreman's note about the line building guards instead of workers.
+
+### Level 11: Pressure Exchange (Act III)
+- Rooms: Gauge Gallery (16×14), Relief Stacks (24×18), Manifold Hall (22×16), Exchange Lift (12×12).
+- Five relief valves, four marked burst routes, a scrap-gear cache, and every enemy type.
+- Story: the pressure clerk's last entries, and the Master's order to divert everything to the Gear vault.
+
+### Level 12: The Overseer's Engine Yard (Act III, boss)
+- Rooms: Yard Gate (14×14, terminals), Engine Yard (34×24, the Steam Walker), Foundry Gate (12×12, seal door and lift).
+- Story: the Overseer's commission plate, and the last Guild dispatch before the finale.
+
+## New code
+- **Pure logic, unit-tested:**
+  - `RoomPressure`: rise, bleed, warning and burst, with the reset after a burst.
+  - `HitCounter`: the governors and the boiler valve.
+  - `BossPhases`: phase from health ratio.
+  - `GearItem.repair_fully()`.
+- **World scenes:**
+  - `conveyor`, `stamping_press`, `drive_governor`, `assembly_line` and `gear_workbench`;
+  - `pressure_system`, `relief_valve` and `burst_route`;
+  - `KeyPickup` gains a Foundry Seal look.
+- **Enemy:** `steam_walker`, with its stats.
+- **HUD:** a ROOM PRESSURE bar and a boss bar, driven by new GameState signals.
+- **Sounds (about 11):** conveyor_rattle, press_hiss, press_slam, governor_break, workbench_repair, relief_vent, pressure_klaxon, pipe_burst, walker_stomp, walker_breath, walker_charge.
+- **Dressing themes:** ASSEMBLY, EXCHANGE and ENGINE_YARD.
+
+## Tests
+- Unit tests for the new logic, the three new themes, and a campaign of 12 levels plus the finale.
+- `campaign_smoke_test` extended through levels 10–12:
+  - **Level 10:** a conveyor carries the Technician, a press hurts on its beat, the line spawns until all three governors are smashed and then the lift opens, and the workbench repairs a worn gear once.
+  - **Level 11:** pressure climbs and shows on the HUD, a relief valve bleeds it, a burst hurts someone on a marked route, and the Main Relief Stack opens the lift.
+  - **Level 12:** the Walker changes phase as it is damaged, its stomp hurts, a breath followed by three valve blows staggers it, phase 3 calls in adds, and its death drops the seal, which opens the gate.
+- The exit chain runs 1 → … → 12 → finale. The finale smoke test still passes with the extra enemies.
+
+## Verification
+Import; run the unit tests, both smoke tests and the sound export; capture and review screenshots of every new room and send them. Left for your playtest: belt speed, press timing, how fast the pressure climbs, and the Walker's difficulty.

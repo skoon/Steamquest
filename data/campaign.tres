@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CampaignDef" load_steps=13 format=3]
+[gd_resource type="Resource" script_class="CampaignDef" load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/config/campaign_def.gd" id="1_campaign"]
 [ext_resource type="Script" path="res://scripts/config/level_info.gd" id="2_level"]
@@ -57,6 +57,24 @@ title = "Tesla Generator Hall"
 act_name = "Act III: The Deep Foundry"
 scene_path = "res://scenes/levels/level_09_tesla_generator.tscn"
 
+[sub_resource type="Resource" id="Level_assembly"]
+script = ExtResource("2_level")
+title = "Automaton Assembly Line"
+act_name = "Act III: The Deep Foundry"
+scene_path = "res://scenes/levels/level_10_assembly_line.tscn"
+
+[sub_resource type="Resource" id="Level_exchange"]
+script = ExtResource("2_level")
+title = "Pressure Exchange"
+act_name = "Act III: The Deep Foundry"
+scene_path = "res://scenes/levels/level_11_pressure_exchange.tscn"
+
+[sub_resource type="Resource" id="Level_engine_yard"]
+script = ExtResource("2_level")
+title = "The Overseer's Engine Yard"
+act_name = "Act III: The Deep Foundry"
+scene_path = "res://scenes/levels/level_12_engine_yard.tscn"
+
 [sub_resource type="Resource" id="Level_foundry"]
 script = ExtResource("2_level")
 title = "The Great Foundry"
@@ -65,4 +83,4 @@ scene_path = "res://scenes/world/foundry_level.tscn"
 
 [resource]
 script = ExtResource("1_campaign")
-levels = Array[ExtResource("2_level")]([SubResource("Level_yard"), SubResource("Level_tram"), SubResource("Level_row"), SubResource("Level_cisterns"), SubResource("Level_gardens"), SubResource("Level_seam"), SubResource("Level_tower"), SubResource("Level_archive"), SubResource("Level_generator"), SubResource("Level_foundry")])
+levels = Array[ExtResource("2_level")]([SubResource("Level_yard"), SubResource("Level_tram"), SubResource("Level_row"), SubResource("Level_cisterns"), SubResource("Level_gardens"), SubResource("Level_seam"), SubResource("Level_tower"), SubResource("Level_archive"), SubResource("Level_generator"), SubResource("Level_assembly"), SubResource("Level_exchange"), SubResource("Level_engine_yard"), SubResource("Level_foundry")])

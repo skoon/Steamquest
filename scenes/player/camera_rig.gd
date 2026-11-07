@@ -33,6 +33,7 @@ func _ready() -> void:
 	_target_size = clampf(start_size, min_size, max_size)
 	camera.size = _target_size
 	camera.current = true
+	add_to_group(&"camera_rig")
 	_target = get_node_or_null(target_path) as Node3D
 	assert(_target != null, "CameraRig: target_path must point to a Node3D")
 	global_position = _target.global_position
@@ -47,6 +48,11 @@ func _process(delta: float) -> void:
 	if is_instance_valid(_target):
 		global_position = global_position.lerp(_target.global_position, 1.0 - exp(-follow_speed * delta))
 	camera.size = lerpf(camera.size, _target_size, 1.0 - exp(-10.0 * delta))
+
+
+## Holds the view where it is, e.g. so the Technician can be seen sinking away on the lift.
+func stop_following() -> void:
+	_target = null
 
 
 func _unhandled_input(event: InputEvent) -> void:

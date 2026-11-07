@@ -20,6 +20,10 @@ signal victory
 signal level_started(info: LevelInfo, index: int)
 ## Fired when a level's exit is used; the level root changes to `next_scene_path`.
 signal level_completed(next_scene_path: String)
+## Level-wide room pressure (0..1), or a negative ratio when the level has none.
+signal room_pressure_changed(ratio: float, warning: bool)
+## A boss's health for the HUD bar; a negative ratio hides the bar.
+signal boss_health_changed(boss_name: String, ratio: float)
 
 const STARTING_GEARS: Array[GearItem] = [
 	preload("res://data/gears/drive_cog.tres"),

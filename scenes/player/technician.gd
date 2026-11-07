@@ -22,6 +22,8 @@ var health: float = 0.0
 var pressure: SteamPressure
 var aim_direction: Vector3 = Vector3.FORWARD
 var is_dead: bool = false
+## Standing on a descending exit lift: controls and collisions are off and nothing can hurt.
+var is_riding_lift: bool = false
 
 var _wrench_cooldown: float = 0.0
 var _rivet_cooldown: float = 0.0
@@ -260,7 +262,7 @@ func _tick_timers(delta: float) -> void:
 # --- Damage -----------------------------------------------------------------
 
 func receive_hit(damage: float, knockback: Vector3) -> void:
-	if is_dead or _invulnerable_time > 0.0 or GameState.is_victorious:
+	if is_dead or is_riding_lift or _invulnerable_time > 0.0 or GameState.is_victorious:
 		return
 	health = DamageCalc.apply_to_health(health, damage)
 	_knockback += knockback
@@ -386,6 +388,15 @@ func recover_from_fall(damage: float, respawn: Vector3) -> void:
 	_knockback = Vector3.ZERO
 	_applied_push = Vector3.ZERO
 	global_position = respawn
+
+
+## Hands control to an exit lift, which then moves the Technician itself.
+func ride_lift() -> void:
+	is_riding_lift = true
+	set_physics_process(false)
+	velocity = Vector3.ZERO
+	collision_layer = 0
+	collision_mask = 0
 
 
 ## A carried brass lantern for dark levels.

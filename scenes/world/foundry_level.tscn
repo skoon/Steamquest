@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3]
+[gd_scene load_steps=43 format=3]
 
 [ext_resource type="Script" path="res://scenes/world/foundry_level.gd" id="1_level"]
 [ext_resource type="Script" path="res://scenes/world/foundry_builder.gd" id="2_builder"]
@@ -32,6 +32,9 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/decor/gear_stack.png" id="30_gear_stack"]
 [ext_resource type="Texture2D" path="res://assets/sprites/decor/furniture_grandfather_clock.png" id="31_clock"]
 [ext_resource type="Texture2D" path="res://assets/sprites/decor/automaton_head.png" id="32_head"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/clockwork_hound.tscn" id="33_hound"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/brass_sentry.tscn" id="34_sentry"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/tesla_drone.tscn" id="35_drone"]
 
 [sub_resource type="Environment" id="Env_foundry"]
 background_mode = 1
@@ -119,8 +122,8 @@ grime_density = 0.15
 [sub_resource type="Resource" id="Rumor_arrival"]
 script = ExtResource("4_rumor")
 rumor_id = &"arrival_log"
-title = "Dispatch #10: The Great Foundry"
-body = "Pneumatic dispatch, recovered from the intake tube.\n\nYou made it, Technician. The yard, the tramline, the showroom, the cisterns, the gardens, the coal seam, the mooring tower, the archive and the generator hall: all behind you. This is the Great Foundry itself, where the night shift vanished eleven years ago and the automatons never stopped working.\n\nWhatever Master Hargreaves hid is somewhere past the boiler rooms, the cutting floor and the smelting vats. The Guild is listening for your signal. Find the gear that never grinds, and bring it home."
+title = "Dispatch #13: The Great Foundry"
+body = "Pneumatic dispatch, recovered from the intake tube.\n\nYou made it, Technician. The yard, the tramline, the showroom, the cisterns, the gardens, the coal seam, the mooring tower, the archive, the generator hall, the assembly line, the pressure exchange and the Overseer's yard: all behind you. The Foundry Seal opened the gate, and the Walker that carried it will not get up again. This is the Great Foundry itself, where the night shift vanished eleven years ago and the automatons never stopped working.\n\nEvery guard the Master left is in here with you now: hounds, sentries, coil drones and worse. Whatever he hid is somewhere past the boiler rooms, the cutting floor and the smelting vats. The Guild is listening for your signal. Find the gear that never grinds, and bring it home."
 hint = "The way deeper lies east, through the Boiler Room bulkhead."
 
 [sub_resource type="Resource" id="Rumor_valve"]
@@ -429,3 +432,21 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0.05, 3)
 
 [node name="VatsSkittererB" parent="Enemies" instance=ExtResource("8_skit")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, 0.05, 8)
+
+[node name="BoilerHound" parent="Enemies" instance=ExtResource("33_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.05, 4)
+
+[node name="CuttingHoundA" parent="Enemies" instance=ExtResource("33_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0.05, -5)
+
+[node name="CuttingHoundB" parent="Enemies" instance=ExtResource("33_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0.05, 5)
+
+[node name="CuttingSentry" parent="Enemies" instance=ExtResource("34_sentry")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 25, 0.05, -1)
+
+[node name="VatsDroneA" parent="Enemies" instance=ExtResource("35_drone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0.05, 0)
+
+[node name="VatsDroneB" parent="Enemies" instance=ExtResource("35_drone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53, 0.05, -2)

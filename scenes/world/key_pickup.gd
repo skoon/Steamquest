@@ -8,7 +8,7 @@ const SPIN_SPEED: float = 1.6
 const BOB_HEIGHT: float = 0.15
 const KEY_TEXTURE: Texture2D = preload("res://assets/sprites/decor/wind_up_key.png")
 
-enum Look { WINDING_KEY, BLUEPRINT_PAGE }
+enum Look { WINDING_KEY, BLUEPRINT_PAGE, FOUNDRY_SEAL }
 
 @export var item_id: StringName = &""
 @export var display_name: String = "Winding Key"
@@ -35,6 +35,8 @@ func _ready() -> void:
 	add_child(shape_node)
 	if look == Look.BLUEPRINT_PAGE:
 		_visual = _build_page()
+	elif look == Look.FOUNDRY_SEAL:
+		_visual = _build_seal()
 	else:
 		_visual = Sprite3D.new()
 		(_visual as Sprite3D).texture = KEY_TEXTURE
@@ -92,3 +94,18 @@ func _build_page() -> Node3D:
 	for i: int in 4:
 		Layers.add_mesh(page, line, ink, Vector3(0.0, 0.15 - float(i) * 0.1, 0.005))
 	return page
+
+
+## The Foundry Seal: a brass medallion with the Hargreaves cog in its face.
+func _build_seal() -> Node3D:
+	var seal: Node3D = Node3D.new()
+	var disc: CylinderMesh = CylinderMesh.new()
+	disc.top_radius = 0.32
+	disc.bottom_radius = 0.32
+	disc.height = 0.06
+	var face: MeshInstance3D = Layers.add_mesh(seal, disc, FoundryMaterials.emissive(Color(0.95, 0.72, 0.3), 0.5), Vector3.ZERO)
+	face.rotation = Vector3(PI * 0.5, 0.0, 0.0)
+	var cog: Node3D = GearMeshFactory.build(0.2, 0.1, 10, FoundryMaterials.get_material(FoundryMaterials.Kind.DARK_STEEL))
+	cog.rotation = Vector3(PI * 0.5, 0.0, 0.0)
+	seal.add_child(cog)
+	return seal

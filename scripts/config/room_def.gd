@@ -18,7 +18,7 @@ extends Resource
 ## Gaps in an open-air room's railing: (room-local X centre, side, width), side -1 north / +1 south.
 @export var railing_gaps: PackedVector3Array = PackedVector3Array()
 
-enum DressingTheme { BOILER, CUTTING, SMELTING, VAULT, YARD, TRAM, SHOWROOM, CISTERN, GARDEN, MINE, TOWER, ARCHIVE, GENERATOR }
+enum DressingTheme { BOILER, CUTTING, SMELTING, VAULT, YARD, TRAM, SHOWROOM, CISTERN, GARDEN, MINE, TOWER, ARCHIVE, GENERATOR, ASSEMBLY, EXCHANGE, ENGINE_YARD }
 
 @export_group("Dressing")
 ## Which clutter catalog FoundryProps uses for this room.

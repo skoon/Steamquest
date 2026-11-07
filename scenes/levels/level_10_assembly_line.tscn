@@ -1,0 +1,296 @@
+[gd_scene load_steps=64 format=3]
+
+[ext_resource type="Script" path="res://scenes/world/foundry_level.gd" id="1_level"]
+[ext_resource type="Script" path="res://scenes/world/foundry_builder.gd" id="2_builder"]
+[ext_resource type="Script" path="res://scripts/config/room_def.gd" id="3_room"]
+[ext_resource type="Script" path="res://scripts/resources/rumor_data.gd" id="4_rumor"]
+[ext_resource type="PackedScene" path="res://scenes/player/technician.tscn" id="5_tech"]
+[ext_resource type="PackedScene" path="res://scenes/player/camera_rig.tscn" id="6_cam"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="7_hud"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/scrap_skitterer.tscn" id="8_skit"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/piston_bruiser.tscn" id="9_brute"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/arc_turret.tscn" id="10_turret"]
+[ext_resource type="PackedScene" path="res://scenes/world/rumor_terminal.tscn" id="11_term"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_door.tscn" id="12_door"]
+[ext_resource type="PackedScene" path="res://scenes/world/jammed_valve.tscn" id="13_valve"]
+[ext_resource type="PackedScene" path="res://scenes/world/rotating_cog.tscn" id="15_cog"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_vent.tscn" id="17_vent"]
+[ext_resource type="PackedScene" path="res://scenes/world/elevator.tscn" id="18_elev"]
+[ext_resource type="PackedScene" path="res://scenes/world/decor_prop.tscn" id="19_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/gear_pickup.tscn" id="21_pickup"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/clockwork_hound.tscn" id="22_hound"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/brass_sentry.tscn" id="23_sentry"]
+[ext_resource type="PackedScene" path="res://scenes/world/key_pickup.tscn" id="24_key"]
+[ext_resource type="PackedScene" path="res://scenes/world/tram_crossing.tscn" id="25_tram"]
+[ext_resource type="PackedScene" path="res://scenes/world/water_pool.tscn" id="26_pool"]
+[ext_resource type="PackedScene" path="res://scenes/world/pump_sequence.tscn" id="27_pumpseq"]
+[ext_resource type="PackedScene" path="res://scenes/world/pump_valve.tscn" id="28_pumpvalve"]
+[ext_resource type="PackedScene" path="res://scenes/world/humid_zone.tscn" id="29_humid"]
+[ext_resource type="PackedScene" path="res://scenes/world/enemy_nest.tscn" id="30_nest"]
+[ext_resource type="PackedScene" path="res://scenes/world/wall_lantern_switch.tscn" id="31_lantern"]
+[ext_resource type="PackedScene" path="res://scenes/world/winch.tscn" id="32_winch"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/cistern_warden.tscn" id="33_warden"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/tesla_drone.tscn" id="34_drone"]
+[ext_resource type="PackedScene" path="res://scenes/world/alarm_bell.tscn" id="35_alarm"]
+[ext_resource type="PackedScene" path="res://scenes/world/wind_zone.tscn" id="36_wind"]
+[ext_resource type="PackedScene" path="res://scenes/world/fall_zone.tscn" id="37_fall"]
+[ext_resource type="PackedScene" path="res://scenes/world/propeller.tscn" id="38_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/gangway_lever.tscn" id="39_lever"]
+[ext_resource type="PackedScene" path="res://scenes/world/electric_plates.tscn" id="40_plates"]
+[ext_resource type="PackedScene" path="res://scenes/world/power_router.tscn" id="41_router"]
+[ext_resource type="PackedScene" path="res://scenes/world/junction_switch.tscn" id="42_junction"]
+[ext_resource type="PackedScene" path="res://scenes/world/tesla_coil.tscn" id="43_coil"]
+[ext_resource type="PackedScene" path="res://scenes/world/conveyor.tscn" id="44_conveyor"]
+[ext_resource type="PackedScene" path="res://scenes/world/stamping_press.tscn" id="45_press"]
+[ext_resource type="PackedScene" path="res://scenes/world/drive_governor.tscn" id="46_governor"]
+[ext_resource type="PackedScene" path="res://scenes/world/assembly_line.tscn" id="47_line"]
+[ext_resource type="PackedScene" path="res://scenes/world/gear_workbench.tscn" id="48_bench"]
+[ext_resource type="PackedScene" path="res://scenes/world/pressure_system.tscn" id="49_pressure"]
+[ext_resource type="PackedScene" path="res://scenes/world/relief_valve.tscn" id="50_relief"]
+[ext_resource type="PackedScene" path="res://scenes/world/burst_route.tscn" id="51_route"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/steam_walker.tscn" id="52_walker"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_wood_planks.png" id="t_planks"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_brick.png" id="t_w_brick"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_iron_plate.png" id="t_iron"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_metal_plate.png" id="t_w_metal"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_tile_octagon.png" id="t_octagon"]
+
+[sub_resource type="Environment" id="Env_level"]
+background_mode = 1
+background_color = Color(0.035, 0.03, 0.025, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.85, 0.72, 0.55, 1)
+ambient_light_energy = 0.5
+tonemap_mode = 2
+tonemap_exposure = 1.05
+glow_enabled = true
+glow_intensity = 0.9
+glow_bloom = 0.08
+fog_enabled = true
+fog_light_color = Color(0.26, 0.2, 0.15, 1)
+fog_density = 0.004
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.012
+volumetric_fog_albedo = Color(0.95, 0.8, 0.65, 1)
+volumetric_fog_emission = Color(0.04, 0.025, 0.015, 1)
+
+[sub_resource type="Resource" id="Room_store"]
+script = ExtResource("3_room")
+room_name = "Parts Store"
+width = 14
+depth = 14
+floor_texture = ExtResource("t_planks")
+wall_texture = ExtResource("t_w_brick")
+floor_tint = Color(0.92, 0.85, 0.78, 1)
+light_color = Color(1, 0.78, 0.5, 1)
+light_energy = 2.4
+pillars = PackedVector2Array()
+dressing_theme = 13
+dressing_seed = 1001
+clutter_density = 0.26
+grime_density = 0.45
+
+[sub_resource type="Resource" id="Room_line"]
+script = ExtResource("3_room")
+room_name = "Line Floor"
+width = 30
+depth = 16
+floor_texture = ExtResource("t_iron")
+wall_texture = ExtResource("t_w_metal")
+floor_tint = Color(0.88, 0.85, 0.82, 1)
+light_color = Color(1, 0.8, 0.55, 1)
+light_energy = 2.6
+pillars = PackedVector2Array()
+dressing_theme = 13
+dressing_seed = 1003
+clutter_density = 0.12
+grime_density = 0.5
+
+[sub_resource type="Resource" id="Room_inspection"]
+script = ExtResource("3_room")
+room_name = "Inspection Bay"
+width = 16
+depth = 14
+floor_texture = ExtResource("t_octagon")
+wall_texture = ExtResource("t_w_metal")
+floor_tint = Color(0.92, 0.9, 0.86, 1)
+light_color = Color(1, 0.85, 0.62, 1)
+light_energy = 2.6
+pillars = PackedVector2Array()
+dressing_theme = 13
+dressing_seed = 1007
+clutter_density = 0.22
+grime_density = 0.35
+
+[sub_resource type="Resource" id="Room_lift"]
+script = ExtResource("3_room")
+room_name = "Line Lift"
+width = 12
+depth = 12
+floor_texture = ExtResource("t_iron")
+wall_texture = ExtResource("t_w_brick")
+floor_tint = Color(0.9, 0.85, 0.8, 1)
+light_color = Color(1, 0.75, 0.48, 1)
+light_energy = 2.2
+pillars = PackedVector2Array()
+dressing_theme = 13
+dressing_seed = 1011
+clutter_density = 0.16
+grime_density = 0.4
+
+[sub_resource type="Resource" id="Rumor_line_shift_card"]
+script = ExtResource("4_rumor")
+rumor_id = &"line_shift_card"
+title = "Line Foreman's Shift Card"
+body = "The line never stops. Belts carry stock east and west; ride them if you are in a hurry, but never stand under a press. They hiss and shake a breath before the die comes down, and the die does not care what is on the bed.\n\nThe presses make short work of a misbuilt automaton, too. That is half of what they are for."
+hint = "Conveyors carry you and automatons along. Stamping presses hiss and shudder before they slam: clear the bed, or lure automatons under them."
+
+[sub_resource type="Resource" id="Rumor_governor_order"]
+script = ExtResource("4_rumor")
+rumor_id = &"governor_order"
+title = "Works Order: The Line Governors"
+body = "Since the night of the order the line has been building guards and nothing else. A skitterer every few breaths, round the clock, eleven years.\n\nThe line runs off three flyball governors. Knock all three to pieces and the whole line seizes. It is the only way to stop it. The lift interlock is wired to the line: while the line runs, the lift stays shut."
+hint = "Smash the three drive governors (3 wrench hits each) to jam the line and open the Line Lift."
+
+[sub_resource type="Resource" id="Rumor_inspection_bench_note"]
+script = ExtResource("4_rumor")
+rumor_id = &"inspection_bench_note"
+title = "Note Chalked on the Inspection Bench"
+body = "SPARE TEETH. ONE SET. FOR EMERGENCIES.\n\nThe bench grinder will dress any worn gear back to new. There is enough stock for one job, so choose the worst one. The bench chooses for you if you let it."
+hint = "Use the workbench (F) once to fully rebuild your most worn gear."
+
+[sub_resource type="Resource" id="Rumor_line_output_ledger"]
+script = ExtResource("4_rumor")
+rumor_id = &"line_output_ledger"
+title = "Line Output Ledger"
+body = "A clerk's ledger, still open at the last page, the columns kept on by some automatic pen.\n\n  Week 1: workers' frames 0. GUARDS PRODUCED 1,140\n  Week 2: workers' frames 0. GUARDS PRODUCED 1,152\n  ...\n  Week 571: workers' frames 0. GUARDS PRODUCED 1,149\n\nIn the margin, in a human hand that stops partway: the line was built to make hands for the night shift. Since the order it only makes guards. It has never once asked who for."
+hint = ""
+
+[node name="Level10AssemblyLine" type="Node3D"]
+script = ExtResource("1_level")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_level")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.383022, 0.321394, 0, 0.642788, 0.766044, -0.5, -0.663414, 0.55667, 0, 20, 0)
+light_color = Color(1, 0.85, 0.65, 1)
+light_energy = 0.4
+shadow_enabled = true
+directional_shadow_max_distance = 60.0
+
+[node name="Navigation" type="NavigationRegion3D" parent="."]
+script = ExtResource("2_builder")
+rooms = Array[ExtResource("3_room")]([SubResource("Room_store"), SubResource("Room_line"), SubResource("Room_inspection"), SubResource("Room_lift")])
+start_x = -9.0
+player_path = NodePath("../Technician")
+keep_clear_roots = Array[NodePath]([NodePath("../Doors"), NodePath("../Interactables"), NodePath("../Hazards"), NodePath("../Props"), NodePath("../Enemies")])
+
+[node name="Technician" parent="." instance=ExtResource("5_tech")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.05, 1)
+
+[node name="CameraRig" parent="." instance=ExtResource("6_cam")]
+target_path = NodePath("../Technician")
+
+[node name="HUD" parent="." instance=ExtResource("7_hud")]
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="StoreDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
+door_id = &"store_door"
+condition = 0
+locked_hint = ""
+
+[node name="LineDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 0)
+door_id = &"line_door"
+condition = 0
+locked_hint = ""
+
+[node name="LineLiftDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 0, 0)
+door_id = &"line_lift"
+condition = 1
+locked_hint = "The lift interlock holds while the line runs. Smash the three governors."
+
+[node name="Interactables" type="Node3D" parent="."]
+
+[node name="ShiftTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -5.5)
+rumor = SubResource("Rumor_line_shift_card")
+
+[node name="GovernorTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 9, 0, 7.5)
+rumor = SubResource("Rumor_governor_order")
+
+[node name="BenchTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, 0, -5.5)
+rumor = SubResource("Rumor_inspection_bench_note")
+
+[node name="LedgerTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 1, 0, 5.5)
+rumor = SubResource("Rumor_line_output_ledger")
+
+[node name="GovernorNorth" parent="Interactables" instance=ExtResource("46_governor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 1.5)
+
+[node name="GovernorCentre" parent="Interactables" instance=ExtResource("46_governor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, 0, -0.5)
+
+[node name="GovernorFar" parent="Interactables" instance=ExtResource("46_governor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.5, 0, 2)
+
+[node name="AssemblyLine" parent="Interactables" instance=ExtResource("47_line")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -4.5)
+spawn_scenes = Array[PackedScene]([ExtResource("8_skit")])
+governors = Array[NodePath]([NodePath("../GovernorNorth"), NodePath("../GovernorCentre"), NodePath("../GovernorFar")])
+unlock_id = &"line_lift"
+
+[node name="GearWorkbench" parent="Interactables" instance=ExtResource("48_bench")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, -5.5)
+
+[node name="Elevator" parent="Interactables" instance=ExtResource("18_elev")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 59, 0, 0)
+exit_mode = 1
+
+[node name="Hazards" type="Node3D" parent="."]
+
+[node name="OutboundBelt" parent="Hazards" instance=ExtResource("44_conveyor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, -4.5)
+size = Vector2(22, 2.4)
+
+[node name="ReturnBelt" parent="Hazards" instance=ExtResource("44_conveyor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, 4.5)
+size = Vector2(20, 2.4)
+direction = -1.0
+
+[node name="PressWest" parent="Hazards" instance=ExtResource("45_press")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, -4.5)
+
+[node name="PressEast" parent="Hazards" instance=ExtResource("45_press")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, -4.5)
+phase_offset = 1.8
+
+[node name="PressReturn" parent="Hazards" instance=ExtResource("45_press")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5, 0, 4.5)
+phase_offset = 0.9
+
+[node name="Props" type="Node3D" parent="."]
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="StoreSkittererA" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 3)
+
+[node name="StoreSkittererB" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.05, -3)
+
+[node name="LineBruiser" parent="Enemies" instance=ExtResource("9_brute")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29, 0.05, 0)
+
+[node name="InspectionBruiser" parent="Enemies" instance=ExtResource("9_brute")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 0.05, 2)
+
+[node name="InspectionTurret" parent="Enemies" instance=ExtResource("10_turret")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 0, 5.5)
