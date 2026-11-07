@@ -72,7 +72,7 @@ func _start_ring(telegraph: float) -> void:
 	_telegraph_total = telegraph
 	_ring.visible = true
 	_ring.scale = Vector3(0.3, 1.0, 0.3)
-	(sprite as CharacterSprite).play_attack()
+	sprite.play_attack()
 
 
 func _slam() -> void:

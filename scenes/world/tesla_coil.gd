@@ -4,7 +4,7 @@ extends StaticBody3D
 ## within `burst_radius` out of the air for `stun_seconds` and scorches nearby arc turrets.
 ## It then needs `recharge_time` before it can be overloaded again.
 
-const COIL_TEXTURE: Texture2D = preload("res://assets/sprites/decor/tesla_coil.png")
+const COIL_HEIGHT: float = 2.4
 
 @export var burst_radius: float = 6.0
 @export var stun_seconds: float = 3.0
@@ -15,7 +15,7 @@ const COIL_TEXTURE: Texture2D = preload("res://assets/sprites/decor/tesla_coil.p
 
 var _charge_wait: float = 0.0
 var _light: OmniLight3D
-var _sprite: Sprite3D
+var _sprite: CharacterModel
 var _time: float = 0.0
 
 
@@ -85,13 +85,13 @@ func _build_visuals() -> void:
 	base.bottom_radius = 0.75
 	base.height = 0.3
 	Layers.add_mesh(self, base, FoundryMaterials.get_material(FoundryMaterials.Kind.DARK_STEEL), Vector3(0.0, 0.15, 0.0))
-	_sprite = Sprite3D.new()
-	_sprite.texture = COIL_TEXTURE
-	_sprite.pixel_size = 2.6 / float(COIL_TEXTURE.get_height())
-	_sprite.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
-	_sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
-	_sprite.double_sided = true
-	_sprite.position = Vector3(0.0, 1.45, 0.0)
+	_sprite = CharacterModel.new()
+	_sprite.model_pack = ModelLibrary.PROPS
+	_sprite.model_name = "tesla_coil"
+	_sprite.model_height = COIL_HEIGHT
+	_sprite.rig = CharacterModel.Rig.STATIC
+	_sprite.face_movement = false
+	_sprite.position = Vector3(0.0, 0.3, 0.0)
 	add_child(_sprite)
 	_light = OmniLight3D.new()
 	_light.light_color = Color(0.5, 0.85, 1.0)

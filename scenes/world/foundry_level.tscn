@@ -28,10 +28,6 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_grate.png" id="26_floor_grate"]
 [ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_brick.png" id="27_wall_brick"]
 [ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_tile_octagon.png" id="28_floor_octagon"]
-[ext_resource type="Texture2D" path="res://assets/sprites/decor/boiler_tank.png" id="29_boiler"]
-[ext_resource type="Texture2D" path="res://assets/sprites/decor/gear_stack.png" id="30_gear_stack"]
-[ext_resource type="Texture2D" path="res://assets/sprites/decor/furniture_grandfather_clock.png" id="31_clock"]
-[ext_resource type="Texture2D" path="res://assets/sprites/decor/automaton_head.png" id="32_head"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/clockwork_hound.tscn" id="33_hound"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/brass_sentry.tscn" id="34_sentry"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/tesla_drone.tscn" id="35_drone"]
@@ -298,14 +294,14 @@ phase_offset = 2.0
 
 [node name="BoilerTankA" parent="Props" instance=ExtResource("19_prop")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, 6.5)
-texture = ExtResource("29_boiler")
-pixel_size = 0.016
+model_name = "boiler_tank"
+model_height = 2.3
 collision_radius = 1.1
 
 [node name="BoilerTankB" parent="Props" instance=ExtResource("19_prop")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 7)
-texture = ExtResource("29_boiler")
-pixel_size = 0.014
+model_name = "boiler_tank"
+model_height = 2.3
 collision_radius = 1.0
 
 [node name="BoilerWallCog" parent="Props" instance=ExtResource("15_cog")]
@@ -339,14 +335,14 @@ upright = true
 
 [node name="GearStack" parent="Props" instance=ExtResource("19_prop")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 0, 8.5)
-texture = ExtResource("30_gear_stack")
-pixel_size = 0.012
+model_name = "gear_stack"
+model_height = 2.0
 collision_radius = 0.9
 
 [node name="ScrapHead" parent="Props" instance=ExtResource("19_prop")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.8, 0, -9.5)
-texture = ExtResource("32_head")
-pixel_size = 0.009
+model_name = "automaton_head"
+model_height = 1.5
 collision_radius = 0.7
 
 [node name="VatWest" parent="Props" instance=ExtResource("20_vat")]
@@ -388,8 +384,9 @@ material_kind = 1
 
 [node name="GrandfatherClock" parent="Props" instance=ExtResource("19_prop")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 73, 0, 5.5)
-texture = ExtResource("31_clock")
-pixel_size = 0.016
+model_pack = "res://assets/models/steampunk_furniture_doors.glb"
+model_name = "furniture_grandfather_clock"
+model_height = 2.8
 collision_radius = 0.7
 
 [node name="Enemies" type="Node3D" parent="."]

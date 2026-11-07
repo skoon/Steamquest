@@ -6,7 +6,7 @@ extends Area3D
 
 const SPIN_SPEED: float = 1.6
 const BOB_HEIGHT: float = 0.15
-const KEY_TEXTURE: Texture2D = preload("res://assets/sprites/decor/wind_up_key.png")
+const KEY_HEIGHT: float = 0.7
 
 enum Look { WINDING_KEY, BLUEPRINT_PAGE, FOUNDRY_SEAL }
 
@@ -38,12 +38,7 @@ func _ready() -> void:
 	elif look == Look.FOUNDRY_SEAL:
 		_visual = _build_seal()
 	else:
-		_visual = Sprite3D.new()
-		(_visual as Sprite3D).texture = KEY_TEXTURE
-		(_visual as Sprite3D).pixel_size = 0.006
-		(_visual as Sprite3D).alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
-		(_visual as Sprite3D).double_sided = true
-		(_visual as Sprite3D).shaded = false
+		_visual = ModelLibrary.instance_fitted(ModelLibrary.PROPS, "wind_up_key", KEY_HEIGHT, true)
 	_visual.position = Vector3(0.0, 0.9, 0.0)
 	add_child(_visual)
 	var plinth: CylinderMesh = CylinderMesh.new()

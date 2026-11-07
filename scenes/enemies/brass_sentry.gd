@@ -55,6 +55,7 @@ func _on_ready() -> void:
 	start_facing.y = 0.0
 	facing = start_facing.normalized() if start_facing.length_squared() > 0.0001 else Vector3.FORWARD
 	_build_shield()
+	sprite.face_immediately(facing)
 	if patrol_points.size() >= 2:
 		_route = PatrolRoute.new(patrol_points)
 		_build_sight_cone()
@@ -141,7 +142,7 @@ func _deflect(knockback: Vector3) -> void:
 
 func _stagger() -> void:
 	if phase == Phase.TELEGRAPH:
-		(sprite as CharacterSprite).play(&"idle")
+		sprite.play(&"idle")
 	phase = Phase.STAGGER
 	_phase_time = stagger_time
 	_thrust_marker.visible = false
@@ -213,7 +214,7 @@ func _update_behavior(delta: float) -> Vector3:
 				phase = Phase.TELEGRAPH
 				_phase_time = stats.telegraph_time
 				_thrust_marker.visible = true
-				(sprite as CharacterSprite).play_attack()
+				sprite.play_attack()
 				return Vector3.ZERO
 			if distance <= stats.attack_range * 0.8:
 				return Vector3.ZERO
@@ -252,6 +253,7 @@ func _on_death() -> void:
 
 func _update_shield_pose() -> void:
 	_shield_pivot.global_rotation = Vector3(0.0, atan2(facing.x, facing.z), 0.0)
+	sprite.face(facing)
 
 
 func _build_shield() -> void:
@@ -309,7 +311,7 @@ func _build_shield() -> void:
 
 
 ## A glowing firebox on the sentry's back, turning with the shield, so its back is easy to read
-## even though the sprite always faces the camera.
+## from any camera angle.
 func _build_back_boiler() -> void:
 	var copper: StandardMaterial3D = FoundryMaterials.get_material(FoundryMaterials.Kind.COPPER_OXIDIZED)
 	var tank: CylinderMesh = CylinderMesh.new()

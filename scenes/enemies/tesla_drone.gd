@@ -98,7 +98,7 @@ func _update_behavior(delta: float) -> Vector3:
 	if _attack_cooldown <= 0.0 and _distance_to_target() <= stats.attack_range and _can_see_target(stats.attack_range):
 		phase = Phase.CHARGE
 		_phase_time = stats.telegraph_time
-		(sprite as CharacterSprite).play_attack()
+		sprite.play_attack()
 		Audio.play_at(&"turret_charge", global_position + Vector3.UP * hover)
 		return Vector3.ZERO
 	return _orbit_velocity()
@@ -137,9 +137,7 @@ func _apply_movement(delta: float, desired: Vector3) -> void:
 	velocity = Vector3(desired.x + _knockback.x + push_velocity.x, 0.0, desired.z + _knockback.z + push_velocity.z)
 	push_velocity = Vector3.ZERO
 	move_and_slide()
-	var character: CharacterSprite = sprite as CharacterSprite
-	if character != null:
-		character.play_locomotion(_screen_velocity(desired))
+	sprite.play_locomotion(desired)
 
 
 func _on_death() -> void:

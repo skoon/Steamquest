@@ -623,3 +623,51 @@ Batches 1–3 built levels 1–9. This batch finishes Act III: the Automaton Ass
 
 ## Verification
 Import; run the unit tests, both smoke tests and the sound export; capture and review screenshots of every new room and send them. Left for your playtest: belt speed, press timing, how fast the pressure climbs, and the Walker's difficulty.
+
+# Phase 4: 3D models replace the 2D sprites (branch `3dmodels`, approved, built)
+
+## Context
+`assets/models/` holds five GLB packs. Each pack is one scene with many models laid side by side as named root nodes (for example `steampunk_props.glb` has 20 roots: `boiler_tank`, `tesla_coil`, `propeller`, `steam_walker`...). The characters and enemies are rigged as **node hierarchies, not skeletons** (`<name>_Rig_pelvis / _Rig_leg_l / _Rig_arm_r / _Rig_head`...; the hound has four legs, a tail and a jaw; the spider has eight legs). Their only animation is a 9.5 s "Showcase" clip in which almost every track has two keys, so it is effectively a static pose with a little torso breathing. There are no walk, attack or death clips.
+
+## What gets replaced
+| Today (2D) | Becomes (3D model) | File |
+| --- | --- | --- |
+| Technician `player_woman_athletic` sprite | `player_woman_athletic` | players_female |
+| Scrap Skitterer `enemy_steam_spider` | `enemy_steam_spider` | enemies |
+| Piston Bruiser and Cistern Warden `enemy_diver_brute` | `enemy_diver_brute` (Warden keeps its tint and larger scale) | enemies |
+| Clockwork Hound | `enemy_clockwork_hound` | enemies |
+| Brass Sentry | `enemy_brass_sentry` | enemies |
+| Tesla Drone | `enemy_tesla_drone` | enemies |
+| Arc Turret (`tesla_coil.png`) | `tesla_coil` | props |
+| Steam Walker boss (`steam_walker.png`) | `steam_walker` | props |
+| Level DecorProps: boiler tank, grandfather clock, airship, gear stack, automaton head | same names | props / furniture_doors |
+| FoundryProps furniture: sofa, armchair, cabinet, bookcase, clock, desk | `furniture_*` | furniture_doors |
+| KeyPickup winding key | `wind_up_key` | props |
+| Propeller blades | `propeller` (spins on its own axis) | props |
+| World Tesla Coil | `tesla_coil` | props |
+
+**Not changing:** floor and wall tile textures (there are no models for them), the HUD, and the loading-screen gear (a 2D UI image).
+
+## Approach
+1. **`ModelLibrary`** (`scripts/core/model_library.gd`, static): loads each GLB once, caches it, and returns a fresh copy of one named root with its root translation zeroed, optionally scaled so its height (from the merged mesh AABB) matches a target height and its feet sit on y = 0. It asserts loudly when a model name is missing.
+2. **`CharacterModel`** (`scripts/core/character_model.gd`, `extends Node3D`) replaces `CharacterSprite` with the same public API that the gameplay code already calls: `play_locomotion()`, `play_attack()`, `play_death()`, `flash_hit()`, `play(&"idle")`, `animation`, `frame`, the `frame_changed` signal (footstep sounds keep working), `speed_scale` and a `modulate` property (tints apply through a `material_overlay`). Animations are procedural on the rig nodes, found by name suffix: legs swing (bipeds alternate two legs, the hound swings diagonal pairs, the spider ripples its eight legs), arms counter-swing, the right arm chops for the attack, a small bob and breathing sway for idle, and the death topples the model over. The model yaws to face its world move direction (and for the Technician, its aim direction).
+3. **`EnemyBase.sprite`** stays as the property name so subclasses and the smoke tests keep working, but it becomes a `Node3D` and uses `modulate` through `CharacterModel`. The Brass Sentry model yaws to its `facing`, so its real back is visible; the glowing back boiler and floor arc stay because they still help the readability that playtest feedback asked for. The Steam Walker and Arc Turret get a static-model variant (`StaticModel` with `modulate` and hit flash) in place of their `Sprite3D`.
+4. **Decor:** `DecorProp` gets a `model_file` / `model_name` / `model_height` (the texture export goes away), and the 12 level scenes swap their decor entries. `FoundryProps._sprite_prop` becomes `_model_prop`.
+5. **Shading:** models are lit by the scene's lights (sprites were unshaded), which suits the dark lantern levels; models cast real shadows, so the blob shadow stays only under flying things such as the drone.
+6. The old PNGs stay in `assets/sprites` (I won't delete anything); only references change.
+
+## Defaults I picked (tell me to change any)
+- Technician stays `player_woman_athletic` (the other 17 outfits are unused for now).
+- Procedural animation in code, rather than authoring clips in Blender.
+- Sizes match today's sprites on screen (Technician about 1.8 m, hound about 0.9 m, Walker about 4.5 m).
+- Doors keep their current procedural 3D look. The six door models could replace the `SteamDoor` frame and leaf as a follow-up.
+
+## Tests
+- Unit tests: `ModelLibrary` (every model name the game uses exists, fitting to a height, feet on the floor, cache reuse) and `CharacterModel` (rig parts found for each enemy type, state changes idle → walk → attack → idle, death is one-shot, `frame_changed` fires during walk, facing yaw follows velocity, modulate and flash).
+- Existing smoke tests updated where they read sprite properties (for example the drone hover check) and run again for all 13 levels.
+
+## Verification
+Import the GLBs headless; run the unit tests, the smoke test and the campaign smoke test; capture screenshots of a room from each act plus the Walker fight, and send them. Left for your playtest: how the procedural animation feels and whether any model needs a size tweak.
+
+## Found during the build
+The GLB materials carry names (SP_MAT_BRASS, SP_MAT_IRON, 42 in all) but no base colours, so everything imported white. `ModelPalette` (`scripts/core/model_palette.gd`) gives each named material a colour and roughness when a pack is first loaded, and asserts if a pack uses a material it has no colour for. If the GLBs are re-exported with colours, the palette can be removed.

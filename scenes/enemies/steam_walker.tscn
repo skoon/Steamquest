@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/enemies/steam_walker.gd" id="1_walker"]
 [ext_resource type="Resource" path="res://data/enemies/steam_walker_stats.tres" id="2_stats"]
-[ext_resource type="Texture2D" path="res://assets/sprites/enemies/steam_walker.png" id="3_tex"]
+[ext_resource type="Script" path="res://scripts/core/character_model.gd" id="3_tex"]
 [ext_resource type="PackedScene" path="res://scenes/world/key_pickup.tscn" id="4_seal"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/scrap_skitterer.tscn" id="5_skit"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/clockwork_hound.tscn" id="6_hound"]
@@ -30,8 +30,13 @@ target_desired_distance = 1.2
 height = 4.0
 radius = 1.6
 
-[node name="Sprite" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 0)
-pixel_size = 0.0225
-alpha_cut = 1
-texture = ExtResource("3_tex")
+[node name="Model" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0, 0)
+script = ExtResource("3_tex")
+model_pack = "res://assets/models/steampunk_props.glb"
+model_name = "steam_walker"
+model_height = 4.5
+rig = 4
+cycle_rate = 0.8
+stride_speed = 2.6
+turn_speed = 2.5

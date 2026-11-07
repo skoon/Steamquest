@@ -7,11 +7,13 @@ const GRAVITY: float = 20.0
 const HUD_BROADCAST_INTERVAL: float = 0.1
 const KNOCKBACK_DECAY: float = 30.0
 const SWING_FX_TIME: float = 0.14
+## After a swing or shot the model keeps facing the aim this long, even while moving.
+const AIM_FACE_TIME: float = 0.45
 
 @export var stats: TechnicianStats
 @export var rivet_scene: PackedScene
 
-@onready var sprite: CharacterSprite = $Sprite
+@onready var sprite: CharacterModel = $Model
 @onready var aim_pivot: Node3D = $AimPivot
 @onready var wrench_hitbox: Area3D = $AimPivot/WrenchHitbox
 @onready var wrench_shape: CollisionShape3D = $AimPivot/WrenchHitbox/CollisionShape3D
@@ -39,6 +41,7 @@ var _last_prompt: String = ""
 var _rig_signature: String = ""
 var _was_overclocked: bool = false
 var _swing_time_left: float = 0.0
+var _aim_face_time: float = 0.0
 var _swing_mesh: MeshInstance3D
 var _dash_steam: GPUParticles3D
 var _golden_light: OmniLight3D
@@ -209,6 +212,7 @@ func _swing_wrench(rig: FrictionModel) -> void:
 	if clang_at != Vector3.INF:
 		Audio.play_at(&"wrench_clang", clang_at)
 	sprite.play_attack()
+	_aim_face_time = AIM_FACE_TIME
 	_swing_time_left = SWING_FX_TIME
 	_swing_mesh.visible = true
 
@@ -227,6 +231,7 @@ func _fire_rivet(rig: FrictionModel) -> void:
 	Audio.play_at(&"rivet_fire", muzzle.global_position)
 	rig.apply_work(FrictionModel.Socket.ARM, stats.arm_work_per_attack * 0.5, GameState.rng.randf())
 	sprite.play_attack()
+	_aim_face_time = AIM_FACE_TIME
 
 
 func _try_vent(rig: FrictionModel) -> void:
@@ -257,6 +262,7 @@ func _tick_timers(delta: float) -> void:
 	_dash_time_left = maxf(_dash_time_left - delta, 0.0)
 	_vent_cooldown = maxf(_vent_cooldown - delta, 0.0)
 	_invulnerable_time = maxf(_invulnerable_time - delta, 0.0)
+	_aim_face_time = maxf(_aim_face_time - delta, 0.0)
 
 
 # --- Damage -----------------------------------------------------------------
@@ -305,11 +311,18 @@ func _update_interaction() -> void:
 # --- Presentation -------------------------------------------------------------
 
 func _update_animation() -> void:
-	var axes: Array[Vector3] = _camera_axes()
 	var flat_velocity: Vector3 = Vector3(velocity.x, 0.0, velocity.z)
-	var screen_velocity: Vector2 = Vector2(flat_velocity.dot(axes[1]), -flat_velocity.dot(axes[0]))
-	sprite.play_locomotion(screen_velocity)
+	sprite.play_locomotion(flat_velocity)
+	if not is_dead:
+		sprite.face(facing_for(flat_velocity, aim_direction, _aim_face_time > 0.0))
 	sprite.speed_scale = GameState.rig.speed_multiplier(FrictionModel.Socket.DRIVE)
+
+
+## The model faces where it is walking, or the aim when standing still or just after attacking.
+static func facing_for(flat_velocity: Vector3, aim: Vector3, recently_attacked: bool) -> Vector3:
+	if recently_attacked or flat_velocity.length() < CharacterModel.MOVING_SPEED:
+		return aim
+	return flat_velocity.normalized()
 
 
 func _update_swing_fx(delta: float) -> void:

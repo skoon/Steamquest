@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scenes/enemies/arc_turret.gd" id="1_turret"]
-[ext_resource type="Texture2D" path="res://assets/sprites/decor/tesla_coil.png" id="2_tex"]
+[ext_resource type="Script" path="res://scripts/core/character_model.gd" id="2_tex"]
 [ext_resource type="Resource" path="res://data/enemies/arc_turret_stats.tres" id="3_stats"]
 [ext_resource type="PackedScene" path="res://scenes/world/gear_pickup.tscn" id="4_pickup"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/lightning_bolt.tscn" id="5_bolt"]
@@ -39,13 +39,14 @@ shape = SubResource("Shape_body")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
 mesh = SubResource("Mesh_base")
 
-[node name="Sprite" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
-pixel_size = 0.012
-billboard = 1
-double_sided = true
-alpha_cut = 1
-texture = ExtResource("2_tex")
+[node name="Model" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+script = ExtResource("2_tex")
+model_pack = "res://assets/models/steampunk_props.glb"
+model_name = "tesla_coil"
+model_height = 2.0
+rig = 4
+face_movement = false
 
 [node name="CoilLight" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)

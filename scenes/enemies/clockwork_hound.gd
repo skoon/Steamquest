@@ -75,7 +75,7 @@ func _update_behavior(delta: float) -> Vector3:
 				_phase_time = LUNGE_DURATION
 				_lunge_direction = _direction_to_target()
 				_bit_this_lunge = false
-				(sprite as CharacterSprite).play_attack()
+				sprite.play_attack()
 				Audio.play_at(&"hound_lunge", global_position)
 			return Vector3.ZERO
 		Phase.LUNGE:

@@ -28,7 +28,6 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_parquet.png" id="t_parquet"]
 [ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_wood_panel.png" id="t_w_wood"]
 [ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_plaster.png" id="t_w_plaster"]
-[ext_resource type="Texture2D" path="res://assets/sprites/decor/furniture_grandfather_clock.png" id="t_clock"]
 
 [sub_resource type="Environment" id="Env_level"]
 background_mode = 1
@@ -240,14 +239,16 @@ upright = true
 
 [node name="GalleryClockA" parent="Props" instance=ExtResource("19_prop")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 7.5)
-texture = ExtResource("t_clock")
-pixel_size = 0.016
+model_pack = "res://assets/models/steampunk_furniture_doors.glb"
+model_name = "furniture_grandfather_clock"
+model_height = 2.8
 collision_radius = 0.7
 
 [node name="GalleryClockB" parent="Props" instance=ExtResource("19_prop")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0, 7.5)
-texture = ExtResource("t_clock")
-pixel_size = 0.016
+model_pack = "res://assets/models/steampunk_furniture_doors.glb"
+model_name = "furniture_grandfather_clock"
+model_height = 2.8
 collision_radius = 0.7
 
 [node name="Enemies" type="Node3D" parent="."]

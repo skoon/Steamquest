@@ -46,7 +46,6 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_metal_plate.png" id="t_w_metal"]
 [ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_grate.png" id="t_grate"]
 [ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_iron_plate.png" id="t_iron"]
-[ext_resource type="Texture2D" path="res://assets/sprites/decor/airship.png" id="t_airship"]
 
 [sub_resource type="Environment" id="Env_level"]
 background_mode = 1
@@ -270,8 +269,8 @@ builder_path = NodePath("../../Navigation")
 
 [node name="SkylarkAirship" parent="Props" instance=ExtResource("19_prop")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 7, -26)
-texture = ExtResource("t_airship")
-pixel_size = 0.05
+model_name = "airship"
+model_height = 5.5
 has_collision = false
 
 [node name="Enemies" type="Node3D" parent="."]

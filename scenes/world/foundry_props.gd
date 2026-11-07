@@ -8,12 +8,6 @@ const P_BAND: int = DressingLayout.Placement.WALL_BAND
 const P_MOUNT: int = DressingLayout.Placement.WALL_MOUNT
 const P_FLOOR: int = DressingLayout.Placement.FLOOR
 
-const SOFA_TEXTURE: Texture2D = preload("res://assets/sprites/decor/furniture_sofa.png")
-const ARMCHAIR_TEXTURE: Texture2D = preload("res://assets/sprites/decor/furniture_armchair.png")
-const CABINET_TEXTURE: Texture2D = preload("res://assets/sprites/decor/furniture_cabinet.png")
-const BOOKCASE_TEXTURE: Texture2D = preload("res://assets/sprites/decor/furniture_bookcase.png")
-const CLOCK_TEXTURE: Texture2D = preload("res://assets/sprites/decor/furniture_grandfather_clock.png")
-const DESK_TEXTURE: Texture2D = preload("res://assets/sprites/decor/furniture_desk.png")
 
 static var _mesh_cache: Dictionary = {}
 
@@ -351,7 +345,7 @@ static func build(kind: StringName, rng: RandomNumberGenerator) -> Node3D:
 		&"mail_sacks": _mail_sacks(root, rng)
 		&"hand_cart": _hand_cart(root, rng)
 		&"pallet_stack": _pallet_stack(root, rng)
-		&"dispatch_desk": _sprite_prop(root, DESK_TEXTURE, 0.008, 0.85, 1.0)
+		&"dispatch_desk": _model_prop(root, "furniture_desk", 1.25, 0.85, 1.0)
 		&"wall_lantern": _wall_lantern(root, rng)
 		&"notice_board": _notice_board(root, rng)
 		&"straw": _straw(root, rng)
@@ -364,11 +358,11 @@ static func build(kind: StringName, rng: RandomNumberGenerator) -> Node3D:
 		&"tickets": _tickets(root, rng)
 		&"display_case": _display_case(root, rng)
 		&"clock_pedestal": _clock_pedestal(root, rng)
-		&"sofa": _sprite_prop(root, SOFA_TEXTURE, 0.009, 0.9, 1.0)
-		&"armchair": _sprite_prop(root, ARMCHAIR_TEXTURE, 0.007, 0.55, 1.0)
-		&"cabinet": _sprite_prop(root, CABINET_TEXTURE, 0.008, 0.55, 1.6)
-		&"bookcase": _sprite_prop(root, BOOKCASE_TEXTURE, 0.01, 0.6, 2.0)
-		&"grandfather_clock": _sprite_prop(root, CLOCK_TEXTURE, 0.011, 0.45, 2.2)
+		&"sofa": _model_prop(root, "furniture_sofa", 1.25, 0.9, 1.0)
+		&"armchair": _model_prop(root, "furniture_armchair", 1.3, 0.55, 1.0)
+		&"cabinet": _model_prop(root, "furniture_cabinet", 1.65, 0.55, 1.6)
+		&"bookcase": _model_prop(root, "furniture_bookcase", 2.05, 0.6, 2.0)
+		&"grandfather_clock": _model_prop(root, "furniture_grandfather_clock", 2.25, 0.45, 2.2)
 		&"placard": _placard(root, rng)
 		&"glass_shards": _glass_shards(root, rng)
 		&"pump_engine": _pump_engine(root, rng)
@@ -947,18 +941,9 @@ static func _ingot_single(root: Node3D, rng: RandomNumberGenerator) -> void:
 
 # --- Act I: dispatch yard, tramline, showroom ------------------------------------------------
 
-## Billboarded furniture sprite from assets/sprites/decor, standing on the floor, with a collider.
-static func _sprite_prop(root: Node3D, texture: Texture2D, pixel_size: float, radius: float, height: float) -> void:
-	var sprite: Sprite3D = Sprite3D.new()
-	sprite.texture = texture
-	sprite.pixel_size = pixel_size
-	sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
-	sprite.double_sided = true
-	sprite.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	sprite.position = Vector3(0.0, float(texture.get_height()) * pixel_size * 0.5, 0.0)
-	root.add_child(sprite)
-	root.add_child(Fx.make_blob_shadow(radius))
+## Furniture model from the furniture pack, front (+Z) facing into the room, with a collider.
+static func _model_prop(root: Node3D, model_name: String, model_height: float, radius: float, height: float) -> void:
+	root.add_child(ModelLibrary.instance_fitted(ModelLibrary.FURNITURE, model_name, model_height))
 	Layers.add_static_cylinder(root, radius, height, Vector3.ZERO)
 
 

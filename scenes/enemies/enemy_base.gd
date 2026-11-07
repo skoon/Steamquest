@@ -21,7 +21,7 @@ const DEATH_LINGER: float = 0.7
 @export var step_min_interval: float = 0.12
 
 @onready var nav_agent: NavigationAgent3D = $NavigationAgent3D
-@onready var sprite: SpriteBase3D = $Sprite
+@onready var sprite: CharacterModel = $Model
 
 var health: float = 0.0
 var is_dead: bool = false
@@ -45,14 +45,12 @@ func _ready() -> void:
 	nav_agent.max_speed = stats.move_speed
 	add_child(Fx.make_blob_shadow(_shadow_radius()))
 	if not step_sounds.is_empty():
-		var character: CharacterSprite = sprite as CharacterSprite
-		assert(character != null, "%s: step_sounds need a CharacterSprite" % name)
-		character.frame_changed.connect(_on_sprite_frame_changed)
+		sprite.frame_changed.connect(_on_sprite_frame_changed)
 	_on_ready()
 
 
 func _on_sprite_frame_changed() -> void:
-	if is_dead or not (sprite.animation == &"walk" or sprite.animation == &"side_walk"):
+	if is_dead or sprite.animation != &"walk":
 		return
 	if not step_frames.has(sprite.frame):
 		return
@@ -125,9 +123,7 @@ func _apply_movement(delta: float, desired: Vector3) -> void:
 	push_velocity = Vector3.ZERO
 	velocity.y = 0.0 if is_on_floor() else velocity.y - GRAVITY * delta
 	move_and_slide()
-	var character: CharacterSprite = sprite as CharacterSprite
-	if character != null:
-		character.play_locomotion(_screen_velocity(desired))
+	sprite.play_locomotion(desired)
 
 
 ## Velocity toward the target along the navigation path.
@@ -168,16 +164,6 @@ func _can_see_target(max_range: float) -> bool:
 	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()
 
 
-func _screen_velocity(world_velocity: Vector3) -> Vector2:
-	var camera: Camera3D = get_viewport().get_camera_3d()
-	if camera == null:
-		return Vector2.ZERO
-	var basis: Basis = camera.global_basis
-	var forward: Vector3 = Vector3(-basis.z.x, 0.0, -basis.z.z).normalized()
-	var right: Vector3 = Vector3(basis.x.x, 0.0, basis.x.z).normalized()
-	return Vector2(world_velocity.dot(right), -world_velocity.dot(forward))
-
-
 ## Deals this automaton's attack to the Technician.
 func _hit_target(damage: float, knockback_force: float) -> void:
 	var push: Vector3 = DamageCalc.knockback(global_position, target.global_position, knockback_force, 0.0)
@@ -199,19 +185,9 @@ func _take_hit(damage: float, knockback: Vector3) -> void:
 	is_aggro = true
 	health = DamageCalc.apply_to_health(health, DamageCalc.mitigated_damage(damage, stats.armor))
 	_knockback += knockback * (1.0 - stats.knockback_resistance)
-	var character: CharacterSprite = sprite as CharacterSprite
-	if character != null:
-		character.flash_hit()
-	else:
-		_flash_static_sprite()
+	sprite.flash_hit()
 	if health <= 0.0:
 		_die()
-
-
-func _flash_static_sprite() -> void:
-	sprite.modulate = Color(1.0, 0.4, 0.35)
-	var tween: Tween = create_tween()
-	tween.tween_property(sprite, "modulate", Color.WHITE, 0.15)
 
 
 func _die() -> void:
@@ -222,9 +198,7 @@ func _die() -> void:
 	Fx.sparks(get_parent(), global_position + Vector3.UP * 0.8)
 	Fx.steam_puff(get_parent(), global_position + Vector3.UP * 0.5)
 	Audio.play_at(&"enemy_death", global_position)
-	var character: CharacterSprite = sprite as CharacterSprite
-	if character != null:
-		character.play_death()
+	sprite.play_death()
 	_maybe_drop_gear()
 	died.emit(self)
 	var tween: Tween = create_tween()

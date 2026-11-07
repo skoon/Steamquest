@@ -67,7 +67,6 @@ func _on_ready() -> void:
 	assert(not add_scenes.is_empty(), "SteamWalker: add_scenes missing")
 	assert(not add_spawn_points.is_empty(), "SteamWalker: add_spawn_points missing")
 	valve_counter = HitCounter.new(VALVE_HITS)
-	(sprite as Sprite3D).billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
 	_ring = _make_flat_mesh(CylinderMesh.new())
 	(_ring.mesh as CylinderMesh).top_radius = 1.0
 	(_ring.mesh as CylinderMesh).bottom_radius = 1.0

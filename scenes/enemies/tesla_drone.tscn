@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scenes/enemies/tesla_drone.gd" id="1_drone"]
-[ext_resource type="Script" path="res://scripts/core/character_sprite.gd" id="2_sprite"]
+[ext_resource type="Script" path="res://scripts/core/character_model.gd" id="2_sprite"]
 [ext_resource type="Resource" path="res://data/enemies/tesla_drone_stats.tres" id="3_stats"]
 [ext_resource type="PackedScene" path="res://scenes/world/gear_pickup.tscn" id="4_pickup"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/lightning_bolt.tscn" id="5_bolt"]
@@ -24,13 +24,15 @@ shape = SubResource("Shape_body")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 
-[node name="Sprite" type="AnimatedSprite3D" parent="."]
+[node name="Model" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0)
-pixel_size = 0.0075
 script = ExtResource("2_sprite")
-looping_animations = PackedStringArray("idle", "walk")
-sprite_prefix = "res://assets/sprites/enemies/enemy_tesla_drone"
-animation_fps = 10.0
+model_pack = "res://assets/models/steampunk_enemies.glb"
+model_name = "enemy_tesla_drone"
+model_height = 1.1
+rig = 3
+center_vertically = true
+stride_speed = 5.0
 
 [node name="CoilLight" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4, 0)

@@ -74,3 +74,15 @@
   - [ ] Scott playtests levels 10–12 and the Walker fight
 - [x] Fit and finish: title-screen button hover (brighter fill, gold border, grow on hover/focus) and a Loading screen with a turning gear after New Game / Continue and between levels
 - [x] Fit and finish: exit lift descends with the Technician aboard; Esc pause menu (Resume / Quit to Title / Quit Game)
+
+## Phase 4: 3D models (branch 3dmodels)
+- [x] Inventory GLB packs and sprite usages; plan written (implementation_plan.md, Phase 4)
+- [x] Scott approves the plan
+- [x] ModelLibrary + tests
+- [x] ModelPalette: the GLB materials were exported without base colours (all white); colours assigned by material name
+- [x] CharacterModel (procedural rig animation) + tests
+- [x] Technician and enemies swapped to models
+- [x] Arc Turret and Steam Walker static models
+- [x] DecorProp, FoundryProps furniture, KeyPickup, Propeller, Tesla Coil swapped
+- [x] Unit tests (208) + smoke tests pass; screenshots reviewed
+- [ ] Scott playtests the 3D look and animation

@@ -4,7 +4,6 @@ extends Node3D
 ## blows a steady stream along its facing (local -Z) that shoves bodies in front of it.
 
 const HIT_INTERVAL_MSEC: int = 700
-const PROPELLER_TEXTURE: Texture2D = preload("res://assets/sprites/decor/propeller.png")
 
 @export var blade_radius: float = 1.4
 @export var spin_speed: float = 9.0
@@ -15,7 +14,7 @@ const PROPELLER_TEXTURE: Texture2D = preload("res://assets/sprites/decor/propell
 ## Clutter keeps this far away.
 @export var radius: float = 1.8
 
-var _blades: Sprite3D
+var _blades: Node3D
 var _contact: Area3D
 var _stream: Area3D
 var _sound_timer: float = 0.0
@@ -82,10 +81,6 @@ func _build_visuals() -> void:
 	var engine: MeshInstance3D = Layers.add_mesh(self, housing, brass, Vector3(0.0, 1.6, 0.45))
 	engine.rotation = Vector3(PI * 0.5, 0.0, 0.0)
 	Layers.add_static_box(self, Vector3(0.6, 1.6, 0.6), Vector3(0.0, 0.8, 0.3))
-	_blades = Sprite3D.new()
-	_blades.texture = PROPELLER_TEXTURE
-	_blades.pixel_size = blade_radius * 2.0 / float(PROPELLER_TEXTURE.get_width())
-	_blades.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
-	_blades.double_sided = true
+	_blades = ModelLibrary.instance_fitted(ModelLibrary.PROPS, "propeller", blade_radius * 2.0, true)
 	_blades.position = Vector3(0.0, 1.6, -0.05)
 	add_child(_blades)
