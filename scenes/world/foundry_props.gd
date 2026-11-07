@@ -165,6 +165,44 @@ static func catalog(theme: RoomDef.DressingTheme) -> Array[Dictionary]:
 				_spec(&"coal_lumps", 0.3, 2.5, P_FLOOR, false),
 				_spec(&"slag_bits", 0.3, 1.0, P_FLOOR, false),
 			])
+		RoomDef.DressingTheme.TOWER:
+			entries.append_array([
+				_spec(&"mooring_bollard", 0.5, 2.0, P_BAND, true),
+				_spec(&"rope_coil", 0.55, 2.0, P_BAND, true),
+				_spec(&"crate", 0.65, 1.5, P_BAND, true),
+				_spec(&"mail_sacks", 0.7, 1.0, P_BAND, true),
+				_spec(&"barrel", 0.45, 1.0, P_BAND, true),
+				_spec(&"signal_lamp", 0.3, 2.0, P_MOUNT, false),
+				_spec(&"gauge_panel", 0.55, 1.0, P_MOUNT, false),
+				_spec(&"bolts", 0.3, 2.0, P_FLOOR, false),
+				_spec(&"straw", 0.4, 1.0, P_FLOOR, false),
+			])
+		RoomDef.DressingTheme.ARCHIVE:
+			entries.append_array([
+				_spec(&"bookcase", 0.65, 3.0, P_BAND, true),
+				_spec(&"cabinet", 0.6, 1.5, P_BAND, true),
+				_spec(&"drafting_table", 0.8, 1.5, P_BAND, true),
+				_spec(&"map_chest", 0.75, 1.5, P_BAND, true),
+				_spec(&"dispatch_desk", 1.0, 1.0, P_BAND, true),
+				_spec(&"armchair", 0.6, 0.6, P_BAND, true),
+				_spec(&"clock_panel", 0.65, 1.0, P_MOUNT, false),
+				_spec(&"placard", 0.6, 1.5, P_MOUNT, false),
+				_spec(&"brass_plaque", 0.75, 1.0, P_MOUNT, false),
+				_spec(&"letters", 0.35, 2.0, P_FLOOR, false),
+				_spec(&"paper_drift", 0.4, 2.0, P_FLOOR, false),
+			])
+		RoomDef.DressingTheme.GENERATOR:
+			entries.append_array([
+				_spec(&"coil_cabinet", 0.7, 2.5, P_BAND, true),
+				_spec(&"insulator_stack", 0.45, 2.0, P_BAND, true),
+				_spec(&"valve_manifold", 0.7, 1.0, P_BAND, true),
+				_spec(&"drum_cluster", 0.75, 1.0, P_BAND, true),
+				_spec(&"cable_bundle", 1.2, 2.0, P_MOUNT, false),
+				_spec(&"gauge_panel", 0.55, 1.5, P_MOUNT, false),
+				_spec(&"pipe_run", 1.5, 1.0, P_MOUNT, false),
+				_spec(&"bolts", 0.3, 2.0, P_FLOOR, false),
+				_spec(&"shavings", 0.3, 1.0, P_FLOOR, false),
+			])
 	return entries
 
 
@@ -189,6 +227,12 @@ static func floor_grime(theme: RoomDef.DressingTheme) -> Array[GrimeTextures.Kin
 			return [GrimeTextures.Kind.PUDDLE, GrimeTextures.Kind.SOOT]
 		RoomDef.DressingTheme.MINE:
 			return [GrimeTextures.Kind.SOOT, GrimeTextures.Kind.SOOT, GrimeTextures.Kind.SCORCH]
+		RoomDef.DressingTheme.TOWER:
+			return [GrimeTextures.Kind.PUDDLE, GrimeTextures.Kind.OIL]
+		RoomDef.DressingTheme.ARCHIVE:
+			return [GrimeTextures.Kind.SOOT]
+		RoomDef.DressingTheme.GENERATOR:
+			return [GrimeTextures.Kind.SCORCH, GrimeTextures.Kind.OIL, GrimeTextures.Kind.SOOT]
 		_:
 			return [GrimeTextures.Kind.OIL]
 
@@ -205,6 +249,10 @@ static func wall_grime(theme: RoomDef.DressingTheme) -> Array[GrimeTextures.Kind
 			return [GrimeTextures.Kind.RUST_STREAK, GrimeTextures.Kind.RUST_STREAK]
 		RoomDef.DressingTheme.MINE:
 			return [GrimeTextures.Kind.SOOT_STREAK]
+		RoomDef.DressingTheme.ARCHIVE:
+			return [GrimeTextures.Kind.SOOT_STREAK]
+		RoomDef.DressingTheme.GENERATOR:
+			return [GrimeTextures.Kind.SOOT_STREAK, GrimeTextures.Kind.RUST_STREAK]
 		_:
 			return [GrimeTextures.Kind.RUST_STREAK, GrimeTextures.Kind.SOOT_STREAK]
 
@@ -282,6 +330,14 @@ static func build(kind: StringName, rng: RandomNumberGenerator) -> Node3D:
 		&"leaf_litter": _leaf_litter(root, rng)
 		&"pick_rack": _pick_rack(root, rng)
 		&"timber_prop": _timber_prop(root, rng)
+		&"mooring_bollard": _mooring_bollard(root, rng)
+		&"rope_coil": _rope_coil(root, rng)
+		&"drafting_table": _drafting_table(root, rng)
+		&"map_chest": _map_chest(root, rng)
+		&"paper_drift": _paper_drift(root, rng)
+		&"coil_cabinet": _coil_cabinet(root, rng)
+		&"insulator_stack": _insulator_stack(root, rng)
+		&"cable_bundle": _cable_bundle(root, rng)
 		_:
 			assert(false, "FoundryProps.build: unknown prop kind %s" % kind)
 	return root
@@ -1199,3 +1255,88 @@ static func _timber_prop(root: Node3D, rng: RandomNumberGenerator) -> void:
 	_box(root, Vector3(gap + 0.4, 0.24, 0.26), wood, Vector3(0.0, 2.55, 0.0))
 	_box(root, Vector3(0.12, 0.8, 0.12), wood, Vector3(-gap * 0.5 + 0.2, 2.2, 0.0), Vector3(0.0, 0.0, -0.7))
 
+
+# --- Tower ---------------------------------------------------------------------------------
+
+static func _mooring_bollard(root: Node3D, rng: RandomNumberGenerator) -> void:
+	var iron: StandardMaterial3D = _m(FoundryMaterials.Kind.CAST_IRON)
+	_cyl(root, 0.3, 0.38, 0.8, iron, Vector3(0.0, 0.4, 0.0))
+	_cyl(root, 0.42, 0.42, 0.1, iron, Vector3(0.0, 0.85, 0.0))
+	_torus(root, 0.3, 0.42, _m(FoundryMaterials.Kind.FABRIC), Vector3(0.0, 0.3 + rng.randf_range(0.0, 0.3), 0.0))
+	Layers.add_static_cylinder(root, 0.42, 0.9, Vector3.ZERO)
+
+
+static func _rope_coil(root: Node3D, rng: RandomNumberGenerator) -> void:
+	var rope: StandardMaterial3D = _m(FoundryMaterials.Kind.FABRIC)
+	for i: int in rng.randi_range(4, 6):
+		_torus(root, 0.25, 0.5 - 0.02 * float(i), rope, Vector3(0.0, 0.06 + 0.1 * float(i), 0.0))
+	if rng.randf() < 0.5:
+		_box(root, Vector3(0.9, 0.06, 0.06), rope, Vector3(0.5, 0.03, 0.2), Vector3(0.0, rng.randf_range(-0.8, 0.8), 0.0))
+	Layers.add_static_cylinder(root, 0.5, 0.6, Vector3.ZERO)
+
+
+# --- Archive -------------------------------------------------------------------------------
+
+static func _drafting_table(root: Node3D, rng: RandomNumberGenerator) -> void:
+	var wood: StandardMaterial3D = _m(FoundryMaterials.Kind.WOOD)
+	var brass: StandardMaterial3D = _m(FoundryMaterials.Kind.BRASS)
+	for x: float in [-0.6, 0.6]:
+		_box(root, Vector3(0.08, 0.9, 0.6), wood, Vector3(x, 0.45, 0.0))
+	_box(root, Vector3(1.5, 0.05, 0.9), wood, Vector3(0.0, 1.0, 0.0), Vector3(-0.35, 0.0, 0.0))
+	_box(root, Vector3(1.1, 0.01, 0.7), FoundryMaterials.emissive(Color(0.2, 0.38, 0.75), 0.25), Vector3(0.0, 1.03, 0.0), Vector3(-0.35, 0.0, 0.0))
+	_box(root, Vector3(1.4, 0.03, 0.04), brass, Vector3(0.0, 1.06, 0.1 + rng.randf_range(-0.2, 0.2)), Vector3(-0.35, 0.0, 0.0))
+	_cyl(root, 0.02, 0.02, 0.6, brass, Vector3(0.55, 1.35, -0.3))
+	_sphere(root, 0.08, FoundryMaterials.emissive(Color(1.0, 0.8, 0.45), 1.5), Vector3(0.55, 1.65, -0.2))
+	Layers.add_static_box(root, Vector3(1.5, 1.1, 0.9), Vector3(0.0, 0.55, 0.0))
+
+
+static func _map_chest(root: Node3D, rng: RandomNumberGenerator) -> void:
+	var wood: StandardMaterial3D = _m(FoundryMaterials.Kind.WOOD)
+	var brass: StandardMaterial3D = _m(FoundryMaterials.Kind.BRASS)
+	_box(root, Vector3(1.4, 0.9, 0.8), wood, Vector3(0.0, 0.45, 0.0))
+	var open_drawer: int = rng.randi_range(0, 4)
+	for i: int in 5:
+		var y: float = 0.12 + 0.17 * float(i)
+		var pull: float = 0.25 if i == open_drawer else 0.0
+		_box(root, Vector3(1.3, 0.13, 0.04), wood, Vector3(0.0, y, 0.41 + pull))
+		_box(root, Vector3(0.2, 0.03, 0.03), brass, Vector3(0.0, y, 0.44 + pull))
+	_box(root, Vector3(0.6, 0.01, 0.45), _m(FoundryMaterials.Kind.PAPER), Vector3(rng.randf_range(-0.3, 0.3), 0.91, 0.0), Vector3(0.0, rng.randf_range(-0.4, 0.4), 0.0))
+	Layers.add_static_box(root, Vector3(1.4, 0.9, 0.8), Vector3(0.0, 0.45, 0.0))
+
+
+static func _paper_drift(root: Node3D, rng: RandomNumberGenerator) -> void:
+	var blueprint: StandardMaterial3D = FoundryMaterials.emissive(Color(0.2, 0.38, 0.75), 0.2)
+	for i: int in rng.randi_range(4, 8):
+		var mat: StandardMaterial3D = blueprint if rng.randf() < 0.35 else _m(FoundryMaterials.Kind.PAPER)
+		_box(root, Vector3(0.3, 0.004, 0.22), mat, Vector3(rng.randf_range(-0.35, 0.35), 0.004 + 0.003 * float(i), rng.randf_range(-0.35, 0.35)), Vector3(0.0, rng.randf_range(0.0, TAU), 0.0))
+
+
+# --- Generator -----------------------------------------------------------------------------
+
+static func _coil_cabinet(root: Node3D, rng: RandomNumberGenerator) -> void:
+	var steel: StandardMaterial3D = _m(FoundryMaterials.Kind.DARK_STEEL)
+	var copper: StandardMaterial3D = _m(FoundryMaterials.Kind.COPPER_OXIDIZED)
+	_box(root, Vector3(1.2, 1.8, 0.8), steel, Vector3(0.0, 0.9, 0.0))
+	for i: int in 3:
+		_cyl(root, 0.12, 0.12, 0.5, copper, Vector3(-0.35 + 0.35 * float(i), 2.05, 0.0))
+		_sphere(root, 0.1, _m(FoundryMaterials.Kind.ARC_BLUE), Vector3(-0.35 + 0.35 * float(i), 2.35, 0.0))
+	_box(root, Vector3(0.5, 0.3, 0.02), _m(FoundryMaterials.Kind.WARNING_RED), Vector3(0.0, 1.3, 0.41))
+	_gauge(root, Vector3(0.35, 0.9, 0.41), 0.1, rng)
+	Layers.add_static_box(root, Vector3(1.2, 1.8, 0.8), Vector3(0.0, 0.9, 0.0))
+
+
+static func _insulator_stack(root: Node3D, rng: RandomNumberGenerator) -> void:
+	var porcelain: StandardMaterial3D = _m(FoundryMaterials.Kind.GAUGE_FACE)
+	var count: int = rng.randi_range(4, 6)
+	for i: int in count:
+		_cyl(root, 0.3, 0.38, 0.18, porcelain, Vector3(0.0, 0.12 + 0.24 * float(i), 0.0))
+	_cyl(root, 0.06, 0.06, 0.4, _m(FoundryMaterials.Kind.COPPER_OXIDIZED), Vector3(0.0, 0.24 * float(count) + 0.2, 0.0))
+	Layers.add_static_cylinder(root, 0.38, 0.24 * float(count) + 0.2, Vector3.ZERO)
+
+
+static func _cable_bundle(root: Node3D, rng: RandomNumberGenerator) -> void:
+	var rubber: StandardMaterial3D = _m(FoundryMaterials.Kind.DARK_STEEL)
+	for i: int in rng.randi_range(3, 5):
+		_cyl(root, 0.05, 0.05, 2.2, rubber, Vector3(0.0, 2.4 - 0.12 * float(i), 0.08), Vector3(0.0, 0.0, PI * 0.5), 6)
+	for x: float in [-0.9, 0.0, 0.9]:
+		_box(root, Vector3(0.08, 0.5, 0.12), _m(FoundryMaterials.Kind.BRASS), Vector3(x, 2.2, 0.06))

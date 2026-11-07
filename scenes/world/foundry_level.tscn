@@ -119,8 +119,8 @@ grime_density = 0.15
 [sub_resource type="Resource" id="Rumor_arrival"]
 script = ExtResource("4_rumor")
 rumor_id = &"arrival_log"
-title = "Dispatch #7: The Great Foundry"
-body = "Pneumatic dispatch, recovered from the intake tube.\n\nYou made it, Technician. The yard, the tramline, the showroom, the cisterns, the gardens and the coal seam: all behind you. This is the Great Foundry itself, where the night shift vanished eleven years ago and the automatons never stopped working.\n\nWhatever Master Hargreaves hid is somewhere past the boiler rooms, the cutting floor and the smelting vats. The Guild is listening for your signal. Find the gear that never grinds, and bring it home."
+title = "Dispatch #10: The Great Foundry"
+body = "Pneumatic dispatch, recovered from the intake tube.\n\nYou made it, Technician. The yard, the tramline, the showroom, the cisterns, the gardens, the coal seam, the mooring tower, the archive and the generator hall: all behind you. This is the Great Foundry itself, where the night shift vanished eleven years ago and the automatons never stopped working.\n\nWhatever Master Hargreaves hid is somewhere past the boiler rooms, the cutting floor and the smelting vats. The Guild is listening for your signal. Find the gear that never grinds, and bring it home."
 hint = "The way deeper lies east, through the Boiler Room bulkhead."
 
 [sub_resource type="Resource" id="Rumor_valve"]

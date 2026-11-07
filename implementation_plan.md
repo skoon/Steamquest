@@ -407,7 +407,17 @@ Batch 1 built the campaign framework and Act I's first three levels. This batch 
 3. Left for your playtest: tide timing, Warden difficulty, how tense the winch defence is, and whether the darkness is atmospheric or just annoying.
 
 
-# Phase 3, batch 3: levels 7–9 (awaiting approval)
+# Phase 3, batch 3: levels 7–9 (approved, built)
+
+**Deviations from the plan as written:**
+- **Tesla Drone reach:** the drone's collision column runs from 0.6 m to 2.5 m and stays fixed while only its sprite bobs, so rivets (fired at chest height) can hit it. The wrench can therefore reach a drone at any time if you get close, not only when it swoops. In practice it keeps 6–8 m away, so the rivet gun is still the answer. A coil-stunned drone sinks to the floor.
+- **One fall zone per level:** a single large catch volume below the whole level, not one under each railing gap. The behaviour is the same.
+- **No wind streak particles:** gusts are shown by the windsock (hangs limp, snaps taut on the warning, streams during the gust) plus the whistle and gust sounds.
+- **Tesla coils are rivet-only.** They sit on the environment layer, which the wrench doesn't hit.
+- **Plates:** the Switch Room sections are single plate banks wired to the router (live or dead), not swept patterns. The sweeping banks are in the Insulator Gallery and the Coil Hall.
+- **Extra pure-logic helper:** `RailingLayout` splits a deck edge into railing spans around its gaps (unit-tested).
+- **Bug fixed along the way:** pushes (wind, propeller wash) were building up in the Technician's velocity from frame to frame. `technician.gd` now strips last frame's push back out, the way it already did for knockback, and a smoke check confirms the Technician stops drifting after a gust.
+
 
 ## Context
 Batches 1 and 2 built levels 1–6. This batch finishes Act II with the Airship Mooring Tower and the Blueprint Archive, and opens Act III with the Tesla Generator Hall. It also adds the third new enemy, the Tesla Drone. After it the campaign runs levels 1–9, then the Great Foundry.

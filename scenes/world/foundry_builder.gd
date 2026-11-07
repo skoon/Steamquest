@@ -33,7 +33,10 @@ extends NavigationRegion3D
 var _walls: Array[Dictionary] = []
 ## Wall fixtures hidden with their wall: { "node": Node3D, "axis": int, "coord": float }
 var _wall_attachments: Array[Dictionary] = []
+const RAILING_HEIGHT: float = 1.1
+
 var _player: Node3D
+var _player_start: Vector3 = Vector3.ZERO
 ## Room name -> number of props placed (props + scatter + fixtures).
 var dressed_prop_counts: Dictionary = {}
 
@@ -42,6 +45,7 @@ func build() -> void:
 	assert(not rooms.is_empty(), "FoundryBuilder: no rooms configured")
 	_player = get_node_or_null(player_path) as Node3D
 	assert(_player != null, "FoundryBuilder: player_path must point to the Technician")
+	_player_start = _player.global_position
 	var keep_clear: PackedVector3Array = _keep_clear_zones()
 	var x: float = start_x
 	var previous_depth: float = 0.0
@@ -55,11 +59,15 @@ func build() -> void:
 		_build_light(room, center_x)
 		_build_room_trigger(room, center_x)
 		_build_pillars(room, center_x)
-		_build_pipes(room, center_x)
 		_build_dressing(room, x, keep_clear)
 		var span: float = room.width + wall_thickness
-		_build_wall_along_x(center_x, -room.depth * 0.5, span, wall_material)
-		_build_wall_along_x(center_x, room.depth * 0.5, span, wall_material)
+		if room.open_air:
+			_build_railing(room, x, -1)
+			_build_railing(room, x, 1)
+		else:
+			_build_pipes(room, center_x)
+			_build_wall_along_x(center_x, -room.depth * 0.5, span, wall_material)
+			_build_wall_along_x(center_x, room.depth * 0.5, span, wall_material)
 		_build_wall_along_z(x, maxf(previous_depth, room.depth), i > 0, wall_material)
 		x += room.width
 		previous_depth = room.depth
@@ -69,6 +77,16 @@ func build() -> void:
 	_build_wall_along_z(x, previous_depth, false, last_material)
 	_build_scorch_marks()
 	_bake_navigation()
+
+
+## Safe spot just inside the named room's entrance door (the level start for the first room).
+func room_entrance(room_name: String) -> Vector3:
+	var x: float = start_x
+	for i: int in rooms.size():
+		if rooms[i].room_name == room_name:
+			return _player_start if i == 0 else Vector3(x + 1.6, 0.3, 0.0)
+		x += rooms[i].width
+	return _player_start
 
 
 func _process(delta: float) -> void:
@@ -223,6 +241,27 @@ func _build_wall_along_z(x: float, length: float, with_gap: bool, material: Stan
 	_walls.append({"mesh": lintel, "axis": 2, "coord": x, "lintel": true})
 
 
+## A waist-high iron railing along one long edge of an open-air room, broken by its railing gaps.
+func _build_railing(room: RoomDef, room_x: float, side: int) -> void:
+	var z: float = float(side) * room.depth * 0.5
+	var iron: StandardMaterial3D = FoundryMaterials.get_material(FoundryMaterials.Kind.CAST_IRON)
+	var brass: StandardMaterial3D = FoundryMaterials.get_material(FoundryMaterials.Kind.BRASS)
+	for span: Vector2 in RailingLayout.solid_spans(room.width, side, room.railing_gaps):
+		var length: float = span.y - span.x
+		var center: Vector3 = Vector3(room_x + (span.x + span.y) * 0.5, 0.0, z)
+		var body: StaticBody3D = Layers.add_static_box(self, Vector3(length, RAILING_HEIGHT, 0.2), center + Vector3(0.0, RAILING_HEIGHT * 0.5, 0.0))
+		var rail: BoxMesh = BoxMesh.new()
+		rail.size = Vector3(length, 0.08, 0.1)
+		Layers.add_mesh(body, rail, brass, center + Vector3(0.0, RAILING_HEIGHT, 0.0))
+		Layers.add_mesh(body, rail, iron, center + Vector3(0.0, RAILING_HEIGHT * 0.5, 0.0))
+		var post: BoxMesh = BoxMesh.new()
+		post.size = Vector3(0.1, RAILING_HEIGHT, 0.1)
+		var posts: int = maxi(int(length / 1.5), 1)
+		for i: int in posts + 1:
+			var px: float = center.x - length * 0.5 + length * float(i) / float(posts)
+			Layers.add_mesh(body, post, iron, Vector3(px, RAILING_HEIGHT * 0.5, z))
+
+
 ## Adds one wall block. `base` is the bottom-centre; the visual is a child so it can be cut away.
 func _add_wall_segment(base: Vector3, size: Vector3, material: StandardMaterial3D, axis: int, coord: float) -> void:
 	var body: StaticBody3D = Layers.add_static_box(self, size, Vector3(base.x, size.y * 0.5, base.z))
@@ -275,6 +314,8 @@ func _build_dressing(room: RoomDef, room_x: float, keep_clear: PackedVector3Arra
 	holder.name = "%sDressing" % room.room_name.replace(" ", "")
 	add_child(holder)
 	var catalog: Array[Dictionary] = FoundryProps.catalog(room.dressing_theme)
+	if room.open_air:
+		catalog = Array(catalog.filter(func(entry: Dictionary) -> bool: return entry["placement"] != DressingLayout.Placement.WALL_MOUNT), TYPE_DICTIONARY, &"", null)
 	var counts: Dictionary = DressingLayout.counts_for(interior, room.clutter_density)
 	var placements: Array[Dictionary] = DressingLayout.plan(interior, dressing_band_min, dressing_band_max, exclusions, catalog, counts, rng)
 	for entry: Dictionary in placements:
@@ -298,6 +339,8 @@ func _build_grime(room: RoomDef, room_x: float, interior: Rect2, exclusions: Pac
 		decal.position = Vector3(position_2d.x, 0.0, position_2d.y)
 		decal.rotation = Vector3(0.0, entry["yaw"], 0.0)
 		holder.add_child(decal)
+	if room.open_air:
+		return
 	var wall_kinds: Array[GrimeTextures.Kind] = FoundryProps.wall_grime(room.dressing_theme)
 	for entry: Dictionary in DressingLayout.plan_wall_decals(interior, decal_counts.y, exclusions, rng):
 		var side: int = entry["side"]

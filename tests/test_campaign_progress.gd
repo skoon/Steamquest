@@ -158,8 +158,13 @@ func test_campaign_levels_have_titles_and_scenes() -> void:
 		assert_true(ResourceLoader.exists(info.scene_path), "level %d scene exists" % i)
 
 
-func test_campaign_runs_six_levels_then_finale() -> void:
-	assert_eq(CAMPAIGN.level_count(), 7, "six levels and the finale")
+func test_campaign_runs_nine_levels_then_finale() -> void:
+	assert_eq(CAMPAIGN.level_count(), 10, "nine levels and the finale")
 	assert_eq(CAMPAIGN.index_of_scene("res://scenes/levels/level_04_flooded_cisterns.tscn"), 3, "level 4")
 	assert_eq(CAMPAIGN.index_of_scene("res://scenes/levels/level_06_coal_seam.tscn"), 5, "level 6")
-	assert_eq(CAMPAIGN.next_index(5), 6, "level 6 leads to the finale")
+	assert_eq(CAMPAIGN.next_index(5), 6, "level 6 leads to level 7")
+	assert_eq(CAMPAIGN.index_of_scene("res://scenes/levels/level_07_airship_tower.tscn"), 6, "level 7")
+	assert_eq(CAMPAIGN.index_of_scene("res://scenes/levels/level_08_blueprint_archive.tscn"), 7, "level 8")
+	assert_eq(CAMPAIGN.index_of_scene("res://scenes/levels/level_09_tesla_generator.tscn"), 8, "level 9")
+	assert_eq(CAMPAIGN.next_index(8), 9, "level 9 leads to the finale")
+	assert_eq(CAMPAIGN.level(8).act_name, "Act III: The Deep Foundry", "the generator hall opens act III")

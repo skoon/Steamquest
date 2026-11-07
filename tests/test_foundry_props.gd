@@ -5,6 +5,7 @@ const THEMES: Array[RoomDef.DressingTheme] = [
 	RoomDef.DressingTheme.SMELTING, RoomDef.DressingTheme.VAULT,
 	RoomDef.DressingTheme.YARD, RoomDef.DressingTheme.TRAM, RoomDef.DressingTheme.SHOWROOM,
 	RoomDef.DressingTheme.CISTERN, RoomDef.DressingTheme.GARDEN, RoomDef.DressingTheme.MINE,
+	RoomDef.DressingTheme.TOWER, RoomDef.DressingTheme.ARCHIVE, RoomDef.DressingTheme.GENERATOR,
 ]
 
 

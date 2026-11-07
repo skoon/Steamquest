@@ -1,0 +1,39 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scenes/enemies/tesla_drone.gd" id="1_drone"]
+[ext_resource type="Script" path="res://scripts/core/character_sprite.gd" id="2_sprite"]
+[ext_resource type="Resource" path="res://data/enemies/tesla_drone_stats.tres" id="3_stats"]
+[ext_resource type="PackedScene" path="res://scenes/world/gear_pickup.tscn" id="4_pickup"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/lightning_bolt.tscn" id="5_bolt"]
+
+[sub_resource type="CylinderShape3D" id="Shape_body"]
+height = 1.9
+radius = 0.5
+
+[node name="TeslaDrone" type="CharacterBody3D"]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_drone")
+stats = ExtResource("3_stats")
+gear_pickup_scene = ExtResource("4_pickup")
+bolt_scene = ExtResource("5_bolt")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.55, 0)
+shape = SubResource("Shape_body")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+
+[node name="Sprite" type="AnimatedSprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0)
+pixel_size = 0.0075
+script = ExtResource("2_sprite")
+looping_animations = PackedStringArray("idle", "walk")
+sprite_prefix = "res://assets/sprites/enemies/enemy_tesla_drone"
+animation_fps = 10.0
+
+[node name="CoilLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4, 0)
+light_color = Color(0.5, 0.85, 1, 1)
+light_energy = 0.6
+omni_range = 4.0

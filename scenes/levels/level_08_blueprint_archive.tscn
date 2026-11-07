@@ -1,0 +1,303 @@
+[gd_scene load_steps=55 format=3]
+
+[ext_resource type="Script" path="res://scenes/world/foundry_level.gd" id="1_level"]
+[ext_resource type="Script" path="res://scenes/world/foundry_builder.gd" id="2_builder"]
+[ext_resource type="Script" path="res://scripts/config/room_def.gd" id="3_room"]
+[ext_resource type="Script" path="res://scripts/resources/rumor_data.gd" id="4_rumor"]
+[ext_resource type="PackedScene" path="res://scenes/player/technician.tscn" id="5_tech"]
+[ext_resource type="PackedScene" path="res://scenes/player/camera_rig.tscn" id="6_cam"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="7_hud"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/scrap_skitterer.tscn" id="8_skit"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/piston_bruiser.tscn" id="9_brute"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/arc_turret.tscn" id="10_turret"]
+[ext_resource type="PackedScene" path="res://scenes/world/rumor_terminal.tscn" id="11_term"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_door.tscn" id="12_door"]
+[ext_resource type="PackedScene" path="res://scenes/world/jammed_valve.tscn" id="13_valve"]
+[ext_resource type="PackedScene" path="res://scenes/world/rotating_cog.tscn" id="15_cog"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_vent.tscn" id="17_vent"]
+[ext_resource type="PackedScene" path="res://scenes/world/elevator.tscn" id="18_elev"]
+[ext_resource type="PackedScene" path="res://scenes/world/decor_prop.tscn" id="19_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/gear_pickup.tscn" id="21_pickup"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/clockwork_hound.tscn" id="22_hound"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/brass_sentry.tscn" id="23_sentry"]
+[ext_resource type="PackedScene" path="res://scenes/world/key_pickup.tscn" id="24_key"]
+[ext_resource type="PackedScene" path="res://scenes/world/tram_crossing.tscn" id="25_tram"]
+[ext_resource type="PackedScene" path="res://scenes/world/water_pool.tscn" id="26_pool"]
+[ext_resource type="PackedScene" path="res://scenes/world/pump_sequence.tscn" id="27_pumpseq"]
+[ext_resource type="PackedScene" path="res://scenes/world/pump_valve.tscn" id="28_pumpvalve"]
+[ext_resource type="PackedScene" path="res://scenes/world/humid_zone.tscn" id="29_humid"]
+[ext_resource type="PackedScene" path="res://scenes/world/enemy_nest.tscn" id="30_nest"]
+[ext_resource type="PackedScene" path="res://scenes/world/wall_lantern_switch.tscn" id="31_lantern"]
+[ext_resource type="PackedScene" path="res://scenes/world/winch.tscn" id="32_winch"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/cistern_warden.tscn" id="33_warden"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/tesla_drone.tscn" id="34_drone"]
+[ext_resource type="PackedScene" path="res://scenes/world/alarm_bell.tscn" id="35_alarm"]
+[ext_resource type="PackedScene" path="res://scenes/world/wind_zone.tscn" id="36_wind"]
+[ext_resource type="PackedScene" path="res://scenes/world/fall_zone.tscn" id="37_fall"]
+[ext_resource type="PackedScene" path="res://scenes/world/propeller.tscn" id="38_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/gangway_lever.tscn" id="39_lever"]
+[ext_resource type="PackedScene" path="res://scenes/world/electric_plates.tscn" id="40_plates"]
+[ext_resource type="PackedScene" path="res://scenes/world/power_router.tscn" id="41_router"]
+[ext_resource type="PackedScene" path="res://scenes/world/junction_switch.tscn" id="42_junction"]
+[ext_resource type="PackedScene" path="res://scenes/world/tesla_coil.tscn" id="43_coil"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_parquet.png" id="t_parquet"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_wallpaper.png" id="t_w_paper"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_wood_panel.png" id="t_w_wood"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_wood_planks.png" id="t_planks"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_wallpaper_striped.png" id="t_w_striped"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_iron_plate.png" id="t_iron"]
+
+[sub_resource type="Environment" id="Env_level"]
+background_mode = 1
+background_color = Color(0.02, 0.018, 0.016, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.7, 0.6, 0.5, 1)
+ambient_light_energy = 0.4
+tonemap_mode = 2
+tonemap_exposure = 1.05
+glow_enabled = true
+glow_intensity = 0.9
+glow_bloom = 0.08
+fog_enabled = true
+fog_light_color = Color(0.2, 0.17, 0.14, 1)
+fog_density = 0.004
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.012
+volumetric_fog_albedo = Color(0.95, 0.8, 0.65, 1)
+volumetric_fog_emission = Color(0.04, 0.025, 0.015, 1)
+
+[sub_resource type="Resource" id="Room_reading"]
+script = ExtResource("3_room")
+room_name = "Reading Room"
+width = 16
+depth = 14
+floor_texture = ExtResource("t_parquet")
+wall_texture = ExtResource("t_w_paper")
+floor_tint = Color(0.95, 0.88, 0.8, 1)
+light_color = Color(1, 0.8, 0.55, 1)
+light_energy = 1.8
+pillars = PackedVector2Array()
+dressing_theme = 11
+dressing_seed = 801
+clutter_density = 0.26
+grime_density = 0.3
+
+[sub_resource type="Resource" id="Room_stacks"]
+script = ExtResource("3_room")
+room_name = "Map Stacks"
+width = 24
+depth = 18
+floor_texture = ExtResource("t_parquet")
+wall_texture = ExtResource("t_w_wood")
+floor_tint = Color(0.9, 0.82, 0.74, 1)
+light_color = Color(1, 0.78, 0.5, 1)
+light_energy = 1.4
+pillars = PackedVector2Array(-6, -3, -6, 3, 0, -3, 0, 3, 6, -3, 6, 3)
+dressing_theme = 11
+dressing_seed = 803
+clutter_density = 0.22
+grime_density = 0.3
+
+[sub_resource type="Resource" id="Room_drafting"]
+script = ExtResource("3_room")
+room_name = "Drafting Office"
+width = 18
+depth = 16
+floor_texture = ExtResource("t_planks")
+wall_texture = ExtResource("t_w_striped")
+floor_tint = Color(0.95, 0.88, 0.8, 1)
+light_color = Color(1, 0.82, 0.58, 1)
+light_energy = 1.8
+pillars = PackedVector2Array()
+dressing_theme = 11
+dressing_seed = 807
+clutter_density = 0.24
+grime_density = 0.3
+
+[sub_resource type="Resource" id="Room_lift"]
+script = ExtResource("3_room")
+room_name = "Archive Lift"
+width = 12
+depth = 12
+floor_texture = ExtResource("t_iron")
+wall_texture = ExtResource("t_w_wood")
+floor_tint = Color(0.9, 0.88, 0.85, 1)
+light_color = Color(1, 0.85, 0.6, 1)
+light_energy = 2
+pillars = PackedVector2Array()
+dressing_theme = 11
+dressing_seed = 811
+clutter_density = 0.16
+grime_density = 0.3
+
+[sub_resource type="Resource" id="Rumor_archive_rules"]
+script = ExtResource("4_rumor")
+rumor_id = &"archive_rules"
+title = "Rules of the Reading Room"
+body = "SILENCE IN THE ARCHIVE.\n\nThe night porters walk their rounds with their lanterns lit. If a porter's lantern falls on you, the bells ring and the coil-guards wake. Keep to the shadows behind them, or keep a stout wrench handy.\n\nThe guards go back to sleep once the bells have been quiet a while."
+hint = "Patrolling sentries only see what their lantern cone lights. Getting spotted rings the alarm and wakes the turrets; they sleep again after 20 quiet seconds."
+
+[sub_resource type="Resource" id="Rumor_access_code_note"]
+script = ExtResource("4_rumor")
+rumor_id = &"access_code_note"
+title = "Note Pinned to the Stacks"
+body = "The deep-works access code is drawn on three blueprint sheets, filed in three different places so no single clerk can read it.\n\nOne in the west stacks, one in the east stacks, one on the Master's own drafting table.\n\nThe archive lift will not run without all three."
+hint = "Collect the three blueprint pages. The archive lift opens when you hold all of them."
+
+[sub_resource type="Resource" id="Rumor_the_last_order"]
+script = ExtResource("4_rumor")
+rumor_id = &"the_last_order"
+title = "Dictation Cylinder, Master's Office"
+body = "A wax cylinder on a phonograph, the needle still resting in the groove. You wind it and it plays.\n\n\"To every automaton of the Hargreaves Works. This is your Master speaking. From this hour you have one task above all others. Guard the Gear. Let no one near it. No one. Not the Guild, not the Board, not the night shift, not me if I should come back and ask for it.\n\nGuard the Gear.\"\n\nThe recording ends in a long hiss."
+hint = ""
+
+[node name="Level08BlueprintArchive" type="Node3D"]
+script = ExtResource("1_level")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_level")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.383022, 0.321394, 0, 0.642788, 0.766044, -0.5, -0.663414, 0.55667, 0, 20, 0)
+light_color = Color(0.9, 0.8, 0.65, 1)
+light_energy = 0.3
+shadow_enabled = true
+directional_shadow_max_distance = 60.0
+
+[node name="Navigation" type="NavigationRegion3D" parent="."]
+script = ExtResource("2_builder")
+rooms = Array[ExtResource("3_room")]([SubResource("Room_reading"), SubResource("Room_stacks"), SubResource("Room_drafting"), SubResource("Room_lift")])
+start_x = -9.0
+player_path = NodePath("../Technician")
+keep_clear_roots = Array[NodePath]([NodePath("../Doors"), NodePath("../Interactables"), NodePath("../Hazards"), NodePath("../Props"), NodePath("../Enemies")])
+
+[node name="Technician" parent="." instance=ExtResource("5_tech")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.05, 1)
+
+[node name="CameraRig" parent="." instance=ExtResource("6_cam")]
+target_path = NodePath("../Technician")
+
+[node name="HUD" parent="." instance=ExtResource("7_hud")]
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="ReadingDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0)
+door_id = &"reading_door"
+condition = 0
+locked_hint = ""
+
+[node name="StacksDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 0, 0)
+door_id = &"stacks_door"
+condition = 0
+locked_hint = ""
+
+[node name="ArchiveLiftDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, 0, 0)
+door_id = &"archive_lift"
+condition = 4
+locked_hint = "The lift wants the access code. Blueprint pages"
+required_unlock_ids = Array[StringName]([&"page_1", &"page_2", &"page_3"])
+
+[node name="Interactables" type="Node3D" parent="."]
+
+[node name="RulesTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -5.5)
+rumor = SubResource("Rumor_archive_rules")
+
+[node name="PagesTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, -8)
+rumor = SubResource("Rumor_access_code_note")
+
+[node name="DictationTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46, 0, -7)
+rumor = SubResource("Rumor_the_last_order")
+
+[node name="ReadingAlarm" parent="Interactables" instance=ExtResource("35_alarm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -5.5)
+turrets = Array[NodePath]([NodePath("../../Enemies/ReadingTurret")])
+
+[node name="StacksAlarm" parent="Interactables" instance=ExtResource("35_alarm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, -8.5)
+turrets = Array[NodePath]([NodePath("../../Enemies/StacksTurretA"), NodePath("../../Enemies/StacksTurretB")])
+
+[node name="DraftingAlarm" parent="Interactables" instance=ExtResource("35_alarm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, 7.5)
+turrets = Array[NodePath]([NodePath("../../Enemies/DraftingTurret")])
+
+[node name="BlueprintPage1" parent="Interactables" instance=ExtResource("24_key")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 7.5)
+item_id = &"blueprint_1"
+unlock_id = &"page_1"
+display_name = "blueprint page 1 of 3"
+look = 1
+
+[node name="BlueprintPage2" parent="Interactables" instance=ExtResource("24_key")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, -7.5)
+item_id = &"blueprint_2"
+unlock_id = &"page_2"
+display_name = "blueprint page 2 of 3"
+look = 1
+
+[node name="BlueprintPage3" parent="Interactables" instance=ExtResource("24_key")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, 2)
+item_id = &"blueprint_3"
+unlock_id = &"page_3"
+display_name = "blueprint page 3 of 3"
+look = 1
+
+[node name="ScrapGearCache" parent="Interactables" instance=ExtResource("21_pickup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, 0, 6)
+
+[node name="Elevator" parent="Interactables" instance=ExtResource("18_elev")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, 0, 0)
+exit_mode = 1
+
+[node name="Hazards" type="Node3D" parent="."]
+
+[node name="Props" type="Node3D" parent="."]
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="ReadingTurret" parent="Enemies" instance=ExtResource("10_turret")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 5)
+dormant = true
+
+[node name="StacksTurretA" parent="Enemies" instance=ExtResource("10_turret")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 7.5)
+dormant = true
+
+[node name="StacksTurretB" parent="Enemies" instance=ExtResource("10_turret")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, -7.5)
+dormant = true
+
+[node name="DraftingTurret" parent="Enemies" instance=ExtResource("10_turret")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, 6)
+dormant = true
+
+[node name="ReadingSentry" parent="Enemies" instance=ExtResource("23_sentry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.05, 4)
+patrol_points = PackedVector3Array(-3, 0, 4, 4, 0, 4, 4, 0, -3, -3, 0, -3)
+alarm_path = NodePath("../../Interactables/ReadingAlarm")
+
+[node name="StacksSentryWest" parent="Enemies" instance=ExtResource("23_sentry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.05, 0)
+patrol_points = PackedVector3Array(10, 0, 0, 16, 0, 0, 16, 0, 6, 10, 0, 6)
+alarm_path = NodePath("../../Interactables/StacksAlarm")
+
+[node name="StacksSentryEast" parent="Enemies" instance=ExtResource("23_sentry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0.05, 0)
+patrol_points = PackedVector3Array(28, 0, 0, 22, 0, 0, 22, 0, -6, 28, 0, -6)
+alarm_path = NodePath("../../Interactables/StacksAlarm")
+
+[node name="DraftingSentry" parent="Enemies" instance=ExtResource("23_sentry")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 0.05, -4)
+patrol_points = PackedVector3Array(34, 0, -4, 46, 0, -4, 46, 0, 4, 34, 0, 4)
+alarm_path = NodePath("../../Interactables/DraftingAlarm")
+
+[node name="DraftingSkittererA" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38, 0.05, 5)
+
+[node name="DraftingSkittererB" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 0.05, -5)

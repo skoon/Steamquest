@@ -54,5 +54,13 @@
   - [x] Levels 4–6 built and added to the campaign; finale log renumbered
   - [x] Unit tests (165 passing), campaign smoke test runs levels 1–6 to the finale
   - [ ] Scott playtests levels 4–6
-- [ ] Batch 3: levels 7–9 (plan written, awaiting approval)
+- [x] Batch 3: levels 7–9
+  - [x] SightCone / AlarmState / PatrolRoute / GustCycle / PlatePattern / PowerRouting / RailingLayout logic
+  - [x] Tesla Drone (hovering orbit, arc bolt, swoop, coil stun); patrolling sentries with lantern cones; alarm bells waking dormant turrets
+  - [x] Open-air rooms (railings with gaps), wind zones, fall zone + winch-back, propellers, gangway levers, blueprint pages
+  - [x] Electric plates, junction switches + power router, tesla coil overload
+  - [x] 9 new sounds; TOWER / ARCHIVE / GENERATOR dressing themes
+  - [x] Levels 7–9 built and added to the campaign (10 entries); finale log renumbered to Dispatch #10
+  - [x] Unit tests (180 passing), campaign smoke test runs levels 1–9 to the finale
+  - [ ] Scott playtests levels 7–9
 - [ ] Batch 4: levels 10–12 + finale changes

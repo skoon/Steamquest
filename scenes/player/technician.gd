@@ -46,6 +46,7 @@ var terrain_speed: float = 1.0
 var terrain_drive_work: float = 1.0
 ## External shove for this frame only (wind, propellers); consumed by _update_movement.
 var push_velocity: Vector3 = Vector3.ZERO
+var _applied_push: Vector3 = Vector3.ZERO
 
 
 func _ready() -> void:
@@ -122,7 +123,9 @@ func _update_aim() -> void:
 
 
 func _update_movement(delta: float, rig: FrictionModel, wish: Vector3) -> void:
-	var horizontal: Vector3 = Vector3(velocity.x, 0.0, velocity.z) - _knockback
+	# Last frame's knockback and push are layered on top of the walk velocity; strip them back out
+	# so neither builds up from frame to frame.
+	var horizontal: Vector3 = Vector3(velocity.x, 0.0, velocity.z) - _knockback - _applied_push
 	if _dash_time_left > 0.0:
 		horizontal = _dash_direction * stats.dash_speed
 	else:
@@ -131,6 +134,7 @@ func _update_movement(delta: float, rig: FrictionModel, wish: Vector3) -> void:
 	_knockback = _knockback.move_toward(Vector3.ZERO, KNOCKBACK_DECAY * delta)
 	velocity.x = horizontal.x + _knockback.x + push_velocity.x
 	velocity.z = horizontal.z + _knockback.z + push_velocity.z
+	_applied_push = push_velocity
 	push_velocity = Vector3.ZERO
 	velocity.y = 0.0 if is_on_floor() else velocity.y - GRAVITY * delta
 	var before: Vector3 = global_position
@@ -380,6 +384,7 @@ func recover_from_fall(damage: float, respawn: Vector3) -> void:
 	receive_hit(damage, Vector3.ZERO)
 	velocity = Vector3.ZERO
 	_knockback = Vector3.ZERO
+	_applied_push = Vector3.ZERO
 	global_position = respawn
 
 

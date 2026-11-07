@@ -56,6 +56,15 @@ const SOUNDS: Dictionary = {
 	&"winch_crank": {"volume_db": -3.0, "bus": BUS_SFX, "loop": false, "peak": 0.75},
 	&"lantern_light": {"volume_db": -6.0, "bus": BUS_SFX, "loop": false, "peak": 0.6},
 	&"humid_hiss": {"volume_db": -10.0, "bus": BUS_SFX, "loop": false, "peak": 0.5},
+	&"wind_gust": {"volume_db": -3.0, "bus": BUS_SFX, "loop": false, "peak": 0.75},
+	&"wind_warning": {"volume_db": -8.0, "bus": BUS_SFX, "loop": false, "peak": 0.5},
+	&"propeller_whirr": {"volume_db": -9.0, "bus": BUS_SFX, "loop": false, "peak": 0.5},
+	&"drone_hum": {"volume_db": -12.0, "bus": BUS_SFX, "loop": false, "peak": 0.45},
+	&"drone_zap": {"volume_db": -4.0, "bus": BUS_SFX, "loop": false, "peak": 0.7},
+	&"alarm_bell": {"volume_db": -3.0, "bus": BUS_SFX, "loop": false, "peak": 0.75},
+	&"plate_crackle": {"volume_db": -6.0, "bus": BUS_SFX, "loop": false, "peak": 0.6},
+	&"switch_clunk": {"volume_db": -3.0, "bus": BUS_SFX, "loop": false, "peak": 0.8},
+	&"coil_overload": {"volume_db": 0.0, "bus": BUS_SFX, "loop": false, "peak": 0.9},
 }
 
 
@@ -136,6 +145,15 @@ static func _raw(id: StringName, rng: RandomNumberGenerator) -> PackedFloat32Arr
 		&"winch_crank": return _winch_crank(rng)
 		&"lantern_light": return _lantern_light(rng)
 		&"humid_hiss": return _humid_hiss(rng)
+		&"wind_gust": return _wind_gust(rng)
+		&"wind_warning": return _wind_warning()
+		&"propeller_whirr": return _propeller_whirr(rng)
+		&"drone_hum": return _drone_hum()
+		&"drone_zap": return _drone_zap(rng)
+		&"alarm_bell": return _alarm_bell()
+		&"plate_crackle": return _plate_crackle(rng)
+		&"switch_clunk": return _switch_clunk(rng)
+		&"coil_overload": return _coil_overload(rng)
 	assert(false, "SoundRecipes: no recipe for %s" % id)
 	return PackedFloat32Array()
 
@@ -489,3 +507,87 @@ static func _lantern_light(rng: RandomNumberGenerator) -> PackedFloat32Array:
 
 static func _humid_hiss(rng: RandomNumberGenerator) -> PackedFloat32Array:
 	return Synth.envelope_adsr(_hiss(1.2, rng, 1800.0, 7000.0), 0.3, 0.2, 0.6, 0.5)
+
+
+# --- Batch 3: tower, archive, generator ------------------------------------------------------
+
+## A rising and falling rush of air.
+static func _wind_gust(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var air: PackedFloat32Array = Synth.biquad(Synth.noise(2.2, rng), Synth.Filter.BANDPASS, 700.0, 0.6)
+	air = Synth.mix_at(air, Synth.biquad(Synth.noise(2.2, rng), Synth.Filter.LOWPASS, 250.0, 0.7), 0.0, 0.8)
+	return Synth.envelope_adsr(air, 0.7, 0.3, 0.8, 0.9)
+
+
+## Two-note whistle off the windsock mast.
+static func _wind_warning() -> PackedFloat32Array:
+	var out: PackedFloat32Array = Synth.envelope_adsr(Synth.sine_sweep(900.0, 1300.0, 0.5), 0.05, 0.1, 0.8, 0.15)
+	return Synth.mix_at(out, Synth.envelope_adsr(Synth.sine_sweep(1300.0, 1000.0, 0.5), 0.05, 0.1, 0.8, 0.2), 0.55, 0.9)
+
+
+## Blade chop: noise pulsed at the blade-pass rate over a low drone.
+static func _propeller_whirr(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var air: PackedFloat32Array = Synth.biquad(Synth.noise(2.0, rng), Synth.Filter.LOWPASS, 900.0, 0.7)
+	var chop: PackedFloat32Array = Synth.sine(18.0, 2.0)
+	for i: int in chop.size():
+		chop[i] = 0.35 + 0.65 * maxf(chop[i], 0.0)
+	air = Synth.multiply(air, chop)
+	air = Synth.mix_at(air, Synth.biquad(Synth.saw_sweep(60.0, 62.0, 2.0), Synth.Filter.LOWPASS, 300.0, 0.7), 0.0, 0.4)
+	return Synth.envelope_adsr(air, 0.2, 0.1, 0.9, 0.3)
+
+
+## Warbling coil hum.
+static func _drone_hum() -> PackedFloat32Array:
+	var hum: PackedFloat32Array = Synth.biquad(Synth.saw_sweep(110.0, 116.0, 1.4), Synth.Filter.LOWPASS, 700.0, 1.0)
+	var wobble: PackedFloat32Array = Synth.sine(7.0, 1.4)
+	for i: int in wobble.size():
+		wobble[i] = 0.75 + 0.25 * wobble[i]
+	hum = Synth.multiply(hum, wobble)
+	return Synth.envelope_adsr(hum, 0.3, 0.1, 0.9, 0.4)
+
+
+## A short, bright arc crack with a falling tail.
+static func _drone_zap(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var crack: PackedFloat32Array = Synth.biquad(Synth.noise(0.3, rng), Synth.Filter.HIGHPASS, 1500.0, 0.7)
+	crack = Synth.mix_at(crack, Synth.sine_sweep(1800.0, 300.0, 0.3), 0.0, 0.5)
+	return Synth.envelope_exp_decay(crack, 0.001, 0.08)
+
+
+## A hand bell rung hard three times: inharmonic partials with a long ring.
+static func _alarm_bell() -> PackedFloat32Array:
+	var out: PackedFloat32Array = Synth.silence(2.0)
+	for strike: int in 3:
+		var tone: PackedFloat32Array = Synth.sine(1250.0, 1.2)
+		tone = Synth.mix_at(tone, Synth.sine(2710.0, 1.2), 0.0, 0.5)
+		tone = Synth.mix_at(tone, Synth.sine(3900.0, 1.2), 0.0, 0.25)
+		out = Synth.mix_at(out, Synth.envelope_exp_decay(tone, 0.002, 0.35), 0.28 * float(strike), 0.8)
+	return out
+
+
+## Spitting electrical crackle: gated noise bursts.
+static func _plate_crackle(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var sizzle: PackedFloat32Array = Synth.biquad(Synth.noise(0.7, rng), Synth.Filter.BANDPASS, 3000.0, 0.8)
+	var gate_length: int = Synth.samples_for(0.004)
+	var open: bool = true
+	for i: int in sizzle.size():
+		if i % gate_length == 0:
+			open = rng.randf() < 0.35
+		if not open:
+			sizzle[i] *= 0.05
+	sizzle = Synth.mix_at(sizzle, Synth.biquad(Synth.saw_sweep(100.0, 100.0, 0.7), Synth.Filter.LOWPASS, 400.0, 0.7), 0.0, 0.25)
+	return Synth.envelope_adsr(sizzle, 0.01, 0.1, 0.8, 0.3)
+
+
+## A heavy knife switch thrown home.
+static func _switch_clunk(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var out: PackedFloat32Array = _clank(220.0, 0.12, rng)
+	out = Synth.mix_at(out, _click(rng, 2400.0), 0.0, 0.8)
+	return Synth.mix_at(out, _clank(140.0, 0.2, rng), 0.05, 0.7)
+
+
+## A coil dumping its charge: rising whine, then a big crack and sizzle.
+static func _coil_overload(rng: RandomNumberGenerator) -> PackedFloat32Array:
+	var whine: PackedFloat32Array = Synth.envelope_adsr(Synth.sine_sweep(300.0, 2400.0, 0.35), 0.3, 0.0, 1.0, 0.05)
+	var out: PackedFloat32Array = Synth.mix_at(Synth.silence(1.6), whine, 0.0, 0.4)
+	var crack: PackedFloat32Array = Synth.envelope_exp_decay(Synth.biquad(Synth.noise(1.2, rng), Synth.Filter.HIGHPASS, 600.0, 0.7), 0.001, 0.25)
+	out = Synth.mix_at(out, crack, 0.35, 1.0)
+	return Synth.mix_at(out, Synth.envelope_exp_decay(Synth.biquad(Synth.noise(0.6, rng), Synth.Filter.LOWPASS, 200.0, 0.7), 0.001, 0.2), 0.35, 0.8)

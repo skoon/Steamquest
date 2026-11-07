@@ -110,3 +110,30 @@ func test_unsafe_routings_make_a_section_live() -> void:
 func test_routing_changes_with_one_switch() -> void:
 	var routing: PowerRouting = PowerRouting.new(PackedInt32Array([0, 0, 0]), 3)
 	assert_true(routing.live_section(PackedInt32Array([0, 0, 1])) != routing.live_section(PackedInt32Array([0, 0, 2])), "turning one switch moves the current")
+
+
+# --- RailingLayout --------------------------------------------------------------------------
+
+func test_railing_without_gaps_is_one_span() -> void:
+	var spans: Array[Vector2] = RailingLayout.solid_spans(20.0, 1, PackedVector3Array())
+	assert_eq(spans.size(), 1, "one span")
+	assert_vec_almost(Vector3(spans[0].x, spans[0].y, 0.0), Vector3(0.0, 20.0, 0.0), "whole edge")
+
+
+func test_railing_gaps_split_only_their_side() -> void:
+	var gaps: PackedVector3Array = PackedVector3Array([Vector3(10.0, 1.0, 4.0), Vector3(5.0, -1.0, 2.0)])
+	var south: Array[Vector2] = RailingLayout.solid_spans(20.0, 1, gaps)
+	assert_eq(south.size(), 2, "south split in two")
+	assert_almost(south[0].y, 8.0, "first span ends at the gap")
+	assert_almost(south[1].x, 12.0, "second starts after it")
+	assert_eq(RailingLayout.solid_spans(20.0, -1, gaps).size(), 2, "north has its own gap")
+
+
+func test_railing_overlapping_and_edge_gaps() -> void:
+	var gaps: PackedVector3Array = PackedVector3Array([Vector3(1.0, 1.0, 2.0), Vector3(9.0, 1.0, 4.0), Vector3(11.0, 1.0, 4.0), Vector3(20.0, 1.0, 2.0)])
+	var spans: Array[Vector2] = RailingLayout.solid_spans(20.0, 1, gaps)
+	assert_eq(spans.size(), 2, "edge gaps clip, overlapping gaps merge")
+	assert_almost(spans[0].x, 2.0, "starts after the edge gap")
+	assert_almost(spans[0].y, 7.0, "stops at the merged gap")
+	assert_almost(spans[1].x, 13.0, "resumes after the merged gap")
+	assert_almost(spans[1].y, 19.0, "stops at the far edge gap")

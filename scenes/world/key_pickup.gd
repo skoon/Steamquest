@@ -1,19 +1,24 @@
 class_name KeyPickup
 extends Area3D
-## A key item lying in the level (the clockwork winding key). Walking over it adds `item_id`
-## to GameState.items, which ITEM-locked SteamDoors check.
+## A key item lying in the level (the clockwork winding key, a blueprint page). Walking over it
+## adds `item_id` to GameState.items, which ITEM-locked SteamDoors check, and unlocks `unlock_id`
+## when set, which ALL_OF doors count (three pages open the archive lift).
 
 const SPIN_SPEED: float = 1.6
 const BOB_HEIGHT: float = 0.15
 const KEY_TEXTURE: Texture2D = preload("res://assets/sprites/decor/wind_up_key.png")
 
+enum Look { WINDING_KEY, BLUEPRINT_PAGE }
+
 @export var item_id: StringName = &""
 @export var display_name: String = "Winding Key"
+@export var unlock_id: StringName = &""
+@export var look: Look = Look.WINDING_KEY
 ## Clutter keeps this far away (read by FoundryBuilder through the `radius` property).
 @export var radius: float = 0.8
 
 var is_collected: bool = false
-var _visual: Sprite3D
+var _visual: Node3D
 var _time: float = 0.0
 
 
@@ -28,12 +33,15 @@ func _ready() -> void:
 	shape_node.shape = sphere
 	shape_node.position = Vector3(0.0, 0.6, 0.0)
 	add_child(shape_node)
-	_visual = Sprite3D.new()
-	_visual.texture = KEY_TEXTURE
-	_visual.pixel_size = 0.006
-	_visual.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
-	_visual.double_sided = true
-	_visual.shaded = false
+	if look == Look.BLUEPRINT_PAGE:
+		_visual = _build_page()
+	else:
+		_visual = Sprite3D.new()
+		(_visual as Sprite3D).texture = KEY_TEXTURE
+		(_visual as Sprite3D).pixel_size = 0.006
+		(_visual as Sprite3D).alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+		(_visual as Sprite3D).double_sided = true
+		(_visual as Sprite3D).shaded = false
 	_visual.position = Vector3(0.0, 0.9, 0.0)
 	add_child(_visual)
 	var plinth: CylinderMesh = CylinderMesh.new()
@@ -61,7 +69,26 @@ func _on_body_entered(body: Node3D) -> void:
 		return
 	is_collected = true
 	GameState.add_item(item_id)
+	if unlock_id != &"":
+		GameState.unlock_door(unlock_id)
 	GameState.post_notice("Picked up the %s" % display_name)
 	Fx.sparks(get_parent(), global_position + Vector3.UP * 0.9)
 	Audio.play_at(&"key_pickup", global_position)
 	queue_free()
+
+
+## A rolled-open blueprint sheet: blue paper with white ruled lines.
+func _build_page() -> Node3D:
+	var page: Node3D = Node3D.new()
+	var sheet: QuadMesh = QuadMesh.new()
+	sheet.size = Vector2(0.6, 0.45)
+	var paper: StandardMaterial3D = FoundryMaterials.emissive(Color(0.2, 0.4, 0.85), 0.6)
+	paper.cull_mode = BaseMaterial3D.CULL_DISABLED
+	Layers.add_mesh(page, sheet, paper, Vector3.ZERO)
+	var line: QuadMesh = QuadMesh.new()
+	line.size = Vector2(0.48, 0.02)
+	var ink: StandardMaterial3D = FoundryMaterials.emissive(Color(0.9, 0.95, 1.0), 1.0)
+	ink.cull_mode = BaseMaterial3D.CULL_DISABLED
+	for i: int in 4:
+		Layers.add_mesh(page, line, ink, Vector3(0.0, 0.15 - float(i) * 0.1, 0.005))
+	return page

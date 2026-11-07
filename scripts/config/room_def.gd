@@ -12,8 +12,13 @@ extends Resource
 @export var light_energy: float = 2.0
 ## Cast-iron support pillars, in room-local X/Z coordinates.
 @export var pillars: PackedVector2Array = PackedVector2Array()
+## Open-air decks get a waist-high railing instead of the north and south walls, no pipes and
+## no wall dressing. Things pushed through a railing gap fall off the level.
+@export var open_air: bool = false
+## Gaps in an open-air room's railing: (room-local X centre, side, width), side -1 north / +1 south.
+@export var railing_gaps: PackedVector3Array = PackedVector3Array()
 
-enum DressingTheme { BOILER, CUTTING, SMELTING, VAULT, YARD, TRAM, SHOWROOM, CISTERN, GARDEN, MINE }
+enum DressingTheme { BOILER, CUTTING, SMELTING, VAULT, YARD, TRAM, SHOWROOM, CISTERN, GARDEN, MINE, TOWER, ARCHIVE, GENERATOR }
 
 @export_group("Dressing")
 ## Which clutter catalog FoundryProps uses for this room.

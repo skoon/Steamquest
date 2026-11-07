@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CampaignDef" load_steps=10 format=3]
+[gd_resource type="Resource" script_class="CampaignDef" load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/config/campaign_def.gd" id="1_campaign"]
 [ext_resource type="Script" path="res://scripts/config/level_info.gd" id="2_level"]
@@ -39,6 +39,24 @@ title = "Coal Seam & Mine Lift"
 act_name = "Act II: The Outer Works"
 scene_path = "res://scenes/levels/level_06_coal_seam.tscn"
 
+[sub_resource type="Resource" id="Level_tower"]
+script = ExtResource("2_level")
+title = "Airship Mooring Tower"
+act_name = "Act II: The Outer Works"
+scene_path = "res://scenes/levels/level_07_airship_tower.tscn"
+
+[sub_resource type="Resource" id="Level_archive"]
+script = ExtResource("2_level")
+title = "The Blueprint Archive"
+act_name = "Act II: The Outer Works"
+scene_path = "res://scenes/levels/level_08_blueprint_archive.tscn"
+
+[sub_resource type="Resource" id="Level_generator"]
+script = ExtResource("2_level")
+title = "Tesla Generator Hall"
+act_name = "Act III: The Deep Foundry"
+scene_path = "res://scenes/levels/level_09_tesla_generator.tscn"
+
 [sub_resource type="Resource" id="Level_foundry"]
 script = ExtResource("2_level")
 title = "The Great Foundry"
@@ -47,4 +65,4 @@ scene_path = "res://scenes/world/foundry_level.tscn"
 
 [resource]
 script = ExtResource("1_campaign")
-levels = Array[ExtResource("2_level")]([SubResource("Level_yard"), SubResource("Level_tram"), SubResource("Level_row"), SubResource("Level_cisterns"), SubResource("Level_gardens"), SubResource("Level_seam"), SubResource("Level_foundry")])
+levels = Array[ExtResource("2_level")]([SubResource("Level_yard"), SubResource("Level_tram"), SubResource("Level_row"), SubResource("Level_cisterns"), SubResource("Level_gardens"), SubResource("Level_seam"), SubResource("Level_tower"), SubResource("Level_archive"), SubResource("Level_generator"), SubResource("Level_foundry")])

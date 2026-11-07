@@ -9,6 +9,9 @@ const LEVEL_3: String = "res://scenes/levels/level_03_clockmakers_row.tscn"
 const LEVEL_4: String = "res://scenes/levels/level_04_flooded_cisterns.tscn"
 const LEVEL_5: String = "res://scenes/levels/level_05_steam_gardens.tscn"
 const LEVEL_6: String = "res://scenes/levels/level_06_coal_seam.tscn"
+const LEVEL_7: String = "res://scenes/levels/level_07_airship_tower.tscn"
+const LEVEL_8: String = "res://scenes/levels/level_08_blueprint_archive.tscn"
+const LEVEL_9: String = "res://scenes/levels/level_09_tesla_generator.tscn"
 const FINALE: String = "res://scenes/world/foundry_level.tscn"
 const TEST_SAVE: String = "user://test_campaign_smoke_save.json"
 const MIN_DRESSING_PROPS: int = 8
@@ -56,6 +59,12 @@ func _run() -> void:
 	await _test_level_5()
 	await _load_level(LEVEL_6)
 	await _test_level_6()
+	await _load_level(LEVEL_7)
+	await _test_level_7()
+	await _load_level(LEVEL_8)
+	await _test_level_8()
+	await _load_level(LEVEL_9)
+	await _test_level_9()
 
 	print("")
 	if _failures.is_empty():
@@ -416,7 +425,7 @@ func _test_level_6() -> void:
 	await _frames(2)
 	_check(lift_door.is_open, "the wound winch opens the mine lift")
 	await _kill_all_enemies()
-	await _ride_elevator(FINALE)
+	await _ride_elevator(LEVEL_7)
 
 
 func _test_sentry_rivet_stagger(player: Technician) -> void:
@@ -453,3 +462,215 @@ func _test_sentry_introduction() -> void:
 	for text: String in _notices:
 		introduced = introduced or text.begins_with("BRASS SENTRY")
 	_check(introduced, "the first sentry to spot the Technician explains how to beat it")
+
+
+# --- Level 7 ------------------------------------------------------------------------------------
+
+func _test_level_7() -> void:
+	var player: Technician = _player()
+	_isolate_enemies([])
+	var builder: FoundryBuilder = _level.get_node("Navigation") as FoundryBuilder
+	_check(builder.rooms[1].open_air and builder.rooms[2].open_air, "the cargo deck and gantry are open to the sky")
+
+	var wind: WindZone = _level.get_node("Hazards/CargoWind") as WindZone
+	(_level.get_node("Hazards/GantryWind") as WindZone).set_physics_process(false)
+	for path: String in ["Hazards/CargoPropeller", "Hazards/CargoPropellerSouth", "Hazards/GantryPropeller"]:
+		(_level.get_node(path) as Propeller).set_physics_process(false)
+	player.global_position = Vector3(18.0, 0.05, -2.0)
+	await _frames(5)
+	for i: int in 200:
+		if wind.current_phase() == HazardCycle.Phase.ACTIVE:
+			break
+		wind.advance_time(0.05)
+	wind.advance_time(wind.gust_time * 0.3)
+	var before: Vector3 = player.global_position
+	await _frames(20)
+	_check(player.global_position.z > before.z + 0.5 and _heard.has(&"wind_gust"), "a gust shoves the Technician toward the deck edge")
+	wind.set_physics_process(false)
+	await _frames(10)
+	var settled: Vector3 = player.global_position
+	await _frames(20)
+	_check(player.global_position.distance_to(settled) < 0.3, "the Technician stops drifting once the gust dies down")
+
+	player.global_position = Vector3(18.0, 0.05, 0.0)
+	await _frames(5)
+	_restore_player(player)
+	var room_name: String = GameState.current_room
+	player.global_position = Vector3(14.0, 0.3, 11.0)
+	var recovered: bool = false
+	for i: int in 180:
+		await get_tree().physics_frame
+		if player.health < player.stats.max_health:
+			recovered = true
+			break
+	await _frames(2)
+	var entrance: Vector3 = builder.room_entrance(room_name)
+	_check(recovered and room_name == "Cargo Deck", "falling off the deck costs hull")
+	_check(player.global_position.distance_to(entrance) < 1.5, "the safety line winches the Technician back to the deck entrance")
+	_restore_player(player)
+
+	var skitterer: EnemyBase = _level.get_node("Enemies/CargoSkittererA") as EnemyBase
+	_isolate_enemies([skitterer])
+	skitterer.global_position = Vector3(24.0, 0.3, 11.0)
+	for i: int in 180:
+		await get_tree().physics_frame
+		if skitterer.is_dead:
+			break
+	_check(skitterer.is_dead, "an automaton pushed through a railing gap is lost")
+	_isolate_enemies([])
+
+	var propeller: Propeller = _level.get_node("Hazards/CargoPropeller") as Propeller
+	propeller.set_physics_process(true)
+	player.global_position = propeller.global_position + propeller.blow_direction() * 3.0 + Vector3(0.0, 0.05, 0.0)
+	before = player.global_position
+	await _frames(20)
+	_check((player.global_position - before).dot(propeller.blow_direction()) > 0.3, "a propeller wash pushes the Technician along its facing")
+	_restore_player(player)
+	player.global_position = propeller.to_global(Vector3(0.0, 0.05, -0.7))
+	await _frames(5)
+	_check(player.health < player.stats.max_health, "the propeller blades hurt on contact")
+	propeller.set_physics_process(false)
+	_restore_player(player)
+
+	await _test_tesla_drone(player)
+
+	var west_lever: GangwayLever = _level.get_node("Interactables/GangwayLeverWest") as GangwayLever
+	var east_lever: GangwayLever = _level.get_node("Interactables/GangwayLeverEast") as GangwayLever
+	var gangway: SteamDoor = _level.get_node("Doors/GangwayDoor") as SteamDoor
+	_check(not gangway.is_open, "the gangway lift starts locked")
+	west_lever.interact(player)
+	await _frames(2)
+	_check(not gangway.is_open and not west_lever.can_interact(), "one lever alone does not lower the gangway")
+	east_lever.interact(player)
+	await _frames(2)
+	_check(gangway.is_open, "pulling both gangway levers frees the lift")
+	await _kill_all_enemies()
+	await _ride_elevator(LEVEL_8)
+
+
+func _test_tesla_drone(player: Technician) -> void:
+	var drone: TeslaDrone = _level.get_node("Enemies/GantryDroneA") as TeslaDrone
+	_isolate_enemies([drone])
+	_check(drone.sprite.position.y > 1.5, "the tesla drone hovers above the deck")
+	player.global_position = drone.global_position + Vector3(-7.0, 0.05, 0.0)
+	var hurt: bool = false
+	for i: int in 400:
+		await get_tree().physics_frame
+		if player.health < player.stats.max_health:
+			hurt = true
+			break
+	_check(hurt and _heard.has(&"drone_zap"), "the drone keeps its distance and zaps the Technician with an arc")
+	_check(drone._distance_to_target() > 3.0, "the drone stands off rather than closing to melee")
+	_restore_player(player)
+	drone.set_physics_process(false)
+	player.global_position = drone.global_position + Vector3(-5.0, 0.05, 0.0)
+	await _frames(3)
+	player.aim_direction = Vector3.RIGHT
+	player.pressure.current = player.pressure.max_pressure
+	var health_before: float = drone.health
+	player._fire_rivet(GameState.rig)
+	await _frames(30)
+	_check(drone.health < health_before, "a rivet hits the hovering drone")
+	drone.set_physics_process(true)
+	drone.stun(0.5)
+	_check(drone.is_stunned(), "a stunned drone drops out of the air")
+	await _frames(50)
+	_check(not drone.is_stunned(), "the drone recovers after its stun")
+	_isolate_enemies([])
+	_restore_player(player)
+
+
+# --- Level 8 ------------------------------------------------------------------------------------
+
+func _test_level_8() -> void:
+	var player: Technician = _player()
+	var sentry: BrassSentry = _level.get_node("Enemies/ReadingSentry") as BrassSentry
+	var turret: ArcTurret = _level.get_node("Enemies/ReadingTurret") as ArcTurret
+	var alarm: AlarmBell = _level.get_node("Interactables/ReadingAlarm") as AlarmBell
+	_isolate_enemies([sentry])
+	_check(turret.dormant, "the reading room turret sleeps until the alarm")
+	_check(sentry.is_patrolling(), "the reading room sentry walks a patrol")
+	player.global_position = Vector3(-6.0, 0.05, 6.0)
+	var start: Vector3 = sentry.global_position
+	await _frames(60)
+	_check(sentry.global_position.distance_to(start) > 0.8 and not alarm.is_raised(), "the sentry patrols without noticing the Technician behind it")
+	player.global_position = sentry.global_position + sentry.facing * 3.0 + Vector3(0.0, 0.05, 0.0)
+	await _frames(5)
+	_check(alarm.is_raised() and not turret.dormant and _heard.has(&"alarm_bell"), "stepping into the lantern cone rings the alarm and wakes the turret")
+	sentry.set_physics_process(false)
+	alarm.alarm.quiet_time = 0.5
+	player.global_position = Vector3(-6.0, 0.05, 6.0)
+	await _frames(45)
+	_check(not alarm.is_raised() and turret.dormant, "the turret goes back to sleep once the alarm falls quiet")
+	_isolate_enemies([])
+	_restore_player(player)
+
+	var lift: SteamDoor = _level.get_node("Doors/ArchiveLiftDoor") as SteamDoor
+	for i: int in 3:
+		_check(not lift.is_open, "the archive lift is locked before page %d" % (i + 1))
+		var page: Node3D = _level.get_node("Interactables/BlueprintPage%d" % (i + 1)) as Node3D
+		player.global_position = page.global_position + Vector3(0.0, 0.05, 0.0)
+		await _frames(5)
+		_check(GameState.has_item(StringName("blueprint_%d" % (i + 1))), "blueprint page %d collected" % (i + 1))
+	await _frames(2)
+	_check(lift.is_open, "all three blueprint pages open the archive lift")
+	await _kill_all_enemies()
+	await _ride_elevator(LEVEL_9)
+
+
+# --- Level 9 ------------------------------------------------------------------------------------
+
+func _test_level_9() -> void:
+	var player: Technician = _player()
+	_isolate_enemies([])
+	var plates: ElectricPlates = _level.get_node("Hazards/GalleryPlates") as ElectricPlates
+	_restore_player(player)
+	var shocked: bool = false
+	for i: int in int(plates.pattern.period() * 60.0) + 30:
+		await get_tree().physics_frame
+		player.global_position = plates.row_center(0) + Vector3(0.0, 0.05, 0.0)
+		if player.health < player.stats.max_health:
+			shocked = plates.state_of(0) == PlatePattern.State.LIVE
+			break
+	_check(shocked and _heard.has(&"plate_crackle"), "a live floor plate shocks the Technician")
+	plates.set_physics_process(false)
+	(_level.get_node("Hazards/CoilHallPlates") as ElectricPlates).set_physics_process(false)
+	_restore_player(player)
+
+	var coil: TeslaCoil = _level.get_node("Hazards/CoilWest") as TeslaCoil
+	var drone: TeslaDrone = _level.get_node("Enemies/CoilDroneA") as TeslaDrone
+	var far_drone: TeslaDrone = _level.get_node("Enemies/CoilDroneC") as TeslaDrone
+	_isolate_enemies([drone])
+	drone.global_position = coil.global_position + Vector3(3.0, 0.05, -2.0)
+	player.global_position = coil.global_position + Vector3(-5.0, 0.05, 0.0)
+	await _frames(3)
+	player.aim_direction = Vector3.RIGHT
+	player.pressure.current = player.pressure.max_pressure
+	player._fire_rivet(GameState.rig)
+	for i: int in 30:
+		await get_tree().physics_frame
+		if not coil.is_charged():
+			break
+	_check(not coil.is_charged() and _heard.has(&"coil_overload"), "a rivet into the coil overloads it")
+	_check(drone.is_stunned() and not far_drone.is_stunned(), "the overload knocks nearby drones out of the air")
+	_isolate_enemies([])
+	_restore_player(player)
+
+	var router: PowerRouter = _level.get_node("Interactables/PowerRouter") as PowerRouter
+	var door_plates: ElectricPlates = _level.get_node("Hazards/LiftDoorPlates") as ElectricPlates
+	var west_plates: ElectricPlates = _level.get_node("Hazards/SwitchPlatesWest") as ElectricPlates
+	var lift: SteamDoor = _level.get_node("Doors/GeneratorLiftDoor") as SteamDoor
+	_check(door_plates.state_of(0) == PlatePattern.State.LIVE, "the plates by the lift door start live")
+	var junction_a: JunctionSwitch = _level.get_node("Interactables/JunctionA") as JunctionSwitch
+	var junction_c: JunctionSwitch = _level.get_node("Interactables/JunctionC") as JunctionSwitch
+	junction_c.interact(player)
+	await _frames(2)
+	_check(west_plates.state_of(0) == PlatePattern.State.LIVE and door_plates.state_of(0) == PlatePattern.State.OFF, "a wrong routing electrifies a different section")
+	junction_a.interact(player)
+	junction_a.interact(player)
+	await _frames(2)
+	_check(router.is_solved() and lift.is_open, "the earth-bank routing opens the generator lift")
+	_check(west_plates.state_of(0) == PlatePattern.State.OFF and door_plates.state_of(0) == PlatePattern.State.OFF, "with the current earthed every section is dead")
+	_check(not junction_a.can_interact(), "the junctions lock once the current is earthed")
+	await _kill_all_enemies()
+	await _ride_elevator(FINALE)

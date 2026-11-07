@@ -1,0 +1,322 @@
+[gd_scene load_steps=54 format=3]
+
+[ext_resource type="Script" path="res://scenes/world/foundry_level.gd" id="1_level"]
+[ext_resource type="Script" path="res://scenes/world/foundry_builder.gd" id="2_builder"]
+[ext_resource type="Script" path="res://scripts/config/room_def.gd" id="3_room"]
+[ext_resource type="Script" path="res://scripts/resources/rumor_data.gd" id="4_rumor"]
+[ext_resource type="PackedScene" path="res://scenes/player/technician.tscn" id="5_tech"]
+[ext_resource type="PackedScene" path="res://scenes/player/camera_rig.tscn" id="6_cam"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="7_hud"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/scrap_skitterer.tscn" id="8_skit"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/piston_bruiser.tscn" id="9_brute"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/arc_turret.tscn" id="10_turret"]
+[ext_resource type="PackedScene" path="res://scenes/world/rumor_terminal.tscn" id="11_term"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_door.tscn" id="12_door"]
+[ext_resource type="PackedScene" path="res://scenes/world/jammed_valve.tscn" id="13_valve"]
+[ext_resource type="PackedScene" path="res://scenes/world/rotating_cog.tscn" id="15_cog"]
+[ext_resource type="PackedScene" path="res://scenes/world/steam_vent.tscn" id="17_vent"]
+[ext_resource type="PackedScene" path="res://scenes/world/elevator.tscn" id="18_elev"]
+[ext_resource type="PackedScene" path="res://scenes/world/decor_prop.tscn" id="19_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/gear_pickup.tscn" id="21_pickup"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/clockwork_hound.tscn" id="22_hound"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/brass_sentry.tscn" id="23_sentry"]
+[ext_resource type="PackedScene" path="res://scenes/world/key_pickup.tscn" id="24_key"]
+[ext_resource type="PackedScene" path="res://scenes/world/tram_crossing.tscn" id="25_tram"]
+[ext_resource type="PackedScene" path="res://scenes/world/water_pool.tscn" id="26_pool"]
+[ext_resource type="PackedScene" path="res://scenes/world/pump_sequence.tscn" id="27_pumpseq"]
+[ext_resource type="PackedScene" path="res://scenes/world/pump_valve.tscn" id="28_pumpvalve"]
+[ext_resource type="PackedScene" path="res://scenes/world/humid_zone.tscn" id="29_humid"]
+[ext_resource type="PackedScene" path="res://scenes/world/enemy_nest.tscn" id="30_nest"]
+[ext_resource type="PackedScene" path="res://scenes/world/wall_lantern_switch.tscn" id="31_lantern"]
+[ext_resource type="PackedScene" path="res://scenes/world/winch.tscn" id="32_winch"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/cistern_warden.tscn" id="33_warden"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/tesla_drone.tscn" id="34_drone"]
+[ext_resource type="PackedScene" path="res://scenes/world/alarm_bell.tscn" id="35_alarm"]
+[ext_resource type="PackedScene" path="res://scenes/world/wind_zone.tscn" id="36_wind"]
+[ext_resource type="PackedScene" path="res://scenes/world/fall_zone.tscn" id="37_fall"]
+[ext_resource type="PackedScene" path="res://scenes/world/propeller.tscn" id="38_prop"]
+[ext_resource type="PackedScene" path="res://scenes/world/gangway_lever.tscn" id="39_lever"]
+[ext_resource type="PackedScene" path="res://scenes/world/electric_plates.tscn" id="40_plates"]
+[ext_resource type="PackedScene" path="res://scenes/world/power_router.tscn" id="41_router"]
+[ext_resource type="PackedScene" path="res://scenes/world/junction_switch.tscn" id="42_junction"]
+[ext_resource type="PackedScene" path="res://scenes/world/tesla_coil.tscn" id="43_coil"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_iron_plate.png" id="t_iron"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_metal_plate.png" id="t_w_metal"]
+[ext_resource type="Texture2D" path="res://assets/sprites/floors/floor_grate.png" id="t_grate"]
+[ext_resource type="Texture2D" path="res://assets/sprites/walls/wall_brick.png" id="t_w_brick"]
+
+[sub_resource type="Environment" id="Env_level"]
+background_mode = 1
+background_color = Color(0.01, 0.015, 0.025, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.55, 0.7, 0.9, 1)
+ambient_light_energy = 0.45
+tonemap_mode = 2
+tonemap_exposure = 1.05
+glow_enabled = true
+glow_intensity = 0.9
+glow_bloom = 0.08
+fog_enabled = true
+fog_light_color = Color(0.12, 0.16, 0.24, 1)
+fog_density = 0.004
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.016
+volumetric_fog_albedo = Color(0.95, 0.8, 0.65, 1)
+volumetric_fog_emission = Color(0.04, 0.025, 0.015, 1)
+
+[sub_resource type="Resource" id="Room_gallery"]
+script = ExtResource("3_room")
+room_name = "Insulator Gallery"
+width = 16
+depth = 14
+floor_texture = ExtResource("t_iron")
+wall_texture = ExtResource("t_w_metal")
+floor_tint = Color(0.85, 0.88, 0.95, 1)
+light_color = Color(0.7, 0.85, 1, 1)
+light_energy = 2.4
+pillars = PackedVector2Array()
+dressing_theme = 12
+dressing_seed = 901
+clutter_density = 0.2
+grime_density = 0.45
+
+[sub_resource type="Resource" id="Room_coils"]
+script = ExtResource("3_room")
+room_name = "Coil Hall"
+width = 26
+depth = 18
+floor_texture = ExtResource("t_iron")
+wall_texture = ExtResource("t_w_metal")
+floor_tint = Color(0.8, 0.85, 0.95, 1)
+light_color = Color(0.6, 0.8, 1, 1)
+light_energy = 2.6
+pillars = PackedVector2Array()
+dressing_theme = 12
+dressing_seed = 903
+clutter_density = 0.16
+grime_density = 0.5
+
+[sub_resource type="Resource" id="Room_switch"]
+script = ExtResource("3_room")
+room_name = "Switch Room"
+width = 16
+depth = 14
+floor_texture = ExtResource("t_grate")
+wall_texture = ExtResource("t_w_brick")
+floor_tint = Color(0.85, 0.85, 0.9, 1)
+light_color = Color(1, 0.8, 0.55, 1)
+light_energy = 2.2
+pillars = PackedVector2Array()
+dressing_theme = 12
+dressing_seed = 907
+clutter_density = 0.18
+grime_density = 0.45
+
+[sub_resource type="Resource" id="Room_lift"]
+script = ExtResource("3_room")
+room_name = "Generator Lift"
+width = 12
+depth = 12
+floor_texture = ExtResource("t_iron")
+wall_texture = ExtResource("t_w_metal")
+floor_tint = Color(0.85, 0.88, 0.95, 1)
+light_color = Color(0.8, 0.9, 1, 1)
+light_energy = 2
+pillars = PackedVector2Array()
+dressing_theme = 12
+dressing_seed = 911
+clutter_density = 0.14
+grime_density = 0.35
+
+[sub_resource type="Resource" id="Rumor_plate_warning"]
+script = ExtResource("4_rumor")
+rumor_id = &"plate_warning"
+title = "Hall Foreman's Warning"
+body = "The floor plates in this hall carry the overflow. They take it in turns, row by row: a blue flicker, then the full current, then dark again.\n\nWatch the flicker. Step where it has just gone dark, not where it is about to light."
+hint = "Plates flicker before they go live. Cross behind the sweep."
+
+[sub_resource type="Resource" id="Rumor_coil_overload_memo"]
+script = ExtResource("4_rumor")
+rumor_id = &"coil_overload_memo"
+title = "Memo: Coil Discipline"
+body = "Staff are reminded NOT to strike the main coils. A struck coil dumps its whole charge at once, and every drone within a stone's throw drops out of the air like a dead pigeon.\n\nIt takes the coil a good twelve seconds to recharge. The drones do not take kindly to it."
+hint = "Shoot a glowing Tesla coil to overload it. Drones nearby fall out of the air for a few seconds, and nearby turrets get scorched."
+
+[sub_resource type="Resource" id="Rumor_earth_bank_card"]
+script = ExtResource("4_rumor")
+rumor_id = &"earth_bank_card"
+title = "Earth Bank Routing Card"
+body = "To send the surplus to the earth bank and kill the plates by the lift:\n\n  Junction A: III\n  Junction B: I\n  Junction C: II\n\nAny other setting dumps the current into one of the floor sections. You will know which."
+hint = "Set junction A to III, B to I and C to II to earth the current and open the generator lift."
+
+[sub_resource type="Resource" id="Rumor_deep_works_log"]
+script = ExtResource("4_rumor")
+rumor_id = &"deep_works_log"
+title = "Generator Log, Final Entry"
+body = "Load doubled tonight. The Master has the deep works drawing every amp we make, and the machines down there have stopped asking permission for anything.\n\nThe night shift went down at midnight on his order. The lift came back up empty."
+hint = ""
+
+[node name="Level09TeslaGenerator" type="Node3D"]
+script = ExtResource("1_level")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_level")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.383022, 0.321394, 0, 0.642788, 0.766044, -0.5, -0.663414, 0.55667, 0, 20, 0)
+light_color = Color(0.7, 0.8, 1, 1)
+light_energy = 0.3
+shadow_enabled = true
+directional_shadow_max_distance = 60.0
+
+[node name="Navigation" type="NavigationRegion3D" parent="."]
+script = ExtResource("2_builder")
+rooms = Array[ExtResource("3_room")]([SubResource("Room_gallery"), SubResource("Room_coils"), SubResource("Room_switch"), SubResource("Room_lift")])
+start_x = -9.0
+player_path = NodePath("../Technician")
+keep_clear_roots = Array[NodePath]([NodePath("../Doors"), NodePath("../Interactables"), NodePath("../Hazards"), NodePath("../Props"), NodePath("../Enemies")])
+
+[node name="Technician" parent="." instance=ExtResource("5_tech")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.05, 1)
+
+[node name="CameraRig" parent="." instance=ExtResource("6_cam")]
+target_path = NodePath("../Technician")
+
+[node name="HUD" parent="." instance=ExtResource("7_hud")]
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="GalleryDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0)
+door_id = &"gallery_door"
+condition = 0
+locked_hint = ""
+
+[node name="CoilHallDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 0, 0)
+door_id = &"coil_door"
+condition = 0
+locked_hint = ""
+
+[node name="GeneratorLiftDoor" parent="Doors" instance=ExtResource("12_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, 0, 0)
+door_id = &"generator_lift"
+condition = 1
+locked_hint = "The lift door is live. Route the current to the earth bank."
+
+[node name="Interactables" type="Node3D" parent="."]
+
+[node name="PlateTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -5.5)
+rumor = SubResource("Rumor_plate_warning")
+
+[node name="CoilTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, -8)
+rumor = SubResource("Rumor_coil_overload_memo")
+
+[node name="RoutingTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, -5.5)
+rumor = SubResource("Rumor_earth_bank_card")
+
+[node name="DeepWorksTerminal" parent="Interactables" instance=ExtResource("11_term")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 53, 0, -5)
+rumor = SubResource("Rumor_deep_works_log")
+
+[node name="PowerRouter" parent="Interactables" instance=ExtResource("41_router")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 0, -5.5)
+safe_positions = PackedInt32Array(2, 0, 1)
+start_positions = PackedInt32Array(0, 0, 0)
+unlock_id = &"generator_lift"
+section_names = PackedStringArray("west", "east", "lift-door")
+
+[node name="JunctionA" parent="Interactables" instance=ExtResource("42_junction")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38, 0, -5.5)
+router_path = NodePath("../PowerRouter")
+index = 0
+label = "A"
+
+[node name="JunctionB" parent="Interactables" instance=ExtResource("42_junction")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41, 0, -5.5)
+router_path = NodePath("../PowerRouter")
+index = 1
+label = "B"
+
+[node name="JunctionC" parent="Interactables" instance=ExtResource("42_junction")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 0, -5.5)
+router_path = NodePath("../PowerRouter")
+index = 2
+label = "C"
+
+[node name="Elevator" parent="Interactables" instance=ExtResource("18_elev")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, 0, 0)
+exit_mode = 1
+
+[node name="Hazards" type="Node3D" parent="."]
+
+[node name="GalleryPlates" parent="Hazards" instance=ExtResource("40_plates")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+rows = 4
+row_size = Vector2(2.5, 13)
+
+[node name="CoilHallPlates" parent="Hazards" instance=ExtResource("40_plates")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 0)
+rows = 5
+row_size = Vector2(2.4, 17)
+reverse = true
+step_time = 0.9
+rest_time = 2.0
+
+[node name="SwitchPlatesWest" parent="Hazards" instance=ExtResource("40_plates")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37, 0, 2)
+rows = 1
+row_size = Vector2(4, 5)
+power_section = 0
+router_path = NodePath("../../Interactables/PowerRouter")
+
+[node name="SwitchPlatesEast" parent="Hazards" instance=ExtResource("40_plates")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 0, 2)
+rows = 1
+row_size = Vector2(4, 5)
+power_section = 1
+router_path = NodePath("../../Interactables/PowerRouter")
+
+[node name="LiftDoorPlates" parent="Hazards" instance=ExtResource("40_plates")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47.2, 0, 0)
+rows = 1
+row_size = Vector2(2.6, 13)
+power_section = 2
+router_path = NodePath("../../Interactables/PowerRouter")
+
+[node name="CoilWest" parent="Hazards" instance=ExtResource("43_coil")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0, 6.5)
+
+[node name="CoilEast" parent="Hazards" instance=ExtResource("43_coil")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, -6.5)
+
+[node name="Props" type="Node3D" parent="."]
+
+[node name="Enemies" type="Node3D" parent="."]
+
+[node name="GalleryTurret" parent="Enemies" instance=ExtResource("10_turret")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0, -5)
+
+[node name="GallerySkittererA" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.05, 4)
+
+[node name="GallerySkittererB" parent="Enemies" instance=ExtResource("8_skit")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.05, -5)
+
+[node name="CoilDroneA" parent="Enemies" instance=ExtResource("34_drone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0.05, 3)
+
+[node name="CoilDroneB" parent="Enemies" instance=ExtResource("34_drone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0.05, -4)
+
+[node name="CoilDroneC" parent="Enemies" instance=ExtResource("34_drone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 0.05, 2)
+
+[node name="CoilTurret" parent="Enemies" instance=ExtResource("10_turret")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, -6)
+
+[node name="SwitchHound" parent="Enemies" instance=ExtResource("22_hound")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0.05, 4)

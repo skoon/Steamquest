@@ -23,6 +23,7 @@ var phase: Phase = Phase.ORBIT
 var hover: float = HOVER_HEIGHT
 var _phase_time: float = 0.0
 var _orbit_sign: float = 1.0
+var _hum_timer: float = 0.0
 
 
 func _shadow_radius() -> float:
@@ -66,6 +67,10 @@ func _physics_process(delta: float) -> void:
 			goal = STUN_HEIGHT
 	hover = move_toward(hover, goal, HEIGHT_SPEED * delta)
 	_apply_height()
+	_hum_timer -= delta
+	if is_aggro and not is_dead and phase != Phase.STUNNED and _hum_timer <= 0.0:
+		_hum_timer = 1.6
+		Audio.play_at(&"drone_hum", global_position + Vector3.UP * hover, -6.0)
 	super(delta)
 
 
